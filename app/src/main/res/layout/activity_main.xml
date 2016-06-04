@@ -7,7 +7,7 @@
         android:id="@+id/textDisplay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="User Profile Name"
+        android:text="Welcome to Bookbag!"
         android:layout_above="@+id/facebookLoginButton"
         android:layout_centerInParent="true"/>
 

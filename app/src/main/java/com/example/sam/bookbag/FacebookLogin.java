@@ -9,6 +9,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
@@ -80,6 +82,9 @@ public class FacebookLogin extends Fragment {
         mTokenTracker.startTracking();
         mProfileTracker.startTracking();
         Log.e("Trackers", "are Tracking");
+        if (Profile.getCurrentProfile() != null){
+            displayToast("Welcome Back " + Profile.getCurrentProfile().getName() + "!");
+        }
     }
 
 
@@ -87,6 +92,7 @@ public class FacebookLogin extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         return inflater.inflate(R.layout.facebook_login, container, false);
+
     }
 
     @Override
@@ -142,6 +148,8 @@ public class FacebookLogin extends Fragment {
                 try {
                     if (currentProfile == null){
                         MainActivity.displayText.setText("");
+                    }else if(currentProfile != null){
+                        displayToast("Welcome Back " + currentProfile.getName() + "!");
                     }
                 } catch (NullPointerException NPE) {
                     Log.e("New Profile", "NULL");
@@ -161,6 +169,9 @@ public class FacebookLogin extends Fragment {
 
     private void constructWelcomeMessage(String userName) {
         MainActivity.displayText.setText("Welcome " + userName);
+    }
+    public void displayToast(String message){
+        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
     }
 }
 
