@@ -7,6 +7,9 @@
         android:id="@+id/sellText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="SELL"/>
+        android:text="SELL"
+        android:layout_marginLeft="150dp"
+        android:layout_marginTop="240dp"
+        android:textSize="30sp"/>
 
 </LinearLayout>

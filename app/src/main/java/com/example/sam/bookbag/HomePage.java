@@ -34,14 +34,15 @@ public class HomePage extends AppCompatActivity{
 
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
+        setTabIcons();
     }
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new Explore(), "Explore");
-        adapter.addFragment(new Classes(), "Classes");
-        adapter.addFragment(new Sell(), "Sell");
-        adapter.addFragment(new Chat(), "Chat");
-        adapter.addFragment(new Profile(), "Profile");
+        adapter.addFragment(new Explore(), "");
+        adapter.addFragment(new Classes(), "");
+        adapter.addFragment(new Sell(), "");
+        adapter.addFragment(new Chat(), "");
+        adapter.addFragment(new Profile(), "");
 
         viewPager.setAdapter(adapter);
     }
@@ -73,6 +74,19 @@ public class HomePage extends AppCompatActivity{
         public CharSequence getPageTitle(int position) {
             return mFragmentTitleList.get(position);
         }
+    }
+    public void setTabIcons(){
+        final int[] ICONS = new int[]{
+                R.drawable.search,
+                R.drawable.classes,
+                R.drawable.sell,
+                R.drawable.chat,
+                R.drawable.profile};
+        tabLayout.getTabAt(0).setIcon(ICONS[0]);
+        tabLayout.getTabAt(1).setIcon(ICONS[1]);
+        tabLayout.getTabAt(2).setIcon(ICONS[2]);
+        tabLayout.getTabAt(3).setIcon(ICONS[3]);
+        tabLayout.getTabAt(4).setIcon(ICONS[4]);
     }
 }
 

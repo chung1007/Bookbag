@@ -7,6 +7,9 @@
         android:id="@+id/classesText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="CLASSES"/>
+        android:text="CLASSES"
+        android:layout_marginLeft="120dp"
+        android:layout_marginTop="240dp"
+        android:textSize="30sp"/>
 
 </LinearLayout>
