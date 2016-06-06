@@ -37,11 +37,11 @@ public class HomePage extends AppCompatActivity{
     }
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new Explore(), "ONE");
-        adapter.addFragment(new Classes(), "TWO");
-        adapter.addFragment(new Sell(), "THREE");
-        adapter.addFragment(new Chat(), "FOUR");
-        adapter.addFragment(new Profile(), "FIVE");
+        adapter.addFragment(new Explore(), "Explore");
+        adapter.addFragment(new Classes(), "Classes");
+        adapter.addFragment(new Sell(), "Sell");
+        adapter.addFragment(new Chat(), "Chat");
+        adapter.addFragment(new Profile(), "Profile");
 
         viewPager.setAdapter(adapter);
     }
