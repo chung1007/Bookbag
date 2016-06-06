@@ -2,6 +2,7 @@ package com.example.sam.bookbag;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -47,6 +48,9 @@ public class FacebookLogin extends Fragment {
                 if (profile != null) {
                     Log.e("user name", profile.getFirstName());
                     constructWelcomeMessage(profile.getName());
+                    Intent homePage = new Intent(getContext(), HomePage.class);
+                    homePage.putExtra("userProfile", Profile.getCurrentProfile());
+                    startActivity(homePage);
                     Log.e("profile", "!=Null");
                 } else {
                     mTextDetails.setText("Searching...");
@@ -84,6 +88,9 @@ public class FacebookLogin extends Fragment {
         Log.e("Trackers", "are Tracking");
         if (Profile.getCurrentProfile() != null){
             displayToast("Welcome Back " + Profile.getCurrentProfile().getName() + "!");
+            Intent homePage = new Intent(getContext(), HomePage.class);
+            homePage.putExtra("userProfile", Profile.getCurrentProfile());
+            startActivity(homePage);
         }
     }
 
