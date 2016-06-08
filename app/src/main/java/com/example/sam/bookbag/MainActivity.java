@@ -2,7 +2,6 @@ package com.example.sam.bookbag;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.TextView;
 
 import com.facebook.FacebookSdk;
@@ -18,3 +17,5 @@ public class MainActivity extends AppCompatActivity {
         displayText = (TextView)findViewById(R.id.textDisplay);
     }
 }
+
+
