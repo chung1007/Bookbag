@@ -5,14 +5,25 @@
     android:orientation="horizontal"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:background="#66CCFF"
     tools:context="com.setactionbartitletextposition_android_examples.com.MainActivity">
 
     <TextView
         android:id="@+id/textDisplay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Welcome to Bookbag!"
-        android:layout_above="@+id/facebookLoginButton"
+        android:text="Bookbag"
+        android:textSize="30sp"
+        android:textColor="#3C3C5D"
+        android:layout_centerVertical="true"
+        android:layout_centerInParent="true"
+        android:paddingBottom="200dp"/>
+
+    <ImageView
+        android:id="@+id/iconImage"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:src="@drawable/icon"
         android:layout_centerInParent="true"/>
 
     <fragment
@@ -20,6 +31,7 @@
         android:id="@+id/facebookLoginButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/textDisplay"
         android:layout_centerInParent="true"/>
 
 </RelativeLayout>

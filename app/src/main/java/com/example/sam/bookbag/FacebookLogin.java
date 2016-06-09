@@ -35,7 +35,7 @@ public class FacebookLogin extends Fragment {
     private ProfileTracker mProfileTracker;
     private LoginButton mButtonLogin;
     private AccessToken accessToken;
-    private Profile profile;
+    public static Profile profile;
     private FacebookCallback<LoginResult> mFacebookCallback = new FacebookCallback<LoginResult>() {
         @Override
         public void onSuccess(LoginResult loginResult) {
@@ -47,10 +47,7 @@ public class FacebookLogin extends Fragment {
                 Log.e("Profile", "after .getCurrentProfile");
                 if (profile != null) {
                     Log.e("user name", profile.getFirstName());
-                    constructWelcomeMessage(profile.getName());
-                    Intent homePage = new Intent(getContext(), HomePage.class);
-                    homePage.putExtra("userProfile", Profile.getCurrentProfile());
-                    startActivity(homePage);
+                    sendExtras();
                     Log.e("profile", "!=Null");
                 } else {
                     mTextDetails.setText("Searching...");
@@ -87,9 +84,11 @@ public class FacebookLogin extends Fragment {
         mProfileTracker.startTracking();
         Log.e("Trackers", "are Tracking");
         if (Profile.getCurrentProfile() != null){
-            displayToast("Welcome Back " + Profile.getCurrentProfile().getName() + "!");
             Intent homePage = new Intent(getContext(), HomePage.class);
-            homePage.putExtra("userProfile", Profile.getCurrentProfile());
+            homePage.putExtra("userName", Profile.getCurrentProfile().getName());
+            homePage.putExtra("userId", Profile.getCurrentProfile().getId());
+            Log.e("userIdBefore", Profile.getCurrentProfile().getId());
+            displayToast("Welcome Back " + Profile.getCurrentProfile().getName() + "!");
             startActivity(homePage);
         }
     }
@@ -100,6 +99,7 @@ public class FacebookLogin extends Fragment {
                              Bundle savedInstanceState) {
         return inflater.inflate(R.layout.facebook_login, container, false);
 
+
     }
 
     @Override
@@ -107,6 +107,7 @@ public class FacebookLogin extends Fragment {
         setupTextDetails(view);
         setupLoginButton(view);
         mButtonLogin.setReadPermissions("public_profile");
+
     }
 
     @Override
@@ -114,7 +115,7 @@ public class FacebookLogin extends Fragment {
         try {
             super.onResume();
             Profile profile = Profile.getCurrentProfile();
-            constructWelcomeMessage(profile.getName());
+            //constructWelcomeMessage(profile.getName());
         } catch (NullPointerException NPE) {
             Log.e("currentProfile", "NULL");
         }
@@ -157,6 +158,7 @@ public class FacebookLogin extends Fragment {
                         MainActivity.displayText.setText("");
                     }else if(currentProfile != null){
                         displayToast("Welcome Back " + currentProfile.getName() + "!");
+                        profile = currentProfile;
                     }
                 } catch (NullPointerException NPE) {
                     Log.e("New Profile", "NULL");
@@ -179,6 +181,14 @@ public class FacebookLogin extends Fragment {
     }
     public void displayToast(String message){
         Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+    }
+    public void sendExtras(){
+        Intent homePage = new Intent(getContext(), HomePage.class);
+        homePage.putExtra("userName", profile.getName());
+        homePage.putExtra("userId", profile.getId());
+        Log.e("userId", profile.getId());
+        displayToast("Welcome " + profile.getName() + "!");
+        startActivity(homePage);
     }
 }
 

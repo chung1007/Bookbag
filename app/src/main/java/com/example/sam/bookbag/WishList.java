@@ -9,15 +9,15 @@ import android.view.ViewGroup;
 /**
  * Created by sam on 6/6/16.
  */
-public class Classes extends Fragment {
+public class WishList extends Fragment {
 
-    public Classes(){
+    public WishList(){
 
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.classes, container, false);
+        return inflater.inflate(R.layout.wishlist, container, false);
 
     }
 }
