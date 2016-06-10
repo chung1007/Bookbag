@@ -5,7 +5,7 @@
     android:orientation="horizontal"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="#66CCFF"
+    android:background="#33bbff"
     tools:context="com.setactionbartitletextposition_android_examples.com.MainActivity">
 
     <TextView
@@ -13,18 +13,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Bookbag"
-        android:textSize="30sp"
-        android:textColor="#3C3C5D"
-        android:layout_centerVertical="true"
+        android:textSize="40sp"
+        android:textColor="#ffffff"
         android:layout_centerInParent="true"
-        android:paddingBottom="200dp"/>
+        android:paddingBottom="150dp"
+        android:paddingTop="30dp"/>
 
     <ImageView
         android:id="@+id/iconImage"
         android:layout_width="55dp"
         android:layout_height="55dp"
-        android:src="@drawable/newicon"
-        android:layout_centerInParent="true"/>
+        android:src="@drawable/bookbagicon"
+        android:tint="#ffffff"
+        android:layout_centerInParent="true"
+        android:layout_above="@+id/textDisplay"/>
 
     <fragment
         android:name="com.example.sam.bookbag.FacebookLogin"
