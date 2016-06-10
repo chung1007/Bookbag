@@ -16,8 +16,9 @@ public class MainActivity extends AppCompatActivity {
         FacebookSdk.sdkInitialize(this);
         setContentView(R.layout.activity_main);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        displayText = (TextView)findViewById(R.id.textDisplay);
+        displayText = (TextView) findViewById(R.id.textDisplay);
     }
+
 }
 
 

@@ -10,12 +10,13 @@
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true">
+        android:layout_alignParentBottom="true"
+        android:id="@+id/view">
 
         <android.support.design.widget.TabLayout
             android:id="@+id/tabs"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="65dp"
             android:layout_alignParentBottom="true"
             android:background="#66CCFF"
             app:tabIndicatorColor="@android:color/white"
@@ -29,13 +30,42 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="#66CCFF"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         android:layout_alignParentTop="true"
-        app:layout_scrollFlags="scroll|enterAlwaysCollapsed"/>
+        app:layout_scrollFlags="scroll|enterAlways">
 
-    <android.support.v4.view.ViewPager
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center_horizontal">
+
+        <ImageView
+            android:src="@drawable/newicon"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_weight="1"
+            android:layout_marginTop="5dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Bookbag"
+            android:textSize="25sp"
+            android:id="@+id/toolbar_title"
+            android:textColor="#ffffff"
+            android:layout_weight="1"
+            android:paddingLeft="5dp"/>
+
+        </LinearLayout>
+
+    </android.support.v7.widget.Toolbar>
+
+    <com.example.sam.bookbag.CustomViewPager
         android:id="@+id/viewpager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+        android:layout_below="@+id/toolbar"
+        android:layout_above="@+id/view"/>
+        <!-- app:layout_behavior="@string/appbar_scrolling_view_behavior"-->
+
 </RelativeLayout>

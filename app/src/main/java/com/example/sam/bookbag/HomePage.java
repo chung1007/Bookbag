@@ -2,6 +2,7 @@ package com.example.sam.bookbag;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -29,7 +30,7 @@ import java.util.List;
 public class HomePage extends AppCompatActivity {
     private Toolbar toolbar;
     private TabLayout tabLayout;
-    private ViewPager viewPager;
+    CustomViewPager viewPager;
     String userId;
     String userName;
     Intent getUserInfo;
@@ -42,9 +43,11 @@ public class HomePage extends AppCompatActivity {
         getExtras();
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        viewPager = (ViewPager) findViewById(R.id.viewpager);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        getSupportActionBar().setTitle("");
+        viewPager = (CustomViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);
+        viewPager.setPagingEnabled(false);
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
         setTabIcons();
@@ -108,7 +111,7 @@ public class HomePage extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu, menu);
-        menu.findItem(R.id.userName).setTitle(userName);
+        //menu.findItem(R.id.userName).setTitle(userName);
         return true;
     }
 

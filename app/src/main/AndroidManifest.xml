@@ -3,11 +3,12 @@
     package="com.example.sam.bookbag">
 
     <uses-permission android:name="android.permission.INTERNET"/>
+
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
+        android:icon="@drawable/newicon"
+        android:label="Bookbag"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <meta-data

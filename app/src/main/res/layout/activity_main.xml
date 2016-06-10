@@ -23,7 +23,7 @@
         android:id="@+id/iconImage"
         android:layout_width="55dp"
         android:layout_height="55dp"
-        android:src="@drawable/icon"
+        android:src="@drawable/newicon"
         android:layout_centerInParent="true"/>
 
     <fragment
