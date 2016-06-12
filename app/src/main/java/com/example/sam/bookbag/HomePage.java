@@ -1,23 +1,20 @@
 package com.example.sam.bookbag;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.Toast;
-
 import com.facebook.FacebookSdk;
 import com.facebook.login.widget.ProfilePictureView;
 
@@ -29,11 +26,12 @@ import java.util.List;
  */
 public class HomePage extends AppCompatActivity {
     private Toolbar toolbar;
-    private TabLayout tabLayout;
+    public static TabLayout tabLayout;
     CustomViewPager viewPager;
     String userId;
     String userName;
     Intent getUserInfo;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +49,7 @@ public class HomePage extends AppCompatActivity {
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
         setTabIcons();
+        setTabListener();
     }
 
     private void setupViewPager(ViewPager viewPager) {
@@ -105,6 +104,9 @@ public class HomePage extends AppCompatActivity {
         tabLayout.getTabAt(2).setIcon(ICONS[2]);
         tabLayout.getTabAt(3).setIcon(ICONS[3]);
         tabLayout.getTabAt(4).setIcon(ICONS[4]);
+        for (int i = 0; i < 5; i++) {
+            tabLayout.getTabAt(i).getIcon().setTint(Color.WHITE);
+        }
     }
 
     @Override
@@ -134,5 +136,31 @@ public class HomePage extends AppCompatActivity {
         Log.e("userId", userId);
 
     }
+    public void setTabListener(){
+        tabLayout.setOnTabSelectedListener(
+                new TabLayout.ViewPagerOnTabSelectedListener(viewPager) {
+
+                    @Override
+                    public void onTabSelected(TabLayout.Tab tab) {
+                        super.onTabSelected(tab);
+                        int tabIconColor = ContextCompat.getColor(getApplicationContext(), R.color.tabSelected);
+                        tab.getIcon().setColorFilter(tabIconColor, PorterDuff.Mode.SRC_IN);
+                    }
+
+                    @Override
+                    public void onTabUnselected(TabLayout.Tab tab) {
+                        super.onTabUnselected(tab);
+                        int tabIconColor = ContextCompat.getColor(getApplicationContext(), R.color.tabNotSelected);
+                        tab.getIcon().setColorFilter(tabIconColor, PorterDuff.Mode.SRC_IN);
+                    }
+
+                    @Override
+                    public void onTabReselected(TabLayout.Tab tab) {
+                        super.onTabReselected(tab);
+                    }
+                }
+        );
+    }
+
 }
 

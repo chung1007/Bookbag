@@ -5,12 +5,15 @@ android {
     buildToolsVersion "21.0.2"
 
     repositories {
-        mavenCentral()
+        //mavenCentral()
+        jcenter {
+            url "http://jcenter.bintray.com/"
+        }
     }
 
     defaultConfig {
         applicationId "com.example.sam.bookbag"
-        minSdkVersion 15
+        minSdkVersion 21
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"

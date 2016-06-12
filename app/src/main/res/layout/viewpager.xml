@@ -19,7 +19,7 @@
             android:layout_height="65dp"
             android:layout_alignParentBottom="true"
             android:background="#33bbff"
-            app:tabIndicatorColor="@android:color/white"
+            app:tabIndicatorColor="#33bbff"
             app:tabMode="fixed"
             app:tabGravity="fill"/>
 
