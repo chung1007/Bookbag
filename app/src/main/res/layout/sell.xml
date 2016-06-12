@@ -51,7 +51,8 @@
                 android:id="@+id/className"
                 android:background="@drawable/textbox"
                 android:inputType="text"
-                android:hint="ex. MATH 400" />
+                android:hint="ex. MATH 400"
+                android:textSize="12sp"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -92,7 +93,32 @@
                 android:id="@+id/Condition"
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
-                android:background="@drawable/textbox"/>
+                android:background="@drawable/textbox"
+                android:hint="Click for list"
+                android:textSize="12sp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Price"
+                android:textSize="20dp"
+                android:paddingTop="10dp"/>
+
+            <EditText
+                android:id="@+id/Price"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:background="@drawable/textbox"
+                android:inputType="number"
+                android:text="$"/>
+
+            <Button
+                android:id="@+id/postButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Post"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="0dp"/>
 
         </LinearLayout>
 
