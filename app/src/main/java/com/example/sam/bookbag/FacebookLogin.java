@@ -22,6 +22,8 @@ import com.facebook.Profile;
 import com.facebook.ProfileTracker;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 
 /**
@@ -36,6 +38,7 @@ public class FacebookLogin extends Fragment {
     private LoginButton mButtonLogin;
     private AccessToken accessToken;
     public static Profile profile;
+    String dataBaseUrl = Constants.dataBaseUrl;
     private FacebookCallback<LoginResult> mFacebookCallback = new FacebookCallback<LoginResult>() {
         @Override
         public void onSuccess(LoginResult loginResult) {
@@ -47,6 +50,7 @@ public class FacebookLogin extends Fragment {
                 Log.e("Profile", "after .getCurrentProfile");
                 if (profile != null) {
                     Log.e("user name", profile.getFirstName());
+                    sendUserData(profile);
                     sendExtras();
                     Log.e("profile", "!=Null");
                 } else {
@@ -189,6 +193,12 @@ public class FacebookLogin extends Fragment {
         Log.e("userId", profile.getId());
         displayToast("Welcome " + profile.getName() + "!");
         startActivity(homePage);
+    }
+    public void sendUserData(Profile profile){
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference ref = database.getReference();
+        ref.child(profile.getName()).child("userId").setValue(profile.getId());
+        Log.e("Firebase", "sent Data");
     }
 }
 
