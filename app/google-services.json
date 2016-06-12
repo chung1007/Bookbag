@@ -1,0 +1,50 @@
+{
+  "project_info": {
+    "project_number": "708223146382",
+    "firebase_url": "https://bookbag-7c9b3.firebaseio.com",
+    "project_id": "bookbag-7c9b3",
+    "storage_bucket": "bookbag-7c9b3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:708223146382:android:afaf73b6b1fa0dae",
+        "android_client_info": {
+          "package_name": "com.example.sam.bookbag"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "708223146382-p0f18rdnsq6tsgph9cf0578ufarpv3tc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.sam.bookbag",
+            "certificate_hash": "E542397F33E0F999839D25598B0F13F76533B3C8"
+          }
+        },
+        {
+          "client_id": "708223146382-pgc7k3cltjpqupus013l4jsa5m70kc0h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCINnMK03VnOg7anvtz4eRqEbLkulCM25Q"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
