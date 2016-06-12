@@ -81,6 +81,19 @@
                 android:background="@drawable/textbox"
                 android:inputType="text" />
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Condition"
+                android:textSize="20dp"
+                android:paddingTop="10dp"/>
+
+            <AutoCompleteTextView
+                android:id="@+id/Condition"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:background="@drawable/textbox"/>
+
         </LinearLayout>
 
     </ScrollView>
