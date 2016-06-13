@@ -99,6 +99,7 @@ public class Sell extends Fragment {
         if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK)
         {
             Bitmap photo = (Bitmap) data.getExtras().get("data");
+            Log.e("photo", photo.toString());
             addPictureView.setImageBitmap(photo);
         }
     }
