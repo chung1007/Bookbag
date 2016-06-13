@@ -1,7 +1,15 @@
 package com.example.sam.bookbag;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Camera;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.ListPopupWindow;
 import android.util.Log;
@@ -13,6 +21,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
+import android.widget.ImageView;
 
 /**
  * Created by sam on 6/6/16.
@@ -22,6 +31,9 @@ public class Sell extends Fragment {
     View view;
     private ListPopupWindow lpw;
     private String[] list;
+    private static final int CAMERA_REQUEST = 1888;
+    ImageView addPictureView;
+    Bitmap m_bitmap;
 
     public Sell(){
 
@@ -31,12 +43,15 @@ public class Sell extends Fragment {
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.sell, container, false);
         autoCompleteTextView = (AutoCompleteTextView)view.findViewById(R.id.Condition);
+        addPictureView = (ImageView)view.findViewById(R.id.textBookImage);
         setConditionList();
+        setPhotoAddListener();
         return view;
     }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
     }
 
     public void setConditionList(){
@@ -62,5 +77,29 @@ public class Sell extends Fragment {
                 return true;
             }
         });
+    }
+    public void setPhotoAddListener(){
+        addPictureView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startCamera();
+            }
+        });
+    }
+
+    private void startCamera() {
+
+        Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(cameraIntent, CAMERA_REQUEST);
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK)
+        {
+            Bitmap photo = (Bitmap) data.getExtras().get("data");
+            addPictureView.setImageBitmap(photo);
+        }
     }
 }

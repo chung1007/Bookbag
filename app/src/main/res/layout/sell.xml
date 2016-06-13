@@ -112,13 +112,30 @@
                 android:inputType="number"
                 android:text="$"/>
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Edition"
+                android:textSize="20dp"
+                android:paddingTop="10dp"/>
+
+            <EditText
+                android:id="@+id/Edition"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:background="@drawable/textbox"
+                android:inputType="number"
+                android:hint="year published"
+                android:textSize="12sp"/>
+
             <Button
                 android:id="@+id/postButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Post"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginBottom="0dp"/>
+                android:layout_marginBottom="0dp"
+                android:textColor="#33bbff" />
 
         </LinearLayout>
 
