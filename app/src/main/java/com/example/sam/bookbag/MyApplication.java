@@ -8,6 +8,10 @@ import android.util.Base64;
 import android.util.Log;
 
 import com.facebook.FacebookSdk;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -16,11 +20,17 @@ import java.security.NoSuchAlgorithmException;
  * Created by sam on 5/31/16.
  */
 public class MyApplication extends Application {
+    public static FirebaseDatabase dataBase;
+    public static DatabaseReference ref;
+    public static FirebaseStorage storage;
+    public static StorageReference storageRef;
+
     @Override
     public void onCreate() {
         super.onCreate();
         FacebookSdk.sdkInitialize(getApplicationContext());
         printHashKey();
+        initializeFirebase();
     }
     public void printHashKey(){
         try {
@@ -37,5 +47,13 @@ public class MyApplication extends Application {
         } catch (NoSuchAlgorithmException e) {
 
         }
+    }
+
+    public void initializeFirebase(){
+        dataBase = FirebaseDatabase.getInstance();
+        ref = dataBase.getReference();
+        storage = FirebaseStorage.getInstance();
+        storageRef = storage.getReferenceFromUrl("gs://bookbag-7c9b3.appspot.com");
+
     }
 }

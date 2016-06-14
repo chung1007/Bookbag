@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.ListPopupWindow;
 import android.util.Log;
@@ -20,8 +21,19 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+
+import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by sam on 6/6/16.
@@ -29,33 +41,47 @@ import android.widget.ImageView;
 public class Sell extends Fragment {
     AutoCompleteTextView autoCompleteTextView;
     View view;
+    Button postButton;
     private ListPopupWindow lpw;
     private String[] list;
     private static final int CAMERA_REQUEST = 1888;
     ImageView addPictureView;
-    Bitmap m_bitmap;
+    byte[] photoByte;
+    EditText className;
+    EditText authorName;
+    EditText ISBN;
+    EditText condition;
+    EditText price;
+    EditText edition;
+    ArrayList<EditText> dataList;
+    EditText[] editTextList;
 
-    public Sell(){
+    public Sell() {
 
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.sell, container, false);
-        autoCompleteTextView = (AutoCompleteTextView)view.findViewById(R.id.Condition);
-        addPictureView = (ImageView)view.findViewById(R.id.textBookImage);
+        autoCompleteTextView = (AutoCompleteTextView) view.findViewById(R.id.condition);
+        addPictureView = (ImageView) view.findViewById(R.id.textBookImage);
+        postButton = (Button) view.findViewById(R.id.postButton);
+        setEdittextId();
         setConditionList();
         setPhotoAddListener();
+        setPostClickListener();
         return view;
     }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
     }
 
-    public void setConditionList(){
-        list = new String[] { "Poor", "Fair", "Good", "New" };
+    public void setConditionList() {
+        list = new String[]{"Poor", "Fair", "Good", "New"};
         lpw = new ListPopupWindow(getContext());
         lpw.setAdapter(new ArrayAdapter<String>(getContext(),
                 android.R.layout.simple_list_item_1, list));
@@ -83,6 +109,7 @@ public class Sell extends Fragment {
             @Override
             public void onClick(View view) {
                 startCamera();
+                Toast.makeText(getContext(), "Take photo Landscape!", Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -99,8 +126,69 @@ public class Sell extends Fragment {
         if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK)
         {
             Bitmap photo = (Bitmap) data.getExtras().get("data");
-            Log.e("photo", photo.toString());
             addPictureView.setImageBitmap(photo);
         }
     }
+    public void setPostClickListener(){
+        postButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                checkDataCompletion(editTextList);
+                sendTextBookPhoto();
+            }
+        });
+    }
+    public void setEdittextId(){
+        className = (EditText)view.findViewById(R.id.className);
+        authorName = (EditText)view.findViewById(R.id.authorName);
+        ISBN = (EditText)view.findViewById(R.id.ISBN);
+        condition = (EditText)view.findViewById(R.id.condition);
+        price = (EditText)view.findViewById(R.id.price);
+        edition = (EditText)view.findViewById(R.id.edition);
+        dataList = new ArrayList<>(Arrays.asList(className, authorName, ISBN, condition, price, edition));
+        editTextList = new EditText[6];
+        for (int i = 0; i < dataList.size(); i++){
+            editTextList[i] = dataList.get(i);
+            Log.e("size i", i + "");
+            Log.e("editTextLength", editTextList.length + "");
+        }
+    }
+    public void checkDataCompletion(EditText[] dataList){
+        ArrayList<String> checkList = new ArrayList<>();
+        for (int i = 0; i < dataList.length; i++){
+            checkList.add(dataList[i].getText().toString());
+            Log.e("length i", i + "");
+            Log.e("dataList", dataList[i].getText().toString());
+        }
+        Log.e("checkList", checkList.toString());
+        if(checkList.contains("")){
+            Toast.makeText(getContext(), "Incomplete information!", Toast.LENGTH_LONG).show();
+        }else{
+            //some function
+        }
+
+    }
+    public void sendTextBookPhoto(){
+        addPictureView.setDrawingCacheEnabled(true);
+        addPictureView.buildDrawingCache();
+        Bitmap bitmap = addPictureView.getDrawingCache();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] data = baos.toByteArray();
+        StorageReference imageKey = MyApplication.storageRef.child(className.getText().toString());
+        UploadTask uploadTask = imageKey.putBytes(data);
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle unsuccessful uploads
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+                Uri downloadUrl = taskSnapshot.getDownloadUrl();
+            }
+        });
+    }
 }
+

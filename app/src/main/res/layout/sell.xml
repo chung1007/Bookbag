@@ -16,7 +16,8 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:isScrollContainer="false">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -89,11 +90,11 @@
                 android:paddingTop="10dp"/>
 
             <AutoCompleteTextView
-                android:id="@+id/Condition"
+                android:id="@+id/condition"
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
                 android:background="@drawable/textbox"
-                android:textSize="12sp"/>
+                android:hint="Click for list"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -103,7 +104,7 @@
                 android:paddingTop="10dp"/>
 
             <EditText
-                android:id="@+id/Price"
+                android:id="@+id/price"
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
                 android:background="@drawable/textbox"
@@ -118,12 +119,11 @@
                 android:paddingTop="10dp"/>
 
             <EditText
-                android:id="@+id/Edition"
+                android:id="@+id/edition"
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
                 android:background="@drawable/textbox"
-                android:inputType="number"
-                android:textSize="12sp"/>
+                android:inputType="number"/>
 
             <Button
                 android:id="@+id/postButton"
@@ -132,7 +132,7 @@
                 android:text="Post"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginBottom="0dp"
-                android:textColor="#33bbff" />
+                android:textColor="#33bbff"/>
 
         </LinearLayout>
 

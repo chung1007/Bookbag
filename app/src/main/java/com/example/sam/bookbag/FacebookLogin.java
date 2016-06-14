@@ -38,7 +38,6 @@ public class FacebookLogin extends Fragment {
     private LoginButton mButtonLogin;
     private AccessToken accessToken;
     public static Profile profile;
-    String dataBaseUrl = Constants.dataBaseUrl;
     private FacebookCallback<LoginResult> mFacebookCallback = new FacebookCallback<LoginResult>() {
         @Override
         public void onSuccess(LoginResult loginResult) {
@@ -118,7 +117,6 @@ public class FacebookLogin extends Fragment {
     public void onResume() {
         try {
             super.onResume();
-            Profile profile = Profile.getCurrentProfile();
             //constructWelcomeMessage(profile.getName());
         } catch (NullPointerException NPE) {
             Log.e("currentProfile", "NULL");
@@ -180,9 +178,6 @@ public class FacebookLogin extends Fragment {
         Log.e("public profile", "requested");
     }
 
-    private void constructWelcomeMessage(String userName) {
-        MainActivity.displayText.setText("Welcome " + userName);
-    }
     public void displayToast(String message){
         Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
     }
@@ -195,9 +190,7 @@ public class FacebookLogin extends Fragment {
         startActivity(homePage);
     }
     public void sendUserData(Profile profile){
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference ref = database.getReference();
-        ref.child(profile.getName()).child("userId").setValue(profile.getId());
+        MyApplication.ref.child(profile.getName()).child("userId").setValue(profile.getId());
         Log.e("Firebase", "sent Data");
     }
 }
