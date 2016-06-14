@@ -46,7 +46,6 @@ public class Sell extends Fragment {
     private String[] list;
     private static final int CAMERA_REQUEST = 1888;
     ImageView addPictureView;
-    byte[] photoByte;
     EditText className;
     EditText authorName;
     EditText ISBN;
@@ -56,9 +55,7 @@ public class Sell extends Fragment {
     ArrayList<EditText> dataList;
     EditText[] editTextList;
 
-    public Sell() {
-
-    }
+    public Sell() {}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -175,8 +172,8 @@ public class Sell extends Fragment {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
         byte[] data = baos.toByteArray();
-        StorageReference imageKey = MyApplication.storageRef.child(className.getText().toString());
-        UploadTask uploadTask = imageKey.putBytes(data);
+        StorageReference imageKey = MyApplication.storageRef.child(HomePage.userName);
+        UploadTask uploadTask = imageKey.child(className.getText().toString()).putBytes(data);
         uploadTask.addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {

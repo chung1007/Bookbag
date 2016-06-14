@@ -30,8 +30,8 @@ public class HomePage extends AppCompatActivity {
     private Toolbar toolbar;
     public static TabLayout tabLayout;
     CustomViewPager viewPager;
-    String userId;
-    String userName;
+    public static String userId;
+    public static String userName;
     Intent getUserInfo;
 
 
