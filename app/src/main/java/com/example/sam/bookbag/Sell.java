@@ -14,6 +14,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.ListPopupWindow;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -24,10 +25,12 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
@@ -42,6 +45,7 @@ public class Sell extends Fragment {
     AutoCompleteTextView autoCompleteTextView;
     View view;
     Button postButton;
+    ScrollView scrollView;
     private ListPopupWindow lpw;
     private String[] list;
     private static final int CAMERA_REQUEST = 1888;
@@ -64,6 +68,7 @@ public class Sell extends Fragment {
         autoCompleteTextView = (AutoCompleteTextView) view.findViewById(R.id.condition);
         addPictureView = (ImageView) view.findViewById(R.id.textBookImage);
         postButton = (Button) view.findViewById(R.id.postButton);
+        scrollView = (ScrollView)view.findViewById(R.id.postDataScrollView);
         setEdittextId();
         setConditionList();
         setPhotoAddListener();
@@ -132,6 +137,11 @@ public class Sell extends Fragment {
             public void onClick(View view) {
                 checkDataCompletion(editTextList);
                 sendTextBookPhoto();
+                sendPostData();
+                Toast toast = Toast.makeText(getContext(), "Posted!", Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.CENTER, 0, 0);
+                toast.show();
+                clearPostData();
             }
         });
     }
@@ -172,20 +182,34 @@ public class Sell extends Fragment {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
         byte[] data = baos.toByteArray();
-        StorageReference imageKey = MyApplication.storageRef.child(HomePage.userName);
+        StorageReference imageKey = MyApplication.storageRef.child(HomePage.userId);
         UploadTask uploadTask = imageKey.child(className.getText().toString()).putBytes(data);
         uploadTask.addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
-                // Handle unsuccessful uploads
+                //DO NOTHING
             }
         }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
-                Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                //DO NOTHING
             }
         });
+    }
+    public void sendPostData(){
+        ArrayList<String> dataNames = new ArrayList<>(Arrays.asList("className", "authorName", "ISBN", "condition", "price", "edition"));
+        DatabaseReference postKey = MyApplication.ref.child(HomePage.userId);
+        for (int i = 0; i < editTextList.length; i++){
+            postKey.child(className.getText().toString()).child(dataNames.get(i)).setValue(editTextList[i].getText().toString());
+        }
+    }
+    public void clearPostData(){
+        addPictureView.setImageResource(0);
+        addPictureView.setImageResource(R.drawable.addpicture);
+        for (int i = 0; i < editTextList.length; i++){
+            editTextList[i].setText("");
+        }
+        scrollView.fullScroll(ScrollView.FOCUS_UP);
     }
 }
 

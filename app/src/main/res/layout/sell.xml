@@ -15,6 +15,7 @@
         android:textSize="30sp"/>
 
     <ScrollView
+        android:id="@+id/postDataScrollView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:isScrollContainer="false">

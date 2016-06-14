@@ -190,7 +190,7 @@ public class FacebookLogin extends Fragment {
         startActivity(homePage);
     }
     public void sendUserData(Profile profile){
-        MyApplication.ref.child(profile.getName()).child("userId").setValue(profile.getId());
+        MyApplication.ref.child(profile.getId());
         Log.e("Firebase", "sent Data");
     }
 }
