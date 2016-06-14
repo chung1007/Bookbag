@@ -46,7 +46,6 @@ public class FacebookLogin extends Fragment {
                 accessToken = loginResult.getAccessToken();
                 loginResult.getRecentlyGrantedPermissions();
                 profile = Profile.getCurrentProfile();
-                Log.e("Profile", "after .getCurrentProfile");
                 if (profile != null) {
                     Log.e("user name", profile.getFirstName());
                     sendUserData(profile);
@@ -159,7 +158,6 @@ public class FacebookLogin extends Fragment {
                     if (currentProfile == null){
                         MainActivity.displayText.setText("");
                     }else if(currentProfile != null){
-                        displayToast("Welcome Back " + currentProfile.getName() + "!");
                         profile = currentProfile;
                     }
                 } catch (NullPointerException NPE) {
