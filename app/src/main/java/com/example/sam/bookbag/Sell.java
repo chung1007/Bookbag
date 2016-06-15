@@ -48,16 +48,21 @@ public class Sell extends Fragment {
     ScrollView scrollView;
     private ListPopupWindow lpw;
     private String[] list;
-    private static final int CAMERA_REQUEST = 1888;
-    ImageView addPictureView;
+    ImageView textBookImageOne;
+    ImageView textBookImageTwo;
+    ImageView textBookImageThree;
+    ImageView textBookImageFour;
+    String toCheckWith;
     EditText className;
     EditText authorName;
     EditText ISBN;
     EditText condition;
     EditText price;
     EditText edition;
+    EditText notes;
     ArrayList<EditText> dataList;
     EditText[] editTextList;
+    ImageView[] photoList;
     boolean correctInfo;
 
     public Sell() {}
@@ -67,12 +72,20 @@ public class Sell extends Fragment {
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.sell, container, false);
         autoCompleteTextView = (AutoCompleteTextView) view.findViewById(R.id.condition);
-        addPictureView = (ImageView) view.findViewById(R.id.textBookImageOne);
+        textBookImageOne = (ImageView) view.findViewById(R.id.textBookImageOne);
+        textBookImageTwo = (ImageView)view.findViewById(R.id.textBookImageTwo);
+        textBookImageThree = (ImageView)view.findViewById(R.id.textBookImageThree);
+        textBookImageFour = (ImageView)view.findViewById(R.id.textBookImageFour);
         postButton = (Button) view.findViewById(R.id.postButton);
         scrollView = (ScrollView)view.findViewById(R.id.postDataScrollView);
+        toCheckWith = textBookImageOne.getDrawable().toString();
         setEdittextId();
         setConditionList();
-        setPhotoAddListener();
+        setPhotoList();
+        setPhotoAddListener(textBookImageOne, 0);
+        setPhotoAddListener(textBookImageTwo, 1);
+        setPhotoAddListener(textBookImageThree, 2);
+        setPhotoAddListener(textBookImageFour, 3);
         setPostClickListener();
         return view;
     }
@@ -80,11 +93,10 @@ public class Sell extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     public void setConditionList() {
-        list = new String[]{"Poor", "Fair", "Good", "New"};
+        list = new String[]{"As New", "Fine", "Very Good", "Good", "Fair", "Poor"};
         lpw = new ListPopupWindow(getContext());
         lpw.setAdapter(new ArrayAdapter<String>(getContext(),
                 android.R.layout.simple_list_item_1, list));
@@ -107,29 +119,38 @@ public class Sell extends Fragment {
             }
         });
     }
-    public void setPhotoAddListener(){
-        addPictureView.setOnClickListener(new View.OnClickListener() {
+    public void setPhotoAddListener(ImageView view, final int requestCode){
+        view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startCamera();
+                startCamera(requestCode);
                 Toast.makeText(getContext(), "Take photo Landscape!", Toast.LENGTH_LONG).show();
             }
         });
     }
 
-    private void startCamera() {
+    private void startCamera(int requestCode) {
 
         Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(cameraIntent, CAMERA_REQUEST);
+        startActivityForResult(cameraIntent, requestCode);
     }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data)
     {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK)
+        if (requestCode == 0 && resultCode == Activity.RESULT_OK)
         {
             Bitmap photo = (Bitmap) data.getExtras().get("data");
-            addPictureView.setImageBitmap(photo);
+            textBookImageOne.setImageBitmap(photo);
+        }else if (requestCode == 1 && resultCode == Activity.RESULT_OK){
+            Bitmap photo = (Bitmap) data.getExtras().get("data");
+            textBookImageTwo.setImageBitmap(photo);
+        }else if (requestCode == 2 && resultCode == Activity.RESULT_OK){
+            Bitmap photo = (Bitmap) data.getExtras().get("data");
+            textBookImageThree.setImageBitmap(photo);
+        }else if (requestCode == 3 && resultCode == Activity.RESULT_OK){
+            Bitmap photo = (Bitmap) data.getExtras().get("data");
+            textBookImageFour.setImageBitmap(photo);
         }
     }
     public void setPostClickListener(){
@@ -155,40 +176,53 @@ public class Sell extends Fragment {
         condition = (EditText)view.findViewById(R.id.condition);
         price = (EditText)view.findViewById(R.id.price);
         edition = (EditText)view.findViewById(R.id.edition);
-        dataList = new ArrayList<>(Arrays.asList(className, authorName, ISBN, condition, price, edition));
-        editTextList = new EditText[6];
+        notes = (EditText)view.findViewById(R.id.notes);
+        dataList = new ArrayList<>(Arrays.asList(className, authorName, ISBN, condition, price, edition, notes));
+        editTextList = new EditText[7];
         for (int i = 0; i < dataList.size(); i++){
             editTextList[i] = dataList.get(i);
             Log.e("size i", i + "");
             Log.e("editTextLength", editTextList.length + "");
         }
     }
+
+    public void setPhotoList(){
+        photoList = new ImageView[]{textBookImageOne, textBookImageTwo, textBookImageThree, textBookImageFour};
+    }
     public void checkDataCompletion(EditText[] dataList){
-        ArrayList<String> checkList = new ArrayList<>();
+        ArrayList<String> dataCheckList = new ArrayList<>();
+        ArrayList<String> photoCheckList = new ArrayList<>();
         for (int i = 0; i < dataList.length; i++){
-            checkList.add(dataList[i].getText().toString());
+            dataCheckList.add(dataList[i].getText().toString());
             Log.e("length i", i + "");
             Log.e("dataList", dataList[i].getText().toString());
         }
-        Log.e("checkList", checkList.toString());
-        if(checkList.contains("")){
+        for (int i = 0; i < photoList.length; i++){
+            photoCheckList.add(photoList[i].getDrawable().toString());
+        }
+        Log.e("checkList", dataCheckList.toString());
+        if(dataCheckList.contains("")){
             toastMaker("Incomplete information!");
+            correctInfo = false;
+        }else if(photoCheckList.contains(toCheckWith)){
+            toastMaker("You forgot to fill in the photos!");
             correctInfo = false;
         }else{
             correctInfo = true;
+            Log.e("photoCheckList", photoCheckList.toString());
+            Log.e("toCheckWith", toCheckWith);
         }
 
     }
     public void sendTextBookPhoto(){
-        try {
-            addPictureView.setDrawingCacheEnabled(true);
-            addPictureView.buildDrawingCache();
-            Bitmap bitmap = addPictureView.getDrawingCache();
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            textBookImageOne.setDrawingCacheEnabled(true);
+            textBookImageOne.buildDrawingCache();
+            final Bitmap bitmap = textBookImageOne.getDrawingCache();
+            final ByteArrayOutputStream baos = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
             byte[] data = baos.toByteArray();
             StorageReference imageKey = MyApplication.storageRef.child(HomePage.userId);
-            UploadTask uploadTask = imageKey.child(className.getText().toString()).putBytes(data);
+            UploadTask uploadTask = imageKey.child(className.getText().toString()).child("image1").putBytes(data);
             uploadTask.addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception exception) {
@@ -197,23 +231,22 @@ public class Sell extends Fragment {
             }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    //DO NOTHING
+
                 }
             });
-        }catch (NullPointerException NPE){
-            toastMaker("You forgot some info!");
-        }
+        textBookImageOne.setImageBitmap(null);
+        textBookImageOne.destroyDrawingCache();
     }
     public void sendPostData(){
-        ArrayList<String> dataNames = new ArrayList<>(Arrays.asList("className", "authorName", "ISBN", "condition", "price", "edition"));
+        ArrayList<String> dataNames = new ArrayList<>(Arrays.asList("className", "authorName", "ISBN", "condition", "price", "edition", "notes"));
         DatabaseReference postKey = MyApplication.ref.child(HomePage.userId);
         for (int i = 0; i < editTextList.length; i++){
             postKey.child(className.getText().toString()).child(dataNames.get(i)).setValue(editTextList[i].getText().toString());
         }
     }
     public void clearPostData(){
-        addPictureView.setImageResource(0);
-        addPictureView.setImageResource(R.drawable.addpicture);
+        textBookImageOne.setImageResource(0);
+        textBookImageOne.setImageResource(R.drawable.addpicture);
         for (int i = 0; i < editTextList.length; i++){
             editTextList[i].setText("");
         }

@@ -1,5 +1,8 @@
 package com.example.sam.bookbag;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
@@ -163,6 +166,25 @@ public class HomePage extends AppCompatActivity {
                     }
                 }
         );
+    }
+    @Override
+    public void onBackPressed(){
+        final Activity activity = this;
+        new AlertDialog.Builder(this)
+                .setTitle("You Sure?")
+                .setMessage("Want to leave this page?")
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        activity.finish();
+                    }
+                })
+                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // do nothing
+                    }
+                })
+                .setIcon(R.drawable.gobackicon)
+                .show();
     }
 
 }
