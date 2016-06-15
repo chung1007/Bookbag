@@ -18,8 +18,8 @@
             android:layout_width="match_parent"
             android:layout_height="65dp"
             android:layout_alignParentBottom="true"
-            android:background="#33bbff"
-            app:tabIndicatorColor="#33bbff"
+            android:background="@color/appColor"
+            app:tabIndicatorColor="@color/appColor"
             app:tabMode="fixed"
             app:tabGravity="fill"/>
 
@@ -29,7 +29,7 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="#33bbff"
+        android:background="@color/appColor"
         android:layout_alignParentTop="true"
         app:layout_scrollFlags="scroll|enterAlways">
 

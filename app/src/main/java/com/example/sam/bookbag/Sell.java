@@ -58,6 +58,7 @@ public class Sell extends Fragment {
     EditText edition;
     ArrayList<EditText> dataList;
     EditText[] editTextList;
+    boolean correctInfo;
 
     public Sell() {}
 
@@ -66,7 +67,7 @@ public class Sell extends Fragment {
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.sell, container, false);
         autoCompleteTextView = (AutoCompleteTextView) view.findViewById(R.id.condition);
-        addPictureView = (ImageView) view.findViewById(R.id.textBookImage);
+        addPictureView = (ImageView) view.findViewById(R.id.textBookImageOne);
         postButton = (Button) view.findViewById(R.id.postButton);
         scrollView = (ScrollView)view.findViewById(R.id.postDataScrollView);
         setEdittextId();
@@ -136,12 +137,14 @@ public class Sell extends Fragment {
             @Override
             public void onClick(View view) {
                 checkDataCompletion(editTextList);
-                sendTextBookPhoto();
-                sendPostData();
-                Toast toast = Toast.makeText(getContext(), "Posted!", Toast.LENGTH_SHORT);
-                toast.setGravity(Gravity.CENTER, 0, 0);
-                toast.show();
-                clearPostData();
+                if (!correctInfo) {
+                    //Do nothing
+                } else {
+                    sendTextBookPhoto();
+                    sendPostData();
+                    toastMaker("Posted!");
+                    clearPostData();
+                }
             }
         });
     }
@@ -169,32 +172,37 @@ public class Sell extends Fragment {
         }
         Log.e("checkList", checkList.toString());
         if(checkList.contains("")){
-            Toast.makeText(getContext(), "Incomplete information!", Toast.LENGTH_LONG).show();
+            toastMaker("Incomplete information!");
+            correctInfo = false;
         }else{
-            //some function
+            correctInfo = true;
         }
 
     }
     public void sendTextBookPhoto(){
-        addPictureView.setDrawingCacheEnabled(true);
-        addPictureView.buildDrawingCache();
-        Bitmap bitmap = addPictureView.getDrawingCache();
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-        byte[] data = baos.toByteArray();
-        StorageReference imageKey = MyApplication.storageRef.child(HomePage.userId);
-        UploadTask uploadTask = imageKey.child(className.getText().toString()).putBytes(data);
-        uploadTask.addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                //DO NOTHING
-            }
-        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                //DO NOTHING
-            }
-        });
+        try {
+            addPictureView.setDrawingCacheEnabled(true);
+            addPictureView.buildDrawingCache();
+            Bitmap bitmap = addPictureView.getDrawingCache();
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            byte[] data = baos.toByteArray();
+            StorageReference imageKey = MyApplication.storageRef.child(HomePage.userId);
+            UploadTask uploadTask = imageKey.child(className.getText().toString()).putBytes(data);
+            uploadTask.addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    //DO NOTHING
+                }
+            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    //DO NOTHING
+                }
+            });
+        }catch (NullPointerException NPE){
+            toastMaker("You forgot some info!");
+        }
     }
     public void sendPostData(){
         ArrayList<String> dataNames = new ArrayList<>(Arrays.asList("className", "authorName", "ISBN", "condition", "price", "edition"));
@@ -210,6 +218,11 @@ public class Sell extends Fragment {
             editTextList[i].setText("");
         }
         scrollView.fullScroll(ScrollView.FOCUS_UP);
+    }
+    public void toastMaker(String message){
+        Toast toast = Toast.makeText(getContext(), message, Toast.LENGTH_SHORT);
+        toast.setGravity(Gravity.CENTER, 0, 0);
+        toast.show();
     }
 }
 

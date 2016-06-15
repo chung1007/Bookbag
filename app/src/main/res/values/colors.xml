@@ -4,5 +4,6 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="tabNotSelected">#ffffff</color>
-    <color name="tabSelected">#fff633</color>
+    <color name="tabSelected">#FF443B</color>
+    <color name="appColor">#34CAD8</color>
 </resources>

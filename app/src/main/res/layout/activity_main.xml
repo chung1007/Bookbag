@@ -5,7 +5,7 @@
     android:orientation="horizontal"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="#33bbff"
+    android:background="@color/appColor"
     tools:context="com.setactionbartitletextposition_android_examples.com.MainActivity">
 
     <TextView
