@@ -4,16 +4,34 @@
     android:layout_height="match_parent"
     android:background="#ffffff">
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#f1f4f4"
+        android:id="@+id/titleLayout">
+
     <TextView
         android:id="@+id/sellText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="Add a listing"
-        android:textColor="#3c98a1"
+        android:layout_centerInParent="true"
+        android:text="Add a Listing"
+        android:textColor="#000000"
         android:paddingBottom="15dp"
-        android:textSize="20sp"
-        android:textStyle="bold"/>
+        android:paddingTop="15dp"
+        android:textSize="20sp" />
+
+        <View
+            android:id="@+id/titleDivider"
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="#cfd1d1"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_below="@id/sellText"/>
+
+    </RelativeLayout>
+
 
 
     <LinearLayout
@@ -83,7 +101,7 @@
                 android:id="@+id/className"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="Class Name : (ex. MAT 21)"
+                android:hint="Class Name : (ex. MAT 21C)"
                 android:textSize="15dp"
                 android:paddingLeft="10dp"
                 android:background="@android:color/transparent"
@@ -95,7 +113,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                android:background="#e9eeee">
+                android:background="#f1f4f4">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -212,7 +230,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                android:background="#e9eeee">
+                android:background="#f1f4f4">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -347,7 +365,7 @@
                 android:text="Post"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginBottom="0dp"
-                android:backgroundTint="#2ECC71"
+                android:backgroundTint="#1ABC9C"
                 android:textColor="#ffffff"/>
 
         </LinearLayout>
