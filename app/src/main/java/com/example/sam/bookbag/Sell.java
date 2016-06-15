@@ -63,6 +63,7 @@ public class Sell extends Fragment {
     ArrayList<EditText> dataList;
     EditText[] editTextList;
     ImageView[] photoList;
+    int photoCounter;
     boolean correctInfo;
 
     public Sell() {}
@@ -93,6 +94,7 @@ public class Sell extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        photoCounter = 1;
     }
 
     public void setConditionList() {
@@ -161,14 +163,16 @@ public class Sell extends Fragment {
                 if (!correctInfo) {
                     //Do nothing
                 } else {
-                    sendTextBookPhoto();
+                    for (int i = 0; i < photoList.length; i++){
+                        sendTextBookPhoto(photoList[i]);
+                    }
                     sendPostData();
                     toastMaker("Posted!");
                     clearPostData();
                 }
-            }
-        });
-    }
+                }
+            });
+        }
     public void setEdittextId(){
         className = (EditText)view.findViewById(R.id.className);
         authorName = (EditText)view.findViewById(R.id.authorName);
@@ -214,15 +218,15 @@ public class Sell extends Fragment {
         }
 
     }
-    public void sendTextBookPhoto(){
-            textBookImageOne.setDrawingCacheEnabled(true);
-            textBookImageOne.buildDrawingCache();
-            final Bitmap bitmap = textBookImageOne.getDrawingCache();
+    public void sendTextBookPhoto(ImageView imageView){
+            imageView.setDrawingCacheEnabled(true);
+            imageView.buildDrawingCache();
+            final Bitmap bitmap = imageView.getDrawingCache();
             final ByteArrayOutputStream baos = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
             byte[] data = baos.toByteArray();
             StorageReference imageKey = MyApplication.storageRef.child(HomePage.userId);
-            UploadTask uploadTask = imageKey.child(className.getText().toString()).child("image1").putBytes(data);
+            UploadTask uploadTask = imageKey.child(className.getText().toString()).child("image" + Integer.toString(photoCounter)).putBytes(data);
             uploadTask.addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception exception) {
@@ -234,8 +238,10 @@ public class Sell extends Fragment {
 
                 }
             });
-        textBookImageOne.setImageBitmap(null);
-        textBookImageOne.destroyDrawingCache();
+        Log.e("photoCounter", photoCounter + "");
+        photoCounter++;
+        imageView.setImageBitmap(null);
+        imageView.destroyDrawingCache();
     }
     public void sendPostData(){
         ArrayList<String> dataNames = new ArrayList<>(Arrays.asList("className", "authorName", "ISBN", "condition", "price", "edition", "notes"));
@@ -245,12 +251,15 @@ public class Sell extends Fragment {
         }
     }
     public void clearPostData(){
-        textBookImageOne.setImageResource(0);
-        textBookImageOne.setImageResource(R.drawable.addpicture);
+        for (int i = 0; i < photoList.length; i++){
+            photoList[i].setImageResource(0);
+            photoList[i].setImageResource(R.drawable.addpicture);
+        }
         for (int i = 0; i < editTextList.length; i++){
             editTextList[i].setText("");
         }
         scrollView.fullScroll(ScrollView.FOCUS_UP);
+        photoCounter = 1;
     }
     public void toastMaker(String message){
         Toast toast = Toast.makeText(getContext(), message, Toast.LENGTH_SHORT);
