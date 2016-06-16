@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/exploreImageView"
+        android:layout_width="120dp"
+        android:layout_height="160dp"
+        android:src="@drawable/bookbagicon"
+        android:paddingLeft="20dp"
+        android:paddingRight="10dp"/>
+
+    <TextView
+        android:id="@+id/exploreBoxTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TITLE"
+        android:textSize="17sp"
+        android:paddingTop="40dp"
+        android:paddingRight="10dp"
+        android:layout_toRightOf="@id/exploreImageView"
+        android:paddingLeft="10dp"/>
+
+    <TextView
+        android:id="@+id/exploreBoxEdition"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="EDITION"
+        android:textSize="17sp"
+        android:paddingRight="10dp"
+        android:paddingTop="5dp"
+        android:paddingLeft="10dp"
+        android:layout_toRightOf="@id/exploreImageView"
+        android:layout_below="@id/exploreBoxTitle"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/exploreBoxEdition"
+        android:text="CONDITION"
+        android:id="@+id/exploreBoxCondition"
+        android:textSize="17sp"
+        android:paddingTop="5dp"
+        android:layout_toRightOf="@+id/exploreImageView"
+        android:paddingLeft="10dp"/>
+
+    <TextView
+        android:id="@+id/exploreBoxPrice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="50dp"
+        android:paddingTop="60dp"
+        android:text="PRICE"
+        android:textColor="#1ABC9C"
+        android:textSize="30sp"
+        android:paddingRight="30dp"
+        android:layout_alignParentRight="true" />
+
+
+</RelativeLayout>

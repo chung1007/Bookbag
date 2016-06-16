@@ -6,4 +6,5 @@
     <color name="tabNotSelected">#ffffff</color>
     <color name="tabSelected">#FF443B</color>
     <color name="appColor">#34CAD8</color>
+    <color name="infoColor">#000000</color>
 </resources>

@@ -270,6 +270,7 @@ public class Sell extends Fragment {
             editTextList[i].setText("");
         }
         scrollView.fullScroll(ScrollView.FOCUS_UP);
+        price.setText("$");
         photoCounter = 1;
     }
     public void toastMaker(String message){
