@@ -12,6 +12,13 @@
         android:hint="Search"
         android:gravity="center" />
 
+    <ListView
+        android:id="@+id/exploreBoxList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </ListView>
+<!--
     <ScrollView
         android:id="@+id/exploreScrollView"
         android:layout_width="match_parent"
@@ -25,5 +32,6 @@
 
         </LinearLayout>
     </ScrollView>
+    -->
 
 </LinearLayout>

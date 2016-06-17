@@ -196,8 +196,7 @@ public class Sell extends Fragment {
         editTextList = new EditText[7];
         for (int i = 0; i < dataList.size(); i++){
             editTextList[i] = dataList.get(i);
-            Log.e("size i", i + "");
-            Log.e("editTextLength", editTextList.length + "");
+
         }
     }
 
@@ -209,13 +208,11 @@ public class Sell extends Fragment {
         ArrayList<String> photoCheckList = new ArrayList<>();
         for (int i = 0; i < dataList.length; i++){
             dataCheckList.add(dataList[i].getText().toString());
-            Log.e("length i", i + "");
-            Log.e("dataList", dataList[i].getText().toString());
+
         }
         for (int i = 0; i < photoList.length; i++){
             photoCheckList.add(photoList[i].getDrawable().toString());
         }
-        Log.e("checkList", dataCheckList.toString());
         if(dataCheckList.contains("")){
             toastMaker("Incomplete information!");
             correctInfo = false;
@@ -224,8 +221,7 @@ public class Sell extends Fragment {
             correctInfo = false;
         }else{
             correctInfo = true;
-            Log.e("photoCheckList", photoCheckList.toString());
-            Log.e("toCheckWith", toCheckWith);
+
         }
 
     }
@@ -249,7 +245,6 @@ public class Sell extends Fragment {
 
                 }
             });
-        Log.e("photoCounter", photoCounter + "");
         photoCounter++;
         imageView.setImageBitmap(null);
         imageView.destroyDrawingCache();

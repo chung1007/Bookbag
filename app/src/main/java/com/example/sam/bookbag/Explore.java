@@ -15,12 +15,15 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
@@ -36,7 +39,11 @@ public class Explore extends Fragment {
     StorageReference storageRef;
     DatabaseReference ref;
     Map<String, String> keysAndValues;
-    LinearLayout exploreList;
+    ArrayList<String> lastOfFirstKey;
+    ArrayList<String> lastOfPostKey;
+    ArrayList<String> checkFirstListening;
+    ArrayList<String> checkPostListening;
+    ListView exploreList;
     String condition;
     String edition;
     String price;
@@ -44,6 +51,7 @@ public class Explore extends Fragment {
     String postKey;
     View exploreBox;
     LayoutInflater inflater;
+    View box;
 
     public Explore(){
 
@@ -53,10 +61,15 @@ public class Explore extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.explore, container, false);
         searchBar = (EditText)view.findViewById(R.id.searchBar);
-        exploreList = (LinearLayout)view.findViewById(R.id.exploreBoxList);
+        exploreList = (ListView)view.findViewById(R.id.exploreBoxList);
         keysAndValues =  new HashMap<>();
+        lastOfFirstKey = new ArrayList<>();
+        lastOfPostKey = new ArrayList<>();
+        checkFirstListening = new ArrayList<>();
+        checkPostListening = new ArrayList<>();
         storageRef = MyApplication.storageRef;
         ref = MyApplication.ref;
+        checkIfFirstListeningIsDone();
         setFirebaseListener();
         searchBar.setCursorVisible(false);
         searchBar.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -77,66 +90,48 @@ public class Explore extends Fragment {
 
     }
 
-   public void setFirebaseListener(){
+    public void checkIfFirstListeningIsDone(){
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                checkFirstListening.add("Done");
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+    public void checkIfPostListeningIsDone(String firstKey){
+        ref.child(firstKey).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                checkPostListening.add("Done");
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+   public void setFirebaseListener() {
        ref.addChildEventListener(new ChildEventListener() {
            @Override
            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-               userId = dataSnapshot.getKey();
-               Log.e("userId", userId);
-               ref.child(userId).addChildEventListener(new ChildEventListener() {
-                   @Override
-                   public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                       postKey = dataSnapshot.getKey();
-                       ref.child(userId).child(postKey).addChildEventListener(new ChildEventListener() {
-                           @Override
-                           public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                               keysAndValues.put(dataSnapshot.getKey(), dataSnapshot.getValue().toString());
-                               Log.e("dataList", keysAndValues.toString());
-                               if(keysAndValues.size() == 7){
-                                   condition = keysAndValues.get("condition");
-                                   edition = keysAndValues.get("edition");
-                                   price = keysAndValues.get("price");
-                                   exploreBox = createBox(postKey, edition, condition, price, userId);
-                                   exploreList.addView(exploreBox);
-                               }else{
-                                   //do nothing
-                               }
-                           }
+               lastOfFirstKey.clear();
+               String firstKey = dataSnapshot.getKey();
+               lastOfFirstKey.add(firstKey);
+               Log.e("lastOfFirstKeyList", lastOfFirstKey.toString());
+               //if (!checkFirstListening.isEmpty()) {
+               checkFirstListening.clear();
+               Log.e("lastFirstKey", lastOfFirstKey.get((lastOfFirstKey.size() - 1)));
+               Log.e("lastFirstKeySize", lastOfFirstKey.size() + "");
+               afterUserIdAdded(lastOfFirstKey.get(lastOfFirstKey.size() - 1));
+               // }
 
-                           @Override
-                           public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                           }
-
-                           @Override
-                           public void onChildRemoved(DataSnapshot dataSnapshot) {
-                           }
-
-                           @Override
-                           public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-                           }
-
-                           @Override
-                           public void onCancelled(DatabaseError databaseError) {
-                           }
-                       });
-                   }
-
-                   @Override
-                   public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                   }
-
-                   @Override
-                   public void onChildRemoved(DataSnapshot dataSnapshot) {
-                   }
-
-                   @Override
-                   public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-                   }
-
-                   @Override
-                   public void onCancelled(DatabaseError databaseError) {
-                   }
-               });
            }
 
            @Override
@@ -156,12 +151,90 @@ public class Explore extends Fragment {
            }
        });
    }
+    public void afterUserIdAdded(final String firstKey){
+        ref.child(firstKey).addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                checkIfPostListeningIsDone(firstKey);
+                lastOfPostKey.clear();
+                String postKey = dataSnapshot.getKey();
+                lastOfPostKey.add(postKey);
+                Log.e("lastOfPostKeyList", lastOfPostKey.toString());
+                if (!checkPostListening.isEmpty()) {
+                    checkPostListening.clear();
+                    Log.e("lastPostKeySize", lastOfPostKey.size() + "");
+                    Log.e("lastPostKey", lastOfPostKey.get(lastOfPostKey.size() - 1));
+                    getPostData(firstKey, lastOfPostKey.get(lastOfPostKey.size() - 1));
+               }
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+    public void getPostData(String userId, String postKey){
+        ref.child(userId).child(postKey).addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                String keys = dataSnapshot.getKey();
+                String values = dataSnapshot.getValue().toString();
+                keysAndValues.put(keys, values);
+                Log.e("Keys", keys);
+                Log.e("Values", values);
+                if (keysAndValues.size() == 7) {
+                    Log.e("lastChild", keysAndValues.toString());
+                    Log.e("map keys", keysAndValues.keySet().toString());
+                    Log.e("map values", keysAndValues.values().toString());
+                    Log.e("map size", Integer.toString(keysAndValues.size()));
+                }else {
+                    //keep adding on to keys and values list;
+                }
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
 
     private View createBox(String title, String edition, String condition, String price, String userId) {
         if (getActivity() != null) {
             inflater = (LayoutInflater) getContext().getSystemService(getContext().LAYOUT_INFLATER_SERVICE);
+            box = inflater.inflate(R.layout.explorebox, null);
         }
-        View box = inflater.inflate(R.layout.explorebox, null);
         TextView boxTitle = (TextView)box.findViewById(R.id.exploreBoxTitle);
         TextView boxEdition = (TextView)box.findViewById(R.id.exploreBoxEdition);
         TextView boxCondition = (TextView)box.findViewById(R.id.exploreBoxCondition);
@@ -190,4 +263,24 @@ public class Explore extends Fragment {
         });
         return box;
     }
+
+    /*
+    keysAndValues.put(dataSnapshot.getKey(), dataSnapshot.getValue().toString());
+                               if (keysAndValues.size() == 7 ) {
+                                   Log.e("firebase", "here are the post data");
+                                   Log.e("dataList", keysAndValues.toString());
+                                   condition = keysAndValues.get("condition");
+                                   edition = keysAndValues.get("edition");
+                                   price = keysAndValues.get("price");
+                                   exploreBox = createBox(postKey, edition, condition, price, userId);
+                                   ExploreListAdapter adapter = new ExploreListAdapter(getContext(), edition, condition, price, postKey, userId);
+                                   exploreList.setAdapter(adapter);
+                                   adapter.add(exploreBox);
+                                   adapter.notifyDataSetChanged();
+                                   keysAndValues.clear();
+                                   //exploreList.addView(exploreBox);
+                               }else {
+                                   //keep adding to keysAndValues
+                               }
+     */
 }
