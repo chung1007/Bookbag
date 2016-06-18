@@ -17,8 +17,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -52,6 +54,8 @@ public class Explore extends Fragment {
     View exploreBox;
     LayoutInflater inflater;
     View box;
+    final long ONE_MEGABYTE = 1024 * 1024;
+
 
     public Explore(){
 
@@ -96,24 +100,16 @@ public class Explore extends Fragment {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 checkFirstListening.add("Done");
             }
-
             @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
+            public void onCancelled(DatabaseError databaseError) {}
         });
     }
     public void checkIfPostListeningIsDone(String firstKey){
         ref.child(firstKey).addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                checkPostListening.add("Done");
-            }
-
+            public void onDataChange(DataSnapshot dataSnapshot) {checkPostListening.add("Done");}
             @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
+            public void onCancelled(DatabaseError databaseError) {}
         });
     }
 
@@ -131,21 +127,13 @@ public class Explore extends Fragment {
                Log.e("lastFirstKeySize", lastOfFirstKey.size() + "");
                afterUserIdAdded(lastOfFirstKey.get(lastOfFirstKey.size() - 1));
                // }
-
            }
-
            @Override
-           public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-           }
-
+           public void onChildChanged(DataSnapshot dataSnapshot, String s) {}
            @Override
-           public void onChildRemoved(DataSnapshot dataSnapshot) {
-           }
-
+           public void onChildRemoved(DataSnapshot dataSnapshot) {}
            @Override
-           public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-           }
-
+           public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
            @Override
            public void onCancelled(DatabaseError databaseError) {
            }
@@ -167,70 +155,52 @@ public class Explore extends Fragment {
                     getPostData(firstKey, lastOfPostKey.get(lastOfPostKey.size() - 1));
                }
             }
-
             @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {}
             @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
+            public void onChildRemoved(DataSnapshot dataSnapshot) {}
             @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
             @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
+            public void onCancelled(DatabaseError databaseError) {}
         });
     }
-    public void getPostData(String userId, String postKey){
+    public void getPostData(final String userId, final String postKey){
         ref.child(userId).child(postKey).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 String keys = dataSnapshot.getKey();
                 String values = dataSnapshot.getValue().toString();
                 keysAndValues.put(keys, values);
-                Log.e("Keys", keys);
-                Log.e("Values", values);
                 if (keysAndValues.size() == 7) {
-                    Log.e("lastChild", keysAndValues.toString());
                     Log.e("map keys", keysAndValues.keySet().toString());
                     Log.e("map values", keysAndValues.values().toString());
-                    Log.e("map size", Integer.toString(keysAndValues.size()));
+                    condition = keysAndValues.get("condition");
+                    price = keysAndValues.get("price");
+                    Log.e("condition", condition);
+                    Log.e("price", price);
+                    exploreBox = createBox(postKey, edition, condition, price, userId);
+                    ExploreListAdapter adapter = new ExploreListAdapter(getContext(), edition, condition, price, postKey, userId);
+                    exploreList.setAdapter(adapter);
+                    adapter.add(exploreBox);
+                    adapter.notifyDataSetChanged();
+                    keysAndValues.clear();
                 }else {
                     //keep adding on to keys and values list;
                 }
             }
-
             @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {}
             @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
+            public void onChildRemoved(DataSnapshot dataSnapshot) {}
             @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
             @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
+            public void onCancelled(DatabaseError databaseError) {}
         });
     }
 
-    private View createBox(String title, String edition, String condition, String price, String userId) {
+    private View createBox(final String title, String edition, String condition, String price, final String userId) {
         if (getActivity() != null) {
             inflater = (LayoutInflater) getContext().getSystemService(getContext().LAYOUT_INFLATER_SERVICE);
             box = inflater.inflate(R.layout.explorebox, null);
@@ -244,21 +214,33 @@ public class Explore extends Fragment {
         boxEdition.setText(edition);
         boxCondition.setText(condition);
         boxPrice.setText(price);
+        final StorageReference imageRef = storageRef.child(userId).child(title).child("image1");
 
-        storageRef.child(userId).child(title).child("image1").getBytes(Long.MAX_VALUE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+        imageRef.getBytes(ONE_MEGABYTE).addOnCompleteListener(new OnCompleteListener<byte[]>() {
             @Override
-            public void onSuccess(byte[] bytes) {
-                // Use the bytes to display the image
-                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                boxImage.setImageBitmap(null);
-                boxImage.destroyDrawingCache();
-                boxImage.setImageResource(0);
-                boxImage.setImageBitmap(bitmap);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                // Handle any errors
+            public void onComplete(@NonNull Task<byte[]> task) {
+                Log.e("completion", "SUCCCESS!");
+
+                imageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                    @Override
+                    public void onSuccess(byte[] bytes) {
+                        Log.e("bytes", "SUCCESS");
+                        // Use the bytes to display the image
+                        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                        boxImage.setImageBitmap(null);
+                        boxImage.destroyDrawingCache();
+                        boxImage.setImageResource(0);
+                        boxImage.setImageBitmap(bitmap);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        // Handle any errors
+                        Log.e("userIdForImage", userId);
+                        Log.e("titleForImage", title);
+                        Log.e("getting image", "failed");
+                    }
+                });
             }
         });
         return box;
