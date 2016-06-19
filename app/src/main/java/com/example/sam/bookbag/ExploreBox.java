@@ -59,6 +59,8 @@ public class ExploreBox extends RelativeLayout {
         boxCondition.setText(condition);
         boxPrice.setText(price);
         final StorageReference imageRef = storageRef.child(userId).child(title).child("image1");
+        Log.e("e.BoxUserId", userId);
+        Log.e("e.BoxTitle", title);
         new Thread() {
             @Override
             public void run() {

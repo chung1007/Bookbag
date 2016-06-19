@@ -58,6 +58,7 @@ public class ExploreListAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         if (convertView == null) {
             Log.e("convertView", "null");
+            Log.e("userIdInAdapter", userId);
             ExploreBox listBox = new ExploreBox(context, title, edition, condition, price, userId);
             listBox.setLayoutParams(new ViewGroup.LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT,

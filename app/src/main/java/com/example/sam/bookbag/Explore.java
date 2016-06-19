@@ -32,14 +32,18 @@ import com.google.firebase.storage.StorageReference;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -57,6 +61,7 @@ public class Explore extends Fragment {
     ArrayList<String> lastOfPostKey;
     ArrayList<String> checkFirstListening;
     ArrayList<String> checkPostListening;
+    List<JSONObject> dataPoints;
     JSONObject postData;
     JSONObject eachPostData;
     ListView exploreList;
@@ -73,10 +78,10 @@ public class Explore extends Fragment {
                              Bundle savedInstanceState) {
         Log.e("onThisScreen", "onCreateView");
         View view = inflater.inflate(R.layout.explore, container, false);
+        exploreList = (ListView)view.findViewById(R.id.exploreBoxList);
         checkPostFile();
         dir = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/Bookbag");
         searchBar = (EditText)view.findViewById(R.id.searchBar);
-        exploreList = (ListView)view.findViewById(R.id.exploreBoxList);
         keysAndValues =  new HashMap<>();
         lastOfFirstKey = new ArrayList<>();
         lastOfPostKey = new ArrayList<>();
@@ -221,44 +226,106 @@ public class Explore extends Fragment {
                     }catch (IOException IOE){
                         Log.e("file", "NOT FOUND");
                     }
-                   /* ExploreListAdapter adapter = new ExploreListAdapter(getContext(), edition, condition, price, postKey, userId);
-                    exploreList.setAdapter(adapter);
-                    adapter.notifyDataSetChanged();*/
                     keysAndValues.clear();
                 } else {
                     //keep adding on to keys and values list;
                 }
             }
-
             @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-            }
-
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {}
             @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-            }
-
+            public void onChildRemoved(DataSnapshot dataSnapshot) {}
             @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-            }
-
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
             @Override
             public void onCancelled(DatabaseError databaseError) {
             }
         });
     }
     public void checkPostFile(){
-        ArrayList postFiles = new ArrayList<String>();
+        ArrayList<String> postFiles = new ArrayList<>();
+        ArrayList<String> userIdlist = new ArrayList<>();
         File file = new File("/sdcard/Bookbag" );
         File list[] = file.listFiles();
         for( int i=0; i< list.length; i++)
         {
-            postFiles.add( list[i].getName() );
+            postFiles.add(list[i].getName());
+            String splitName[] = list[i].getName().split("_");
+            String userId = splitName[0];
+            userIdlist.add(userId);
         }
         Log.e("files", postFiles.toString());
         if(!postFiles.isEmpty()){
             Log.e("post", "there has been previous posts!");
+            Log.e("userId's", userIdlist.toString());
+            listPostNames(postFiles, userIdlist);
         }
 
+    }
+    public String readFile(String name) {
+        BufferedReader file;
+        try {
+            file = new BufferedReader(new InputStreamReader(new FileInputStream(
+                    new File(name))));
+        } catch (IOException ioe) {
+            Log.e("File Error", "Failed To Open File");
+            return null;
+        }
+        String dataOfFile = "";
+        String buf;
+        try {
+            while ((buf = file.readLine()) != null) {
+                dataOfFile = dataOfFile.concat(buf + "\n");
+            }
+        } catch (IOException ioe) {
+            Log.e("File Error", "Failed To Read From File");
+            return null;
+        }
+        Log.i("fileData", dataOfFile);
+        return dataOfFile;
+    }
+    public void listPostNames(ArrayList<String> postNames, ArrayList<String> userIds){
+        for (int i = 0; i < postNames.size(); i++){
+            String fileName = "sdcard/Bookbag/" + postNames.get(i);
+            String content = readFile(fileName);
+            try {
+                Log.e("content", content);
+                JSONObject postDataRead = new JSONObject(content);
+                Log.e("postDataRead", postDataRead.toString());
+                dataPoints = new ArrayList<>();
+                dataPoints.add(postDataRead);
+            }catch (JSONException JSE){
+                Log.e("assign json", "failed");
+            }
+
+        }
+        Log.e("dataPoints", dataPoints.toString());
+        getDisplayData(dataPoints, userIds);
+    }
+    public void getDisplayData(List<JSONObject> dataPoints, ArrayList<String> userIds){
+        for (int i = 0; i < dataPoints.size(); i++){
+            JSONObject userPostData = dataPoints.get(i);
+            Iterator<String> keys = userPostData.keys();
+            // get some_name_i_wont_know in str_Name
+            String firstKey = keys.next();
+            try {
+                JSONObject jsonUnderKey = userPostData.getJSONObject(firstKey);
+                String title = jsonUnderKey.getString("title");
+                String edition = jsonUnderKey.getString("edition");
+                String condition = jsonUnderKey.getString("condition");
+                String price = jsonUnderKey.getString("price");
+                String userId = userIds.get(i);
+                displayPostBoxes(title, edition, condition, price, userId);
+            }catch (JSONException JSE){
+                Log.e("jsonUnderKey", "FAILED");
+            }
+        }
+
+    }
+    public void displayPostBoxes(String postKey, String edition, String condition, String price, String userId){
+        ExploreListAdapter adapter = new ExploreListAdapter(getContext(), edition, condition, price, postKey, userId);
+        exploreList.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+        Log.e("boxes", "made");
     }
 }
