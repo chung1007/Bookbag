@@ -4,6 +4,7 @@ package com.example.sam.bookbag;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -28,7 +29,16 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.StorageReference;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +46,8 @@ import java.util.Map;
 /**
  * Created by sam on 6/6/16.
  */
+
+//TODO save all the latest post data on sdcard file and on the onCreateView, populate adapter with those values.
 public class Explore extends Fragment {
     EditText searchBar;
     StorageReference storageRef;
@@ -45,25 +57,24 @@ public class Explore extends Fragment {
     ArrayList<String> lastOfPostKey;
     ArrayList<String> checkFirstListening;
     ArrayList<String> checkPostListening;
+    JSONObject postData;
+    JSONObject eachPostData;
     ListView exploreList;
     String condition;
     String edition;
     String price;
-    String userId;
-    String postKey;
-    View exploreBox;
-    LayoutInflater inflater;
-    View box;
-    final long ONE_MEGABYTE = 1024 * 1024;
-
-
+    File dir;
+    PrintWriter file;
     public Explore(){
 
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.e("onThisScreen", "onCreateView");
         View view = inflater.inflate(R.layout.explore, container, false);
+        checkPostFile();
+        dir = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/Bookbag");
         searchBar = (EditText)view.findViewById(R.id.searchBar);
         exploreList = (ListView)view.findViewById(R.id.exploreBoxList);
         keysAndValues =  new HashMap<>();
@@ -71,27 +82,19 @@ public class Explore extends Fragment {
         lastOfPostKey = new ArrayList<>();
         checkFirstListening = new ArrayList<>();
         checkPostListening = new ArrayList<>();
+        postData  = new JSONObject();
+        eachPostData = new JSONObject();
         storageRef = MyApplication.storageRef;
         ref = MyApplication.ref;
         checkIfFirstListeningIsDone();
         setFirebaseListener();
-        searchBar.setCursorVisible(false);
-        searchBar.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean b) {
-                searchBar.setCursorVisible(true);
-            }
-        });
-        /*Drawable img = Explore.this.getContext().getResources().getDrawable(
-                R.drawable.search);
-        img.setBounds(0, 0, 0, searchBar.getMeasuredHeight());*/
         return view;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        Log.e("onThisScreen", "onCreate");
     }
 
     public void checkIfFirstListeningIsDone(){
@@ -100,16 +103,22 @@ public class Explore extends Fragment {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 checkFirstListening.add("Done");
             }
+
             @Override
-            public void onCancelled(DatabaseError databaseError) {}
+            public void onCancelled(DatabaseError databaseError) {
+            }
         });
     }
     public void checkIfPostListeningIsDone(String firstKey){
         ref.child(firstKey).addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {checkPostListening.add("Done");}
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                checkPostListening.add("Done");
+            }
+
             @Override
-            public void onCancelled(DatabaseError databaseError) {}
+            public void onCancelled(DatabaseError databaseError) {
+            }
         });
     }
 
@@ -128,12 +137,19 @@ public class Explore extends Fragment {
                afterUserIdAdded(lastOfFirstKey.get(lastOfFirstKey.size() - 1));
                // }
            }
+
            @Override
-           public void onChildChanged(DataSnapshot dataSnapshot, String s) {}
+           public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+           }
+
            @Override
-           public void onChildRemoved(DataSnapshot dataSnapshot) {}
+           public void onChildRemoved(DataSnapshot dataSnapshot) {
+           }
+
            @Override
-           public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
+           public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+           }
+
            @Override
            public void onCancelled(DatabaseError databaseError) {
            }
@@ -153,19 +169,27 @@ public class Explore extends Fragment {
                     Log.e("lastPostKeySize", lastOfPostKey.size() + "");
                     Log.e("lastPostKey", lastOfPostKey.get(lastOfPostKey.size() - 1));
                     getPostData(firstKey, lastOfPostKey.get(lastOfPostKey.size() - 1));
-               }
+                }
             }
+
             @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {}
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            }
+
             @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {}
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+            }
+
             @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            }
+
             @Override
-            public void onCancelled(DatabaseError databaseError) {}
+            public void onCancelled(DatabaseError databaseError) {
+            }
         });
     }
-    public void getPostData(final String userId, final String postKey){
+    public void getPostData(final String userId, final String postKey) {
         ref.child(userId).child(postKey).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -177,92 +201,64 @@ public class Explore extends Fragment {
                     Log.e("map values", keysAndValues.values().toString());
                     condition = keysAndValues.get("condition");
                     price = keysAndValues.get("price");
-                    Log.e("condition", condition);
-                    Log.e("price", price);
-                    exploreBox = createBox(postKey, edition, condition, price, userId);
-                    ExploreListAdapter adapter = new ExploreListAdapter(getContext(), edition, condition, price, postKey, userId);
+                    edition = keysAndValues.get("edition");
+                    try {
+                        eachPostData.put("title", postKey);
+                        eachPostData.put("edition", edition);
+                        eachPostData.put("condition", condition);
+                        eachPostData.put("price", price);
+                        postData.put(userId, eachPostData);
+                        Log.e("postData", postData.toString());
+                    }catch (JSONException JSE){
+                        Log.e("JSON", "FAILED");
+                    }
+                    try {
+                        file = null;
+                        dir.mkdir();
+                        file = new PrintWriter(new FileOutputStream(new File(dir, (userId + "_" + postKey))));
+                        file.println(postData);
+                        file.close();
+                    }catch (IOException IOE){
+                        Log.e("file", "NOT FOUND");
+                    }
+                   /* ExploreListAdapter adapter = new ExploreListAdapter(getContext(), edition, condition, price, postKey, userId);
                     exploreList.setAdapter(adapter);
-                    adapter.add(exploreBox);
-                    adapter.notifyDataSetChanged();
+                    adapter.notifyDataSetChanged();*/
                     keysAndValues.clear();
-                }else {
+                } else {
                     //keep adding on to keys and values list;
                 }
             }
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {}
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {}
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
-            @Override
-            public void onCancelled(DatabaseError databaseError) {}
-        });
-    }
 
-    private View createBox(final String title, String edition, String condition, String price, final String userId) {
-        if (getActivity() != null) {
-            inflater = (LayoutInflater) getContext().getSystemService(getContext().LAYOUT_INFLATER_SERVICE);
-            box = inflater.inflate(R.layout.explorebox, null);
-        }
-        TextView boxTitle = (TextView)box.findViewById(R.id.exploreBoxTitle);
-        TextView boxEdition = (TextView)box.findViewById(R.id.exploreBoxEdition);
-        TextView boxCondition = (TextView)box.findViewById(R.id.exploreBoxCondition);
-        TextView boxPrice = (TextView)box.findViewById(R.id.exploreBoxPrice);
-        final ImageView boxImage = (ImageView)box.findViewById(R.id.exploreImageView);
-        boxTitle.setText(title);
-        boxEdition.setText(edition);
-        boxCondition.setText(condition);
-        boxPrice.setText(price);
-        final StorageReference imageRef = storageRef.child(userId).child(title).child("image1");
-
-        imageRef.getBytes(ONE_MEGABYTE).addOnCompleteListener(new OnCompleteListener<byte[]>() {
             @Override
-            public void onComplete(@NonNull Task<byte[]> task) {
-                Log.e("completion", "SUCCCESS!");
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            }
 
-                imageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                    @Override
-                    public void onSuccess(byte[] bytes) {
-                        Log.e("bytes", "SUCCESS");
-                        // Use the bytes to display the image
-                        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                        boxImage.setImageBitmap(null);
-                        boxImage.destroyDrawingCache();
-                        boxImage.setImageResource(0);
-                        boxImage.setImageBitmap(bitmap);
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception exception) {
-                        // Handle any errors
-                        Log.e("userIdForImage", userId);
-                        Log.e("titleForImage", title);
-                        Log.e("getting image", "failed");
-                    }
-                });
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
             }
         });
-        return box;
     }
+    public void checkPostFile(){
+        ArrayList postFiles = new ArrayList<String>();
+        File file = new File("/sdcard/Bookbag" );
+        File list[] = file.listFiles();
+        for( int i=0; i< list.length; i++)
+        {
+            postFiles.add( list[i].getName() );
+        }
+        Log.e("files", postFiles.toString());
+        if(!postFiles.isEmpty()){
+            Log.e("post", "there has been previous posts!");
+        }
 
-    /*
-    keysAndValues.put(dataSnapshot.getKey(), dataSnapshot.getValue().toString());
-                               if (keysAndValues.size() == 7 ) {
-                                   Log.e("firebase", "here are the post data");
-                                   Log.e("dataList", keysAndValues.toString());
-                                   condition = keysAndValues.get("condition");
-                                   edition = keysAndValues.get("edition");
-                                   price = keysAndValues.get("price");
-                                   exploreBox = createBox(postKey, edition, condition, price, userId);
-                                   ExploreListAdapter adapter = new ExploreListAdapter(getContext(), edition, condition, price, postKey, userId);
-                                   exploreList.setAdapter(adapter);
-                                   adapter.add(exploreBox);
-                                   adapter.notifyDataSetChanged();
-                                   keysAndValues.clear();
-                                   //exploreList.addView(exploreBox);
-                               }else {
-                                   //keep adding to keysAndValues
-                               }
-     */
+    }
 }
