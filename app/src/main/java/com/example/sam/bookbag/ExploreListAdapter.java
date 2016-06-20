@@ -47,11 +47,7 @@ public class ExploreListAdapter extends BaseAdapter {
         this.userIds = userIds;
         postData = new JSONObject();
         postValues = new JSONObject();
-        /*this.title = postDatas.get(0);
-        this.edition = postDatas.get(1);
-        this.condition = postDatas.get(2);
-        this.price = postDatas.get(3);
-        this.userId = postDatas.get(4);*/
+
     }
 
     @Override

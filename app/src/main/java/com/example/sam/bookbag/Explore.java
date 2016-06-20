@@ -42,6 +42,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -311,35 +312,12 @@ public class Explore extends Fragment {
             }
 
         }
+        Collections.reverse(dataPoints);
+        Collections.reverse(userIds);
         Log.e("dataPoints", dataPoints.toString());
         displayPostBoxes(dataPoints, userIds);
     }
-    /*public void getDisplayData(List<JSONObject> dataPoints, ArrayList<String> userIds){
-        ArrayList<String> postDatas = new ArrayList<>();
-        for (int i = 0; i < dataPoints.size(); i++){
-            JSONObject userPostData = dataPoints.get(i);
-            Iterator<String> keys = userPostData.keys();
-            // get some_name_i_wont_know in str_Name
-            String firstKey = keys.next();
-            try {
-                JSONObject jsonUnderKey = userPostData.getJSONObject(firstKey);
-                String title = jsonUnderKey.getString("title");
-                Log.e("title", title);
-                String edition = jsonUnderKey.getString("edition");
-                String condition = jsonUnderKey.getString("condition");
-                String price = jsonUnderKey.getString("price");
-                String userId = userIds.get(i);
-                postDatas.add(title);
-                postDatas.add(edition);
-                postDatas.add(condition);
-                postDatas.add(price);
-                postDatas.add(userId);
-                displayPostBoxes(postDatas);
-            }catch (JSONException JSE){
-                Log.e("jsonUnderKey", "FAILED");
-            }
-        }
-    }*/
+
     public void displayPostBoxes(List<JSONObject> datapoints, ArrayList<String> userIds){
         adapter = new ExploreListAdapter(getContext(), datapoints, userIds);
         exploreList.setAdapter(adapter);
