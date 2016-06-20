@@ -18,33 +18,45 @@ import android.widget.TextView;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Created by sam on 6/16/16.
  */
 public class ExploreListAdapter extends BaseAdapter {
     Context context;
+    List<JSONObject> dataPoints;
+    ArrayList<String> userIds;
+    JSONObject postData;
+    JSONObject postValues;
     String edition;
     String condition;
     String price;
     String title;
     String userId;
-    RecyclerView.ViewHolder holder;
 
-    public ExploreListAdapter(Context context, ArrayList<String> postDatas) {
+    public ExploreListAdapter(Context context, List<JSONObject> datapoints, ArrayList<String> userIds) {
         super();
         this.context = context;
-        this.title = postDatas.get(0);
+        this.dataPoints = datapoints;
+        this.userIds = userIds;
+        postData = new JSONObject();
+        postValues = new JSONObject();
+        /*this.title = postDatas.get(0);
         this.edition = postDatas.get(1);
         this.condition = postDatas.get(2);
         this.price = postDatas.get(3);
-        this.userId = postDatas.get(4);
+        this.userId = postDatas.get(4);*/
     }
 
     @Override
     public int getCount(){
-        return 10;
+        return dataPoints.size();
     }
 
     @Override
@@ -64,8 +76,21 @@ public class ExploreListAdapter extends BaseAdapter {
         if (convertView == null) {
             Log.e("getView", "called");
             Log.e("convertView", "null");
-            Log.e("userIdInAdapter", userId);
-            Log.e("makeBoxTitle", title);
+            postData = dataPoints.get(position);
+            Iterator<String> keys = postData.keys();
+            String firstKey = keys.next();
+            Log.e("postData", postData.toString());
+            userId = userIds.get(position);
+            try {
+                postValues = postData.getJSONObject(firstKey);
+                title = postValues.getString("title");
+                edition = postValues.getString("edition");
+                condition = postValues.getString("condition");
+                price = postValues.getString("price");
+            }catch (JSONException JSE){
+                Log.e("getView", "JSON FAILED");
+            }
+            Log.e("postValues", postValues.toString());
             ExploreBox listBox = new ExploreBox(context, title, edition, condition, price, userId);
             listBox.setLayoutParams(new ViewGroup.LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT,

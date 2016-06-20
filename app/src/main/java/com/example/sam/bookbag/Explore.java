@@ -312,9 +312,9 @@ public class Explore extends Fragment {
 
         }
         Log.e("dataPoints", dataPoints.toString());
-        getDisplayData(dataPoints, userIds);
+        displayPostBoxes(dataPoints, userIds);
     }
-    public void getDisplayData(List<JSONObject> dataPoints, ArrayList<String> userIds){
+    /*public void getDisplayData(List<JSONObject> dataPoints, ArrayList<String> userIds){
         ArrayList<String> postDatas = new ArrayList<>();
         for (int i = 0; i < dataPoints.size(); i++){
             JSONObject userPostData = dataPoints.get(i);
@@ -339,9 +339,9 @@ public class Explore extends Fragment {
                 Log.e("jsonUnderKey", "FAILED");
             }
         }
-    }
-    public void displayPostBoxes(ArrayList<String> postDatas){
-        adapter = new ExploreListAdapter(getContext(), postDatas);
+    }*/
+    public void displayPostBoxes(List<JSONObject> datapoints, ArrayList<String> userIds){
+        adapter = new ExploreListAdapter(getContext(), datapoints, userIds);
         exploreList.setAdapter(adapter);
         adapter.notifyDataSetChanged();
         Log.e("boxes", "made");

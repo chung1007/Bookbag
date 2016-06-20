@@ -55,12 +55,11 @@ public class ExploreBox extends RelativeLayout {
         final ImageView boxImage = (ImageView) box.findViewById(R.id.exploreImageView);
         boxTitle.setText(title);
         boxEdition.setText(edition);
-        Log.e("edition", edition);
         boxCondition.setText(condition);
         boxPrice.setText(price);
+        Log.e("userId", userId);
+        Log.e("title", title);
         final StorageReference imageRef = storageRef.child(userId).child(title).child("image1");
-        Log.e("e.BoxUserId", userId);
-        Log.e("e.BoxTitle", title);
         new Thread() {
             @Override
             public void run() {
