@@ -69,7 +69,7 @@ public class ExploreBox extends RelativeLayout {
                     public void onComplete(@NonNull Task<byte[]> task) {
                         Log.e("completion", "SUCCCESS!");
 
-                        imageRef.getBytes(Constants.ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                        imageRef.getBytes(Long.MAX_VALUE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
                             @Override
                             public void onSuccess(byte[] bytes) {
                                 Log.e("bytes", "SUCCESS");
@@ -94,8 +94,6 @@ public class ExploreBox extends RelativeLayout {
             }
         }.start();
         return box;
-
     }
-
 }
 

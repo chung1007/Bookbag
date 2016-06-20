@@ -8,6 +8,7 @@ import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,6 +56,7 @@ import java.util.Map;
 public class Explore extends Fragment {
     EditText searchBar;
     StorageReference storageRef;
+    ExploreListAdapter adapter;
     DatabaseReference ref;
     Map<String, String> keysAndValues;
     ArrayList<String> lastOfFirstKey;
@@ -87,8 +89,6 @@ public class Explore extends Fragment {
         lastOfPostKey = new ArrayList<>();
         checkFirstListening = new ArrayList<>();
         checkPostListening = new ArrayList<>();
-        postData  = new JSONObject();
-        eachPostData = new JSONObject();
         storageRef = MyApplication.storageRef;
         ref = MyApplication.ref;
         checkIfFirstListeningIsDone();
@@ -208,22 +208,24 @@ public class Explore extends Fragment {
                     price = keysAndValues.get("price");
                     edition = keysAndValues.get("edition");
                     try {
+                        postData = new JSONObject();
+                        eachPostData = new JSONObject();
                         eachPostData.put("title", postKey);
                         eachPostData.put("edition", edition);
                         eachPostData.put("condition", condition);
                         eachPostData.put("price", price);
                         postData.put(userId, eachPostData);
                         Log.e("postData", postData.toString());
-                    }catch (JSONException JSE){
+                    } catch (JSONException JSE) {
                         Log.e("JSON", "FAILED");
                     }
                     try {
                         file = null;
                         dir.mkdir();
-                        file = new PrintWriter(new FileOutputStream(new File(dir, (userId + "_" + postKey))));
+                        file = new PrintWriter(new FileOutputStream(new File(dir, (userId + "_" + (postKey.replace(" ", ""))))));
                         file.println(postData);
                         file.close();
-                    }catch (IOException IOE){
+                    } catch (IOException IOE) {
                         Log.e("file", "NOT FOUND");
                     }
                     keysAndValues.clear();
@@ -231,12 +233,19 @@ public class Explore extends Fragment {
                     //keep adding on to keys and values list;
                 }
             }
+
             @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {}
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            }
+
             @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {}
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+            }
+
             @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            }
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
             }
@@ -247,12 +256,15 @@ public class Explore extends Fragment {
         ArrayList<String> userIdlist = new ArrayList<>();
         File file = new File("/sdcard/Bookbag" );
         File list[] = file.listFiles();
-        for( int i=0; i< list.length; i++)
-        {
-            postFiles.add(list[i].getName());
-            String splitName[] = list[i].getName().split("_");
-            String userId = splitName[0];
-            userIdlist.add(userId);
+        try {
+            for (int i = 0; i < list.length; i++) {
+                postFiles.add(list[i].getName());
+                String splitName[] = list[i].getName().split("_");
+                String userId = splitName[0];
+                userIdlist.add(userId);
+            }
+        }catch (NullPointerException NPE){
+            toastMaker("No posts currently");
         }
         Log.e("files", postFiles.toString());
         if(!postFiles.isEmpty()){
@@ -285,6 +297,7 @@ public class Explore extends Fragment {
         return dataOfFile;
     }
     public void listPostNames(ArrayList<String> postNames, ArrayList<String> userIds){
+        dataPoints = new ArrayList<>();
         for (int i = 0; i < postNames.size(); i++){
             String fileName = "sdcard/Bookbag/" + postNames.get(i);
             String content = readFile(fileName);
@@ -292,7 +305,6 @@ public class Explore extends Fragment {
                 Log.e("content", content);
                 JSONObject postDataRead = new JSONObject(content);
                 Log.e("postDataRead", postDataRead.toString());
-                dataPoints = new ArrayList<>();
                 dataPoints.add(postDataRead);
             }catch (JSONException JSE){
                 Log.e("assign json", "failed");
@@ -303,6 +315,7 @@ public class Explore extends Fragment {
         getDisplayData(dataPoints, userIds);
     }
     public void getDisplayData(List<JSONObject> dataPoints, ArrayList<String> userIds){
+        ArrayList<String> postDatas = new ArrayList<>();
         for (int i = 0; i < dataPoints.size(); i++){
             JSONObject userPostData = dataPoints.get(i);
             Iterator<String> keys = userPostData.keys();
@@ -311,21 +324,31 @@ public class Explore extends Fragment {
             try {
                 JSONObject jsonUnderKey = userPostData.getJSONObject(firstKey);
                 String title = jsonUnderKey.getString("title");
+                Log.e("title", title);
                 String edition = jsonUnderKey.getString("edition");
                 String condition = jsonUnderKey.getString("condition");
                 String price = jsonUnderKey.getString("price");
                 String userId = userIds.get(i);
-                displayPostBoxes(title, edition, condition, price, userId);
+                postDatas.add(title);
+                postDatas.add(edition);
+                postDatas.add(condition);
+                postDatas.add(price);
+                postDatas.add(userId);
+                displayPostBoxes(postDatas);
             }catch (JSONException JSE){
                 Log.e("jsonUnderKey", "FAILED");
             }
         }
-
     }
-    public void displayPostBoxes(String postKey, String edition, String condition, String price, String userId){
-        ExploreListAdapter adapter = new ExploreListAdapter(getContext(), edition, condition, price, postKey, userId);
+    public void displayPostBoxes(ArrayList<String> postDatas){
+        adapter = new ExploreListAdapter(getContext(), postDatas);
         exploreList.setAdapter(adapter);
         adapter.notifyDataSetChanged();
         Log.e("boxes", "made");
+    }
+    public void toastMaker(String message){
+        Toast toast = Toast.makeText(getContext(), message, Toast.LENGTH_SHORT);
+        toast.setGravity(Gravity.CENTER, 0, 0);
+        toast.show();
     }
 }

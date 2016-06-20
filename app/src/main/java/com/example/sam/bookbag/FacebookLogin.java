@@ -38,6 +38,7 @@ public class FacebookLogin extends Fragment {
     private LoginButton mButtonLogin;
     private AccessToken accessToken;
     public static Profile profile;
+    public static boolean firstTime;
     private FacebookCallback<LoginResult> mFacebookCallback = new FacebookCallback<LoginResult>() {
         @Override
         public void onSuccess(LoginResult loginResult) {
@@ -48,6 +49,7 @@ public class FacebookLogin extends Fragment {
                 profile = Profile.getCurrentProfile();
                 if (profile != null) {
                     Log.e("user name", profile.getFirstName());
+                    firstTime = true;
                     sendUserData(profile);
                     sendExtras();
                     Log.e("profile", "!=Null");
@@ -86,6 +88,7 @@ public class FacebookLogin extends Fragment {
         mProfileTracker.startTracking();
         Log.e("Trackers", "are Tracking");
         if (Profile.getCurrentProfile() != null){
+            firstTime = false;
             Intent homePage = new Intent(getContext(), HomePage.class);
             homePage.putExtra("userName", Profile.getCurrentProfile().getName());
             homePage.putExtra("userId", Profile.getCurrentProfile().getId());

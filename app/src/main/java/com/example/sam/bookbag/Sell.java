@@ -74,6 +74,10 @@ public class Sell extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.sell, container, false);
+        if (FacebookLogin.firstTime){
+            toastMaker("Remember to take all four pictures!");
+            FacebookLogin.firstTime = false;
+        }
         autoCompleteTextView = (AutoCompleteTextView) view.findViewById(R.id.condition);
         textBookImageOne = (ImageView) view.findViewById(R.id.textBookImageOne);
         textBookImageTwo = (ImageView)view.findViewById(R.id.textBookImageTwo);
