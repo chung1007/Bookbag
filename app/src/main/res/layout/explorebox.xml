@@ -68,6 +68,14 @@
         android:layout_alignParentRight="true"
         android:text="user id"
         android:alpha="0"/>
+    <TextView
+        android:id="@+id/isbn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/userId"
+        android:layout_alignParentRight="true"
+        android:text="ISBN"
+        android:alpha="0"/>
 
 
 </RelativeLayout>

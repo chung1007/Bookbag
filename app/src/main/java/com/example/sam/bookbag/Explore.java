@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -16,6 +18,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -58,12 +61,14 @@ public class Explore extends Fragment {
     EditText searchBar;
     StorageReference storageRef;
     ExploreListAdapter adapter;
+    Spinner sortList;
     DatabaseReference ref;
     Map<String, String> keysAndValues;
     ArrayList<String> lastOfFirstKey;
     ArrayList<String> lastOfPostKey;
     ArrayList<String> checkFirstListening;
     ArrayList<String> checkPostListening;
+    ArrayList<String> userIdlist;
     List<JSONObject> dataPoints;
     JSONObject postData;
     JSONObject eachPostData;
@@ -71,6 +76,7 @@ public class Explore extends Fragment {
     String condition;
     String edition;
     String price;
+    String ISBN;
     File dir;
     PrintWriter file;
     public Explore(){
@@ -92,6 +98,7 @@ public class Explore extends Fragment {
         checkPostListening = new ArrayList<>();
         storageRef = MyApplication.storageRef;
         ref = MyApplication.ref;
+        setSearchBarListener();
         checkIfFirstListeningIsDone();
         setFirebaseListener();
         return view;
@@ -208,6 +215,8 @@ public class Explore extends Fragment {
                     condition = keysAndValues.get("condition");
                     price = keysAndValues.get("price");
                     edition = keysAndValues.get("edition");
+                    ISBN = keysAndValues.get("ISBN");
+                    Log.e("key ISBN", ISBN);
                     try {
                         postData = new JSONObject();
                         eachPostData = new JSONObject();
@@ -215,6 +224,7 @@ public class Explore extends Fragment {
                         eachPostData.put("edition", edition);
                         eachPostData.put("condition", condition);
                         eachPostData.put("price", price);
+                        eachPostData.put("ISBN", ISBN);
                         postData.put(userId, eachPostData);
                         Log.e("postData", postData.toString());
                     } catch (JSONException JSE) {
@@ -254,7 +264,7 @@ public class Explore extends Fragment {
     }
     public void checkPostFile(){
         ArrayList<String> postFiles = new ArrayList<>();
-        ArrayList<String> userIdlist = new ArrayList<>();
+        userIdlist = new ArrayList<>();
         File file = new File("/sdcard/Bookbag" );
         File list[] = file.listFiles();
         try {
@@ -329,6 +339,44 @@ public class Explore extends Fragment {
         toast.setGravity(Gravity.CENTER, 0, 0);
         toast.show();
     }
+    public void setSortItemListener(){
 
-    
+    }
+    public void setSearchBarListener(){
+
+        searchBar.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if(searchBar.getText().toString().equals("")){
+                    exploreList.setAdapter(null);
+                    checkPostFile();
+                }else{
+                        for (int j = 0; j < dataPoints.size(); j++){
+                            JSONObject jsonFirst = dataPoints.get(j);
+                            Iterator<String> keys = jsonFirst.keys();
+                            String firstKey = keys.next();
+                            try {
+                                JSONObject jsonUnderFirst = jsonFirst.getJSONObject(firstKey);
+                                if (!jsonUnderFirst.getString("title").toLowerCase().contains(searchBar.getText().toString().toLowerCase())){
+                                    dataPoints.remove(jsonFirst);
+                                    userIdlist.remove(firstKey);
+                                }
+                            }catch (JSONException JSE){
+                                Log.e("json in search", "FAILED");
+                            }
+
+                        }
+                    exploreList.setAdapter(null);
+                    displayPostBoxes(dataPoints, userIdlist);
+                    }
+                }
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+    }
+
 }

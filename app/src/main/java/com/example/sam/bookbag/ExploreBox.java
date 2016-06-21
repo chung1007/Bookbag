@@ -30,15 +30,17 @@ public class ExploreBox extends RelativeLayout {
     String condition;
     String price;
     String userId;
+    String ISBN;
     View box;
 
-    public ExploreBox(Context context, String title, String edition, String condition, String price, String userId) {
+    public ExploreBox(Context context, String title, String edition, String condition, String price, String ISBN, String userId) {
         super(context);
         this.title = title;
         this.edition = edition;
         this.condition = condition;
         this.price = price;
         this.userId = userId;
+        this.ISBN = ISBN;
 
         LayoutInflater mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         box = mInflater.inflate(R.layout.explorebox, this, true);
@@ -54,14 +56,17 @@ public class ExploreBox extends RelativeLayout {
         TextView boxCondition = (TextView) box.findViewById(R.id.exploreBoxCondition);
         TextView boxPrice = (TextView) box.findViewById(R.id.exploreBoxPrice);
         TextView userIdInBox = (TextView)box.findViewById(R.id.userId);
+        TextView bookISBN = (TextView)box.findViewById(R.id.isbn);
         final ImageView boxImage = (ImageView) box.findViewById(R.id.exploreImageView);
         boxTitle.setText(title);
         boxEdition.setText(edition + " edition");
         boxCondition.setText(condition);
         boxPrice.setText(price);
         userIdInBox.setText(userId);
+        bookISBN.setText(ISBN);
         Log.e("userId", userId);
         Log.e("title", title);
+        //Log.e("ISBN", bookISBN.getText().toString());
         final StorageReference imageRef = storageRef.child(userId).child(title).child("image1");
         new Thread() {
             @Override
