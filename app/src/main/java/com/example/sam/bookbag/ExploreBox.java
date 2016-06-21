@@ -55,7 +55,7 @@ public class ExploreBox extends RelativeLayout {
         TextView userIdInBox = (TextView)box.findViewById(R.id.userId);
         final ImageView boxImage = (ImageView) box.findViewById(R.id.exploreImageView);
         boxTitle.setText(title);
-        boxEdition.setText(edition);
+        boxEdition.setText(edition + " edition");
         boxCondition.setText(condition);
         boxPrice.setText(price);
         userIdInBox.setText(userId);
