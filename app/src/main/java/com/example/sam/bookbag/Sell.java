@@ -14,6 +14,7 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.ListPopupWindow;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -65,6 +66,7 @@ public class Sell extends Fragment {
     ArrayList<EditText> dataList;
     EditText[] editTextList;
     ImageView[] photoList;
+    Bitmap imageOneBitmap;
     int photoCounter;
     boolean correctInfo;
 
@@ -157,8 +159,8 @@ public class Sell extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 0 && resultCode == Activity.RESULT_OK)
         {
-            Bitmap photo = (Bitmap) data.getExtras().get("data");
-            textBookImageOne.setImageBitmap(photo);
+            imageOneBitmap = (Bitmap) data.getExtras().get("data");
+            textBookImageOne.setImageBitmap(imageOneBitmap);
         }else if (requestCode == 1 && resultCode == Activity.RESULT_OK){
             Bitmap photo = (Bitmap) data.getExtras().get("data");
             textBookImageTwo.setImageBitmap(photo);
@@ -259,6 +261,7 @@ public class Sell extends Fragment {
         for (int i = 0; i < editTextList.length; i++){
             postKey.child(className.getText().toString()).child(dataNames.get(i)).setValue(editTextList[i].getText().toString());
         }
+        postKey.child(className.getText().toString()).child("bitmap").setValue(BitMapToString(imageOneBitmap));
     }
     public void clearPostData(){
         for (int i = 0; i < photoList.length; i++){
@@ -276,6 +279,13 @@ public class Sell extends Fragment {
         Toast toast = Toast.makeText(getContext(), message, Toast.LENGTH_SHORT);
         toast.setGravity(Gravity.CENTER, 0, 0);
         toast.show();
+    }
+    public String BitMapToString(Bitmap bitmap){
+        ByteArrayOutputStream baos=new  ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG,100, baos);
+        byte [] b=baos.toByteArray();
+        String temp=Base64.encodeToString(b, Base64.DEFAULT);
+        return temp;
     }
 }
 

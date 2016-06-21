@@ -77,6 +77,7 @@ public class Explore extends Fragment {
     String edition;
     String price;
     String ISBN;
+    String bitmap;
     File dir;
     PrintWriter file;
     public Explore(){
@@ -209,13 +210,14 @@ public class Explore extends Fragment {
                 String keys = dataSnapshot.getKey();
                 String values = dataSnapshot.getValue().toString();
                 keysAndValues.put(keys, values);
-                if (keysAndValues.size() == 7) {
+                if (keysAndValues.size() == 8) {
                     Log.e("map keys", keysAndValues.keySet().toString());
                     Log.e("map values", keysAndValues.values().toString());
                     condition = keysAndValues.get("condition");
                     price = keysAndValues.get("price");
                     edition = keysAndValues.get("edition");
                     ISBN = keysAndValues.get("ISBN");
+                    bitmap = keysAndValues.get("bitmap");
                     Log.e("key ISBN", ISBN);
                     try {
                         postData = new JSONObject();
@@ -225,6 +227,7 @@ public class Explore extends Fragment {
                         eachPostData.put("condition", condition);
                         eachPostData.put("price", price);
                         eachPostData.put("ISBN", ISBN);
+                        eachPostData.put("bitmap", bitmap);
                         postData.put(userId, eachPostData);
                         Log.e("postData", postData.toString());
                     } catch (JSONException JSE) {

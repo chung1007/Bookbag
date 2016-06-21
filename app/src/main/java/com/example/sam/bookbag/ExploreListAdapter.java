@@ -40,6 +40,7 @@ public class ExploreListAdapter extends BaseAdapter {
     String title;
     String userId;
     String ISBN;
+    String bitmap;
 
     public ExploreListAdapter(Context context, List<JSONObject> datapoints, ArrayList<String> userIds) {
         super();
@@ -85,11 +86,12 @@ public class ExploreListAdapter extends BaseAdapter {
                 condition = postValues.getString("condition");
                 price = postValues.getString("price");
                 ISBN = postValues.getString("ISBN");
+                bitmap = postValues.getString("bitmap");
             }catch (JSONException JSE){
                 Log.e("getView", "JSON FAILED");
             }
             Log.e("postValues", postValues.toString());
-            ExploreBox listBox = new ExploreBox(context, title, edition, condition, price, ISBN, userId);
+            ExploreBox listBox = new ExploreBox(context, title, edition, condition, price, ISBN, userId, bitmap);
             listBox.setLayoutParams(new ViewGroup.LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT));

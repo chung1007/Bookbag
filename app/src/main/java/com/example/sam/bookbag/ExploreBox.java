@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,9 +32,10 @@ public class ExploreBox extends RelativeLayout {
     String price;
     String userId;
     String ISBN;
+    String bitmap;
     View box;
 
-    public ExploreBox(Context context, String title, String edition, String condition, String price, String ISBN, String userId) {
+    public ExploreBox(Context context, String title, String edition, String condition, String price, String ISBN, String userId, String bitmap) {
         super(context);
         this.title = title;
         this.edition = edition;
@@ -41,6 +43,7 @@ public class ExploreBox extends RelativeLayout {
         this.price = price;
         this.userId = userId;
         this.ISBN = ISBN;
+        this.bitmap = bitmap;
 
         LayoutInflater mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         box = mInflater.inflate(R.layout.explorebox, this, true);
@@ -50,7 +53,6 @@ public class ExploreBox extends RelativeLayout {
     public View getBox() {
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(getContext().LAYOUT_INFLATER_SERVICE);
         box = inflater.inflate(R.layout.explorebox, null);
-        StorageReference storageRef = MyApplication.storageRef;
         TextView boxTitle = (TextView) box.findViewById(R.id.exploreBoxTitle);
         TextView boxEdition = (TextView) box.findViewById(R.id.exploreBoxEdition);
         TextView boxCondition = (TextView) box.findViewById(R.id.exploreBoxCondition);
@@ -66,61 +68,22 @@ public class ExploreBox extends RelativeLayout {
         bookISBN.setText(ISBN);
         Log.e("userId", userId);
         Log.e("title", title);
-        //Log.e("ISBN", bookISBN.getText().toString());
-        final StorageReference imageRef = storageRef.child(userId).child(title).child("image1");
-        new Thread() {
-            @Override
-            public void run() {
-                imageRef.getBytes(Constants.ONE_MEGABYTE).addOnCompleteListener(new OnCompleteListener<byte[]>() {
-                    @Override
-                    public void onComplete(@NonNull Task<byte[]> task) {
-                        Log.e("completion", "SUCCCESS!");
-
-                        imageRef.getBytes(Long.MAX_VALUE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                            @Override
-                            public void onSuccess(byte[] bytes) {
-                                Log.e("bytes", "SUCCESS");
-                                // Use the bytes to display the image
-                                /*int boxInts[] = getImageSizes(boxImage);
-                                Log.e("boxInts", boxInts.toString());*/
-                                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                               /* Bitmap resizedBitmap = Bitmap.createScaledBitmap(
-                                        bitmap, boxInts[0], boxInts[1], false);*/
-                                boxImage.setImageBitmap(null);
-                                boxImage.destroyDrawingCache();
-                                boxImage.setImageResource(0);
-                                boxImage.setImageBitmap(bitmap);
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception exception) {
-                                // Handle any errors
-                                Log.e("userIdForImage", userId);
-                                Log.e("titleForImage", title);
-                                Log.e("getting image", "failed");
-                            }
-                        });
-                    }
-                });
-            }
-        }.start();
+        boxImage.setImageBitmap(null);
+        boxImage.destroyDrawingCache();
+        boxImage.setImageResource(0);
+        boxImage.setImageBitmap(StringToBitMap(bitmap));
         return box;
     }
-    /*public int[] getImageSizes(final ImageView box){
-        ViewTreeObserver vto = box.getViewTreeObserver();
-        final int measures[] = new int[1];
-        vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-            public boolean onPreDraw() {
-                int finalHeight = box.getMeasuredHeight();
-                int finalWidth = box.getMeasuredWidth();
-                measures[0] = finalWidth;
-                measures[1] = finalHeight;
 
-                Log.e("hilength","Height: " + finalHeight + " Width: " + finalWidth);
-                return true;
-            }
-        });
-        return  measures;
-    }*/
+    public Bitmap StringToBitMap(String encodedString){
+        try {
+            byte [] encodeByte=Base64.decode(encodedString, Base64.DEFAULT);
+            Bitmap bitmap=BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
+            return bitmap;
+        } catch(Exception e) {
+            e.getMessage();
+            return null;
+        }
+    }
 }
 
