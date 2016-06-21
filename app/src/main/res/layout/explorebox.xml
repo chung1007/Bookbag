@@ -57,7 +57,7 @@
         android:paddingTop="18dp"
         android:text="PRICE"
         android:textColor="#1ABC9C"
-        android:textSize="25sp"
+        android:textSize="20sp"
         android:paddingRight="30dp"
         android:layout_alignParentRight="true" />
     <TextView

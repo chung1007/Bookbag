@@ -9,6 +9,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -75,7 +76,11 @@ public class ExploreBox extends RelativeLayout {
                             public void onSuccess(byte[] bytes) {
                                 Log.e("bytes", "SUCCESS");
                                 // Use the bytes to display the image
+                                /*int boxInts[] = getImageSizes(boxImage);
+                                Log.e("boxInts", boxInts.toString());*/
                                 Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                               /* Bitmap resizedBitmap = Bitmap.createScaledBitmap(
+                                        bitmap, boxInts[0], boxInts[1], false);*/
                                 boxImage.setImageBitmap(null);
                                 boxImage.destroyDrawingCache();
                                 boxImage.setImageResource(0);
@@ -96,5 +101,21 @@ public class ExploreBox extends RelativeLayout {
         }.start();
         return box;
     }
+    /*public int[] getImageSizes(final ImageView box){
+        ViewTreeObserver vto = box.getViewTreeObserver();
+        final int measures[] = new int[1];
+        vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            public boolean onPreDraw() {
+                int finalHeight = box.getMeasuredHeight();
+                int finalWidth = box.getMeasuredWidth();
+                measures[0] = finalWidth;
+                measures[1] = finalHeight;
+
+                Log.e("hilength","Height: " + finalHeight + " Width: " + finalWidth);
+                return true;
+            }
+        });
+        return  measures;
+    }*/
 }
 
