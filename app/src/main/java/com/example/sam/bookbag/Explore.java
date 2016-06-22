@@ -313,7 +313,6 @@ public class Explore extends Fragment {
             Log.e("File Error", "Failed To Read From File");
             return null;
         }
-        Log.i("fileData", dataOfFile);
         return dataOfFile;
     }
     public void listPostNames(ArrayList<String> postNames, ArrayList<String> userIds){
@@ -353,7 +352,7 @@ public class Explore extends Fragment {
                     casePriceChosen();
                 } else if (selectedItem.equals("Recent")) {
                     checkPostFile();
-                } else if (selectedItem.equals("Condition")) {
+                } else if (selectedItem.equals("Cond.")) {
                     caseConditionChosen();
                 }
             }

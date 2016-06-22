@@ -113,6 +113,8 @@ public class HomePage extends AppCompatActivity {
         for (int i = 0; i < 5; i++) {
             tabLayout.getTabAt(i).getIcon().setTint(Color.WHITE);
         }
+        int tabIconColor = ContextCompat.getColor(getApplicationContext(), R.color.tabSelected);
+        tabLayout.getTabAt(0).getIcon().setColorFilter(tabIconColor, PorterDuff.Mode.SRC_IN);
     }
 
     @Override

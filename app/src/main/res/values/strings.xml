@@ -10,7 +10,7 @@
 
     <string-array name="sort_arrays">
         <item>Recent</item>
-        <item>Condition</item>
+        <item>Cond.</item>
         <item>Price</item>
     </string-array>
 </resources>
