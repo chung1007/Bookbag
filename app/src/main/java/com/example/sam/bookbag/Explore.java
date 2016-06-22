@@ -14,6 +14,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -46,9 +47,12 @@ import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -79,6 +83,7 @@ public class Explore extends Fragment {
     String ISBN;
     String bitmap;
     File dir;
+    int counter;
     PrintWriter file;
     public Explore(){
 
@@ -92,6 +97,7 @@ public class Explore extends Fragment {
         checkPostFile();
         dir = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/Bookbag");
         searchBar = (EditText)view.findViewById(R.id.searchBar);
+        sortList = (Spinner)view.findViewById(R.id.exploreSpinner);
         keysAndValues =  new HashMap<>();
         lastOfFirstKey = new ArrayList<>();
         lastOfPostKey = new ArrayList<>();
@@ -100,6 +106,7 @@ public class Explore extends Fragment {
         storageRef = MyApplication.storageRef;
         ref = MyApplication.ref;
         setSearchBarListener();
+        setSortItemListener();
         checkIfFirstListeningIsDone();
         setFirebaseListener();
         return view;
@@ -229,7 +236,6 @@ public class Explore extends Fragment {
                         eachPostData.put("ISBN", ISBN);
                         eachPostData.put("bitmap", bitmap);
                         postData.put(userId, eachPostData);
-                        Log.e("postData", postData.toString());
                     } catch (JSONException JSE) {
                         Log.e("JSON", "FAILED");
                     }
@@ -316,9 +322,7 @@ public class Explore extends Fragment {
             String fileName = "sdcard/Bookbag/" + postNames.get(i);
             String content = readFile(fileName);
             try {
-                Log.e("content", content);
                 JSONObject postDataRead = new JSONObject(content);
-                Log.e("postDataRead", postDataRead.toString());
                 dataPoints.add(postDataRead);
             }catch (JSONException JSE){
                 Log.e("assign json", "failed");
@@ -327,7 +331,6 @@ public class Explore extends Fragment {
         }
         Collections.reverse(dataPoints);
         Collections.reverse(userIds);
-        Log.e("dataPoints", dataPoints.toString());
         displayPostBoxes(dataPoints, userIds);
     }
 
@@ -343,43 +346,127 @@ public class Explore extends Fragment {
         toast.show();
     }
     public void setSortItemListener(){
+        sortList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selectedItem = parent.getItemAtPosition(position).toString();
+                if (selectedItem.equals("Price")) {
+                    HashMap<String, String> mapToSort = new HashMap<>();
+                    for (int i = 0; i < dataPoints.size(); i++) {
+                        JSONObject jsonFirst = dataPoints.get(i);
+                        Iterator<String> keys = jsonFirst.keys();
+                        String firstKey = keys.next();
+                        try {
+                            JSONObject jsonUnderFirst = jsonFirst.getJSONObject(firstKey);
+                            String key = firstKey + "_" + jsonUnderFirst.getString("title");
+                            Log.e("compare keys", key);
+                            String value = jsonUnderFirst.getString("price");
+                            mapToSort.put(key, value);
+                        } catch (JSONException JSE) {
+                            Log.e("JSON in sorting", "FAILED");
+                        }
+                    }
+                    HashMap<String, String> sortedMap = sortByValues(mapToSort);
+                    List<JSONObject> sortedDataPoints = new ArrayList<>();
+                    List<String> sortedKeys = new ArrayList<String>(sortedMap.keySet());
+                    List<String> sortedValues = new ArrayList<String>(sortedMap.values());
+                    ArrayList<String> userIds = new ArrayList<>();
+                    List<String> list = new ArrayList<String>();
+                    Log.e("mapToSort", mapToSort.toString());
+                    Log.e("sorted Map", sortedMap.toString());
+                    counter = 0;
+                    while (list.size() != 5){
+                        for (int i = 0; i < dataPoints.size(); i++) {
+                            JSONObject jsonFirst = dataPoints.get(i);
+                            Iterator<String> keys = jsonFirst.keys();
+                            String firstKey = keys.next();
+                            try {
+                                JSONObject jsonUnderFirst = jsonFirst.getJSONObject(firstKey);
+                                String key = firstKey + "_" + jsonUnderFirst.getString("title");
+                                String value = jsonUnderFirst.getString("price");
+                                if (key.equals(sortedKeys.get(counter)) && value.equals(sortedValues.get(counter))) {
+                                    list.add(key);
+                                    sortedDataPoints.add(jsonFirst);
+                                    userIds.add(firstKey);
+                                    Log.e("addedKey", key);
+                                    sortedKeys.remove(sortedKeys.get(counter));
+                                    sortedValues.remove(sortedValues.get(counter));
+                                    if(sortedKeys.size()==0){
+                                        break;
+                                    }
+                                } else {
+                                    //Log.e("counter", counter + "");
+                                }
+                            } catch (JSONException JSE) {
+                                Log.e("JSON in sorting", "FAILED");
+                            }
+                        }
+                     }
+                    displayPostBoxes(sortedDataPoints, userIds);
+                    Log.e("matches", list.toString());
+                }
+            }
 
+            public void onNothingSelected(AdapterView<?> parent) {
+                //Do nothing
+            }
+        });
     }
     public void setSearchBarListener(){
 
         searchBar.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if(searchBar.getText().toString().equals("")){
+                if (searchBar.getText().toString().equals("")) {
                     exploreList.setAdapter(null);
                     checkPostFile();
-                }else{
-                        for (int j = 0; j < dataPoints.size(); j++){
-                            JSONObject jsonFirst = dataPoints.get(j);
-                            Iterator<String> keys = jsonFirst.keys();
-                            String firstKey = keys.next();
-                            try {
-                                JSONObject jsonUnderFirst = jsonFirst.getJSONObject(firstKey);
-                                if (!jsonUnderFirst.getString("title").toLowerCase().contains(searchBar.getText().toString().toLowerCase())){
-                                    dataPoints.remove(jsonFirst);
-                                    userIdlist.remove(firstKey);
-                                }
-                            }catch (JSONException JSE){
-                                Log.e("json in search", "FAILED");
+                } else {
+                    for (int j = 0; j < dataPoints.size(); j++) {
+                        JSONObject jsonFirst = dataPoints.get(j);
+                        Iterator<String> keys = jsonFirst.keys();
+                        String firstKey = keys.next();
+                        try {
+                            JSONObject jsonUnderFirst = jsonFirst.getJSONObject(firstKey);
+                            if (!jsonUnderFirst.getString("title").toLowerCase().contains(searchBar.getText().toString().toLowerCase())) {
+                                dataPoints.remove(jsonFirst);
+                                userIdlist.remove(firstKey);
                             }
-
+                        } catch (JSONException JSE) {
+                            Log.e("json in search", "FAILED");
                         }
+
+                    }
                     exploreList.setAdapter(null);
                     displayPostBoxes(dataPoints, userIdlist);
-                    }
                 }
+            }
+
             @Override
             public void afterTextChanged(Editable editable) {
 
             }
         });
     }
+    private static HashMap sortByValues(HashMap map) {
+        List list = new LinkedList(map.entrySet());
+        // Defined Custom Comparator here
+        Collections.sort(list, new Comparator() {
+            public int compare(Object o1, Object o2) {
+                return ((Comparable) ((Map.Entry) (o1)).getValue())
+                        .compareTo(((Map.Entry) (o2)).getValue());
+            }
+        });
 
+        // Here I am copying the sorted list in HashMap
+        // using LinkedHashMap to preserve the insertion order
+        HashMap sortedHashMap = new LinkedHashMap();
+        for (Iterator it = list.iterator(); it.hasNext();) {
+            Map.Entry entry = (Map.Entry) it.next();
+            sortedHashMap.put(entry.getKey(), entry.getValue());
+        }
+        return sortedHashMap;
+    }
 }

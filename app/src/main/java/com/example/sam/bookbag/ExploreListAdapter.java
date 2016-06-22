@@ -77,7 +77,6 @@ public class ExploreListAdapter extends BaseAdapter {
             postData = dataPoints.get(position);
             Iterator<String> keys = postData.keys();
             String firstKey = keys.next();
-            Log.e("postData", postData.toString());
             userId = userIds.get(position);
             try {
                 postValues = postData.getJSONObject(firstKey);
@@ -90,7 +89,6 @@ public class ExploreListAdapter extends BaseAdapter {
             }catch (JSONException JSE){
                 Log.e("getView", "JSON FAILED");
             }
-            Log.e("postValues", postValues.toString());
             ExploreBox listBox = new ExploreBox(context, title, edition, condition, price, ISBN, userId, bitmap);
             listBox.setLayoutParams(new ViewGroup.LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT,
