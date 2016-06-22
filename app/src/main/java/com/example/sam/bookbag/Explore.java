@@ -95,7 +95,7 @@ public class Explore extends Fragment {
         View view = inflater.inflate(R.layout.explore, container, false);
         exploreList = (ListView)view.findViewById(R.id.exploreBoxList);
         checkPostFile();
-        dir = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/Bookbag");
+        dir = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/Bookbag_explore");
         searchBar = (EditText)view.findViewById(R.id.searchBar);
         sortList = (Spinner)view.findViewById(R.id.exploreSpinner);
         keysAndValues =  new HashMap<>();
@@ -274,7 +274,7 @@ public class Explore extends Fragment {
     public void checkPostFile(){
         ArrayList<String> postFiles = new ArrayList<>();
         userIdlist = new ArrayList<>();
-        File file = new File("/sdcard/Bookbag" );
+        File file = new File("/sdcard/Bookbag_explore" );
         File list[] = file.listFiles();
         try {
             for (int i = 0; i < list.length; i++) {
@@ -319,7 +319,7 @@ public class Explore extends Fragment {
     public void listPostNames(ArrayList<String> postNames, ArrayList<String> userIds){
         dataPoints = new ArrayList<>();
         for (int i = 0; i < postNames.size(); i++){
-            String fileName = "sdcard/Bookbag/" + postNames.get(i);
+            String fileName = "sdcard/Bookbag_explore/" + postNames.get(i);
             String content = readFile(fileName);
             try {
                 JSONObject postDataRead = new JSONObject(content);
