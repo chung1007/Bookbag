@@ -262,6 +262,8 @@ public class Sell extends Fragment {
             postKey.child(className.getText().toString()).child(dataNames.get(i)).setValue(editTextList[i].getText().toString());
         }
         postKey.child(className.getText().toString()).child("bitmap").setValue(BitMapToString(imageOneBitmap));
+        postKey.child(className.getText().toString()).child("seller").setValue(HomePage.userName);
+
     }
     public void clearPostData(){
         for (int i = 0; i < photoList.length; i++){

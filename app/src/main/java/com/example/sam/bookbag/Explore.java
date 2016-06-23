@@ -1,12 +1,11 @@
 package com.example.sam.bookbag;
 
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+
+import android.content.DialogInterface;
 import android.os.Bundle;
-import android.os.Environment;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -17,26 +16,18 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.StorageReference;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -44,11 +35,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -77,28 +67,34 @@ public class Explore extends Fragment {
     JSONObject postData;
     JSONObject eachPostData;
     ListView exploreList;
+    View infoView;
     String condition;
     String edition;
     String price;
     String ISBN;
     String bitmap;
+    String author;
+    String notes;
+    String seller;
     File dir;
     int counter;
     PrintWriter file;
-    public Explore(){
+
+    public Explore() {
 
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Log.e("onThisScreen", "onCreateView");
         View view = inflater.inflate(R.layout.explore, container, false);
-        exploreList = (ListView)view.findViewById(R.id.exploreBoxList);
+        exploreList = (ListView) view.findViewById(R.id.exploreBoxList);
         checkPostFile();
         dir = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/Bookbag_explore");
-        searchBar = (EditText)view.findViewById(R.id.searchBar);
-        sortList = (Spinner)view.findViewById(R.id.exploreSpinner);
-        keysAndValues =  new HashMap<>();
+        searchBar = (EditText) view.findViewById(R.id.searchBar);
+        sortList = (Spinner) view.findViewById(R.id.exploreSpinner);
+        keysAndValues = new HashMap<>();
         lastOfFirstKey = new ArrayList<>();
         lastOfPostKey = new ArrayList<>();
         checkFirstListening = new ArrayList<>();
@@ -109,6 +105,7 @@ public class Explore extends Fragment {
         setSortItemListener();
         checkIfFirstListeningIsDone();
         setFirebaseListener();
+        listenForListItemClicked();
         return view;
     }
 
@@ -118,7 +115,7 @@ public class Explore extends Fragment {
         Log.e("onThisScreen", "onCreate");
     }
 
-    public void checkIfFirstListeningIsDone(){
+    public void checkIfFirstListeningIsDone() {
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -130,7 +127,8 @@ public class Explore extends Fragment {
             }
         });
     }
-    public void checkIfPostListeningIsDone(String firstKey){
+
+    public void checkIfPostListeningIsDone(String firstKey) {
         ref.child(firstKey).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -143,40 +141,41 @@ public class Explore extends Fragment {
         });
     }
 
-   public void setFirebaseListener() {
-       ref.addChildEventListener(new ChildEventListener() {
-           @Override
-           public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-               lastOfFirstKey.clear();
-               String firstKey = dataSnapshot.getKey();
-               lastOfFirstKey.add(firstKey);
-               Log.e("lastOfFirstKeyList", lastOfFirstKey.toString());
-               //if (!checkFirstListening.isEmpty()) {
-               checkFirstListening.clear();
-               Log.e("lastFirstKey", lastOfFirstKey.get((lastOfFirstKey.size() - 1)));
-               Log.e("lastFirstKeySize", lastOfFirstKey.size() + "");
-               afterUserIdAdded(lastOfFirstKey.get(lastOfFirstKey.size() - 1));
-               // }
-           }
+    public void setFirebaseListener() {
+        ref.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                lastOfFirstKey.clear();
+                String firstKey = dataSnapshot.getKey();
+                lastOfFirstKey.add(firstKey);
+                Log.e("lastOfFirstKeyList", lastOfFirstKey.toString());
+                //if (!checkFirstListening.isEmpty()) {
+                checkFirstListening.clear();
+                Log.e("lastFirstKey", lastOfFirstKey.get((lastOfFirstKey.size() - 1)));
+                Log.e("lastFirstKeySize", lastOfFirstKey.size() + "");
+                afterUserIdAdded(lastOfFirstKey.get(lastOfFirstKey.size() - 1));
+                // }
+            }
 
-           @Override
-           public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-           }
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            }
 
-           @Override
-           public void onChildRemoved(DataSnapshot dataSnapshot) {
-           }
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+            }
 
-           @Override
-           public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-           }
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            }
 
-           @Override
-           public void onCancelled(DatabaseError databaseError) {
-           }
-       });
-   }
-    public void afterUserIdAdded(final String firstKey){
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+    }
+
+    public void afterUserIdAdded(final String firstKey) {
         ref.child(firstKey).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -210,6 +209,7 @@ public class Explore extends Fragment {
             }
         });
     }
+
     public void getPostData(final String userId, final String postKey) {
         ref.child(userId).child(postKey).addChildEventListener(new ChildEventListener() {
             @Override
@@ -217,7 +217,7 @@ public class Explore extends Fragment {
                 String keys = dataSnapshot.getKey();
                 String values = dataSnapshot.getValue().toString();
                 keysAndValues.put(keys, values);
-                if (keysAndValues.size() == 8) {
+                if (keysAndValues.size() == 9) {
                     Log.e("map keys", keysAndValues.keySet().toString());
                     Log.e("map values", keysAndValues.values().toString());
                     condition = keysAndValues.get("condition");
@@ -225,6 +225,9 @@ public class Explore extends Fragment {
                     edition = keysAndValues.get("edition");
                     ISBN = keysAndValues.get("ISBN");
                     bitmap = keysAndValues.get("bitmap");
+                    author = keysAndValues.get("authorName");
+                    notes = keysAndValues.get("notes");
+                    seller = keysAndValues.get("seller");
                     Log.e("key ISBN", ISBN);
                     try {
                         postData = new JSONObject();
@@ -234,7 +237,10 @@ public class Explore extends Fragment {
                         eachPostData.put("condition", condition);
                         eachPostData.put("price", price);
                         eachPostData.put("ISBN", ISBN);
+                        eachPostData.put("author", author);
+                        eachPostData.put("notes", notes);
                         eachPostData.put("bitmap", bitmap);
+                        eachPostData.put("seller", seller);
                         postData.put(userId, eachPostData);
                     } catch (JSONException JSE) {
                         Log.e("JSON", "FAILED");
@@ -271,10 +277,11 @@ public class Explore extends Fragment {
             }
         });
     }
-    public void checkPostFile(){
+
+    public void checkPostFile() {
         ArrayList<String> postFiles = new ArrayList<>();
         userIdlist = new ArrayList<>();
-        File file = new File("/sdcard/Bookbag_explore" );
+        File file = new File("/sdcard/Bookbag_explore");
         File list[] = file.listFiles();
         try {
             for (int i = 0; i < list.length; i++) {
@@ -283,17 +290,18 @@ public class Explore extends Fragment {
                 String userId = splitName[0];
                 userIdlist.add(userId);
             }
-        }catch (NullPointerException NPE){
+        } catch (NullPointerException NPE) {
             toastMaker("No posts currently");
         }
         Log.e("files", postFiles.toString());
-        if(!postFiles.isEmpty()){
+        if (!postFiles.isEmpty()) {
             Log.e("post", "there has been previous posts!");
             Log.e("userId's", userIdlist.toString());
             listPostNames(postFiles, userIdlist);
         }
 
     }
+
     public String readFile(String name) {
         BufferedReader file;
         try {
@@ -315,15 +323,16 @@ public class Explore extends Fragment {
         }
         return dataOfFile;
     }
-    public void listPostNames(ArrayList<String> postNames, ArrayList<String> userIds){
+
+    public void listPostNames(ArrayList<String> postNames, ArrayList<String> userIds) {
         dataPoints = new ArrayList<>();
-        for (int i = 0; i < postNames.size(); i++){
+        for (int i = 0; i < postNames.size(); i++) {
             String fileName = "sdcard/Bookbag_explore/" + postNames.get(i);
             String content = readFile(fileName);
             try {
                 JSONObject postDataRead = new JSONObject(content);
                 dataPoints.add(postDataRead);
-            }catch (JSONException JSE){
+            } catch (JSONException JSE) {
                 Log.e("assign json", "failed");
             }
 
@@ -333,18 +342,20 @@ public class Explore extends Fragment {
         displayPostBoxes(dataPoints, userIds);
     }
 
-    public void displayPostBoxes(List<JSONObject> datapoints, ArrayList<String> userIds){
+    public void displayPostBoxes(List<JSONObject> datapoints, ArrayList<String> userIds) {
         adapter = new ExploreListAdapter(getContext(), datapoints, userIds);
         exploreList.setAdapter(adapter);
         adapter.notifyDataSetChanged();
         Log.e("boxes", "made");
     }
-    public void toastMaker(String message){
+
+    public void toastMaker(String message) {
         Toast toast = Toast.makeText(getContext(), message, Toast.LENGTH_SHORT);
         toast.setGravity(Gravity.CENTER, 0, 0);
         toast.show();
     }
-    public void setSortItemListener(){
+
+    public void setSortItemListener() {
         sortList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String selectedItem = parent.getItemAtPosition(position).toString();
@@ -362,7 +373,8 @@ public class Explore extends Fragment {
             }
         });
     }
-    public void setSearchBarListener(){
+
+    public void setSearchBarListener() {
 
         searchBar.addTextChangedListener(new TextWatcher() {
             @Override
@@ -401,6 +413,7 @@ public class Explore extends Fragment {
             }
         });
     }
+
     private static HashMap sortByValues(HashMap map) {
         List list = new LinkedList(map.entrySet());
         // Defined Custom Comparator here
@@ -414,13 +427,14 @@ public class Explore extends Fragment {
         // Here I am copying the sorted list in HashMap
         // using LinkedHashMap to preserve the insertion order
         HashMap sortedHashMap = new LinkedHashMap();
-        for (Iterator it = list.iterator(); it.hasNext();) {
+        for (Iterator it = list.iterator(); it.hasNext(); ) {
             Map.Entry entry = (Map.Entry) it.next();
             sortedHashMap.put(entry.getKey(), entry.getValue());
         }
         return sortedHashMap;
     }
-    public void casePriceChosen(){
+
+    public void casePriceChosen() {
         HashMap<String, String> mapToSort = new HashMap<>();
         for (int i = 0; i < dataPoints.size(); i++) {
             JSONObject jsonFirst = dataPoints.get(i);
@@ -445,7 +459,7 @@ public class Explore extends Fragment {
         Log.e("mapToSort", mapToSort.toString());
         Log.e("sorted Map", sortedMap.toString());
         counter = 0;
-        while (list.size() != dataPoints.size()){
+        while (list.size() != dataPoints.size()) {
             for (int i = 0; i < dataPoints.size(); i++) {
                 JSONObject jsonFirst = dataPoints.get(i);
                 Iterator<String> keys = jsonFirst.keys();
@@ -461,7 +475,7 @@ public class Explore extends Fragment {
                         Log.e("addedKey", key);
                         sortedKeys.remove(sortedKeys.get(counter));
                         sortedValues.remove(sortedValues.get(counter));
-                        if(sortedKeys.size()==0){
+                        if (sortedKeys.size() == 0) {
                             break;
                         }
                     } else {
@@ -474,7 +488,8 @@ public class Explore extends Fragment {
         displayPostBoxes(sortedDataPoints, userIds);
         Log.e("matches", list.toString());
     }
-    public void caseConditionChosen(){
+
+    public void caseConditionChosen() {
         HashMap<String, String> mapToSort = new HashMap<>();
         HashMap<String, String> conditionValues = new HashMap<>();
         conditionValues.put("As New", "1");
@@ -508,7 +523,7 @@ public class Explore extends Fragment {
         Log.e("mapToSort", mapToSort.toString());
         Log.e("sorted Map", sortedMap.toString());
         counter = 0;
-        while (list.size() != dataPoints.size()){
+        while (list.size() != dataPoints.size()) {
             for (int i = 0; i < dataPoints.size(); i++) {
                 JSONObject jsonFirst = dataPoints.get(i);
                 Iterator<String> keys = jsonFirst.keys();
@@ -525,7 +540,7 @@ public class Explore extends Fragment {
                         Log.e("addedKey", key);
                         sortedKeys.remove(sortedKeys.get(counter));
                         sortedValues.remove(sortedValues.get(counter));
-                        if(sortedKeys.size()==0){
+                        if (sortedKeys.size() == 0) {
                             break;
                         }
                     } else {
@@ -538,4 +553,81 @@ public class Explore extends Fragment {
         displayPostBoxes(sortedDataPoints, userIds);
         Log.e("matches", list.toString());
     }
+
+    public void listenForListItemClicked() {
+        exploreList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                infoView = View.inflate(getContext(), R.layout.bookinfopage, null);
+                TextView Id = (TextView) view.findViewById(R.id.userId);
+                TextView boxTitle = (TextView) view.findViewById(R.id.exploreBoxTitle);
+                ImageView bookOne = (ImageView)infoView.findViewById(R.id.imageDisplayOne);
+                ImageView bookTwo = (ImageView)infoView.findViewById(R.id.imageDisplayTwo);
+                ImageView bookThree = (ImageView)infoView.findViewById(R.id.imageDisplayThree);
+                ImageView bookFour = (ImageView)infoView.findViewById(R.id.imageDisplayFour);
+                String sellersId = Id.getText().toString();
+                String bookTitle = boxTitle.getText().toString();
+                String fileName = sellersId+"_"+(bookTitle.replace(" ", ""));
+                String content = readFile("/sdcard/Bookbag_explore/"+fileName);
+                try {
+                    JSONObject fileData = new JSONObject(content);
+                    Iterator<String> keys = fileData.keys();
+                    String firstKey = keys.next();
+                    JSONObject jsonToRead = fileData.getJSONObject(firstKey);
+                    String price = jsonToRead.getString("price");
+                    String edition = jsonToRead.getString("edition");
+                    String author = jsonToRead.getString("author");
+                    String ISBN = jsonToRead.getString("ISBN");
+                    String condition = jsonToRead.getString("condition");
+                    String notes = jsonToRead.getString("notes");
+                    String seller = jsonToRead.getString("seller");
+                    ArrayList<String> viewDataList = new ArrayList<>(Arrays.asList(price, bookTitle, edition, author,
+                            ISBN, condition, notes, seller));
+                    ArrayList<ImageView> pictures = new ArrayList<>(Arrays.asList(bookOne, bookTwo, bookThree, bookFour));
+                    setViewData(infoView, viewDataList);
+                    setUpViewingDialog(infoView);
+                }catch (JSONException JSE){
+                    Log.e("item click listener", "json failed!");
+                }
+            }
+        });
+    }
+    public void setViewData(View view, ArrayList<String> values){
+
+        TextView price = (TextView)view.findViewById(R.id.priceDisplay);
+        TextView bookTitle = (TextView)view.findViewById(R.id.nameDisplay);
+        TextView edition = (TextView)view.findViewById(R.id.editionDisplay);
+        TextView author = (TextView)view.findViewById(R.id.authorDisplay);
+        TextView ISBN = (TextView)view.findViewById(R.id.ISBNDisplay);
+        TextView condition = (TextView)view.findViewById(R.id.conditionDisplay);
+        TextView notes = (TextView)view.findViewById(R.id.notesDisplay);
+        TextView seller = (TextView)view.findViewById(R.id.sellerName);
+        ArrayList<TextView> textviews = new ArrayList<>(Arrays.asList(price, bookTitle, edition,
+                author, ISBN, condition, notes, seller));
+        for (int i = 0; i < values.size(); i++){
+            textviews.get(i).setText(values.get(i));
+        }
+
+    }
+
+    public void setUpViewingDialog(View view) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("");
+        builder.setView(view)
+                .setCancelable(false)
+                .setPositiveButton("Back", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                }).show();
+
+    }
+
+    public void setViewPictures(ArrayList<ImageView> pictures){
+        for (int i = 0; i < pictures.size(); i++){
+            
+        }
+    }
 }
+
