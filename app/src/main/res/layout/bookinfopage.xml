@@ -12,15 +12,6 @@
         android:paddingRight="10dp"
         android:src="@drawable/addtowishlist"
         android:layout_gravity="top|right"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Textbook Info"
-        android:textSize="23sp"
-        android:textColor="#000000"
-        android:layout_gravity="center_horizontal"
-        android:paddingBottom="10dp"/>
-
 
     <ScrollView
         android:layout_width="match_parent"
@@ -32,67 +23,62 @@
         android:orientation="vertical">
 
     <HorizontalScrollView
-        android:layout_width="120dp"
+        android:layout_width="147dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:paddingTop="20dp"
+        android:paddingTop="10dp"
         android:scrollbarSize="3dp"
         android:scrollbarStyle="insideOverlay">
 
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="100dp"
-        android:background="@drawable/linearlayoutborder"
+        android:layout_height="130dp"
         android:orientation="horizontal"
         android:gravity="center_horizontal">
 
         <ImageView
             android:id="@+id/imageDisplayOne"
-            android:layout_width="125dp"
-            android:layout_height="125dp"
-            android:src="@drawable/addpicture"
+            android:layout_width="160dp"
+            android:layout_height="180dp"
             android:paddingTop="15dp"
             android:layout_gravity="center_vertical"
             android:paddingBottom="15dp"
+            android:paddingRight="15dp"
             android:layout_weight="1"
-            android:paddingRight="20dp"
-            android:paddingLeft="20dp"/>
+            android:scaleType="fitXY"/>
 
         <ImageView
             android:id="@+id/imageDisplayTwo"
-            android:layout_width="125dp"
-            android:layout_height="125dp"
-            android:src="@drawable/addpicture"
+            android:layout_width="160dp"
+            android:layout_height="180dp"
             android:paddingTop="15dp"
             android:layout_gravity="center_vertical"
             android:paddingBottom="15dp"
             android:layout_weight="1"
-            android:paddingRight="20dp"
-            android:paddingLeft="20dp"/>
+            android:paddingRight="15dp"
+            android:scaleType="fitXY"/>
 
         <ImageView
             android:id="@+id/imageDisplayThree"
-            android:layout_width="125dp"
-            android:layout_height="125dp"
-            android:src="@drawable/addpicture"
+            android:layout_width="160dp"
+            android:layout_height="180dp"
             android:paddingTop="15dp"
             android:layout_gravity="center_vertical"
             android:paddingBottom="15dp"
             android:layout_weight="1"
-            android:paddingRight="20dp"
-            android:paddingLeft="20dp"/>
+            android:paddingRight="15dp"
+            android:scaleType="fitXY"/>
 
         <ImageView
             android:id="@+id/imageDisplayFour"
-            android:layout_width="125dp"
-            android:layout_height="125dp"
-            android:src="@drawable/addpicture"
+            android:layout_width="160dp"
+            android:layout_height="180dp"
             android:paddingTop="15dp"
             android:layout_gravity="center_vertical"
             android:paddingBottom="15dp"
             android:layout_weight="1"
-            android:paddingRight="20dp"
-            android:paddingLeft="20dp"/>
+            android:paddingRight="15dp"
+            android:scaleType="fitXY"/>
 
     </LinearLayout>
 
@@ -107,8 +93,9 @@
             android:id="@+id/priceHeading"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="10dp"
-            android:text="PRICE:  "
+            android:paddingLeft="20dp"
+            android:text="Price:  "
+            android:textStyle="bold"
             android:paddingTop="30dp"
             android:textColor="#000000"/>
 
@@ -117,8 +104,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="$"
-            android:textSize="30sp"
-            android:paddingTop="20dp"
+            android:textSize="20sp"
+            android:paddingTop="27dp"
             android:layout_toRightOf="@id/priceHeading"
             android:textColor="#1ABC9C"/>
     </RelativeLayout>
@@ -135,8 +122,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Textbook Name: "
+        android:textStyle="bold"
         android:textSize="15sp"
-        android:paddingLeft="10dp"
+        android:paddingLeft="20dp"
         android:textColor="#000000"/>
 
     <TextView
@@ -144,6 +132,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="nameOfBook"
+        android:scrollHorizontally="false"
+        android:maxLines="2"
         android:layout_toRightOf="@+id/nameHeading"
         android:textSize="15sp"
         android:textColor="#000000"/>
@@ -160,7 +150,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Edition: "
-            android:paddingLeft="10dp"
+            android:textStyle="bold"
+            android:paddingLeft="20dp"
             android:textSize="15sp"
             android:textColor="#000000"/>
 
@@ -185,7 +176,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Author: "
-            android:paddingLeft="10dp"
+            android:textStyle="bold"
+            android:paddingLeft="20dp"
             android:textSize="15sp"
             android:textColor="#000000"/>
 
@@ -210,7 +202,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="ISBN: "
-            android:paddingLeft="10dp"
+            android:textStyle="bold"
+            android:paddingLeft="20dp"
             android:textSize="15sp"
             android:textColor="#000000"/>
 
@@ -235,7 +228,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Condition: "
-            android:paddingLeft="10dp"
+            android:textStyle="bold"
+            android:paddingLeft="20dp"
             android:textSize="15sp"
             android:textColor="#000000"/>
 
@@ -254,11 +248,13 @@
     <TextView
         android:id="@+id/notesHeading"
         android:paddingTop="20dp"
-        android:paddingLeft="10dp"
+        android:paddingLeft="20dp"
         android:textColor="#000000"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Notes: "/>
+        android:text="Notes: "
+        android:textSize="15sp"
+        android:textStyle="bold"/>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -268,7 +264,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="10dp"
-            android:paddingLeft="10dp"
+            android:paddingLeft="20dp"
             android:text="some notes"
             android:textColor="#000000"/>
     </ScrollView>
@@ -302,7 +298,7 @@
             android:id="@+id/contactSellerButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Contact"
+            android:text="Contact Seller"
             android:layout_gravity="center_horizontal"
             android:backgroundTint="#1ABC9C"
             android:textColor="#ffffff"/>

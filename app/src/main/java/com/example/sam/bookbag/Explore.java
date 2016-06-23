@@ -3,7 +3,10 @@ package com.example.sam.bookbag;
 
 
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
@@ -20,6 +23,11 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -54,6 +62,7 @@ import java.util.Map;
 public class Explore extends Fragment {
     EditText searchBar;
     StorageReference storageRef;
+    StorageReference imageRef;
     ExploreListAdapter adapter;
     Spinner sortList;
     DatabaseReference ref;
@@ -569,6 +578,10 @@ public class Explore extends Fragment {
                 String bookTitle = boxTitle.getText().toString();
                 String fileName = sellersId+"_"+(bookTitle.replace(" ", ""));
                 String content = readFile("/sdcard/Bookbag_explore/"+fileName);
+                setViewPictures(bookOne, sellersId, bookTitle, "1");
+                setViewPictures(bookTwo, sellersId, bookTitle, "2");
+                setViewPictures(bookThree, sellersId, bookTitle, "3");
+                //setViewPictures(bookFour, sellersId, bookTitle, "2");
                 try {
                     JSONObject fileData = new JSONObject(content);
                     Iterator<String> keys = fileData.keys();
@@ -583,7 +596,6 @@ public class Explore extends Fragment {
                     String seller = jsonToRead.getString("seller");
                     ArrayList<String> viewDataList = new ArrayList<>(Arrays.asList(price, bookTitle, edition, author,
                             ISBN, condition, notes, seller));
-                    ArrayList<ImageView> pictures = new ArrayList<>(Arrays.asList(bookOne, bookTwo, bookThree, bookFour));
                     setViewData(infoView, viewDataList);
                     setUpViewingDialog(infoView);
                 }catch (JSONException JSE){
@@ -624,10 +636,35 @@ public class Explore extends Fragment {
 
     }
 
-    public void setViewPictures(ArrayList<ImageView> pictures){
-        for (int i = 0; i < pictures.size(); i++){
-            
-        }
+    public void setViewPictures(final ImageView view, String userId, String title, final String number){
+            imageRef = storageRef.child(userId).child(title).child("image"+ number);
+            new Thread() {
+                @Override
+                public void run() {
+                    imageRef.getBytes(Constants.ONE_MEGABYTE).addOnCompleteListener(new OnCompleteListener<byte[]>() {
+                        @Override
+                        public void onComplete(@NonNull Task<byte[]> task) {
+                            Log.e("completion", "SUCCCESS!");
+
+                            imageRef.getBytes(Long.MAX_VALUE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                                @Override
+                                public void onSuccess(byte[] bytes) {
+                                    Log.e("bytes", "SUCCESS");
+                                    Log.e("image", number);
+                                    Bitmap displayBitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                                    view.setImageBitmap(displayBitmap);
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception exception) {
+                                    // Handle any errors
+                                    Log.e("getting image", "failed");
+                                }
+                            });
+                        }
+                    });
+                }
+            }.start();
     }
 }
 

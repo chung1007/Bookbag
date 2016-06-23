@@ -236,7 +236,7 @@ public class Sell extends Fragment {
             imageView.buildDrawingCache();
             final Bitmap bitmap = imageView.getDrawingCache();
             final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
             byte[] data = baos.toByteArray();
             StorageReference imageKey = MyApplication.storageRef.child(HomePage.userId);
             UploadTask uploadTask = imageKey.child(className.getText().toString()).child("image" + Integer.toString(photoCounter)).putBytes(data);
