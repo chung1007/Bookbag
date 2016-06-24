@@ -5,6 +5,8 @@ package com.example.sam.bookbag;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -62,7 +64,6 @@ import java.util.Map;
 public class Explore extends Fragment {
     EditText searchBar;
     StorageReference storageRef;
-    StorageReference imageRef;
     ExploreListAdapter adapter;
     Spinner sortList;
     DatabaseReference ref;
@@ -72,6 +73,7 @@ public class Explore extends Fragment {
     ArrayList<String> checkFirstListening;
     ArrayList<String> checkPostListening;
     ArrayList<String> userIdlist;
+    ArrayList<Bitmap> displayBM;
     List<JSONObject> dataPoints;
     JSONObject postData;
     JSONObject eachPostData;
@@ -108,6 +110,7 @@ public class Explore extends Fragment {
         lastOfPostKey = new ArrayList<>();
         checkFirstListening = new ArrayList<>();
         checkPostListening = new ArrayList<>();
+        displayBM = new ArrayList<>();
         storageRef = MyApplication.storageRef;
         ref = MyApplication.ref;
         setSearchBarListener();
@@ -570,18 +573,14 @@ public class Explore extends Fragment {
                 infoView = View.inflate(getContext(), R.layout.bookinfopage, null);
                 TextView Id = (TextView) view.findViewById(R.id.userId);
                 TextView boxTitle = (TextView) view.findViewById(R.id.exploreBoxTitle);
-                ImageView bookOne = (ImageView)infoView.findViewById(R.id.imageDisplayOne);
-                ImageView bookTwo = (ImageView)infoView.findViewById(R.id.imageDisplayTwo);
-                ImageView bookThree = (ImageView)infoView.findViewById(R.id.imageDisplayThree);
-                ImageView bookFour = (ImageView)infoView.findViewById(R.id.imageDisplayFour);
                 String sellersId = Id.getText().toString();
                 String bookTitle = boxTitle.getText().toString();
                 String fileName = sellersId+"_"+(bookTitle.replace(" ", ""));
                 String content = readFile("/sdcard/Bookbag_explore/"+fileName);
-                setViewPictures(bookOne, sellersId, bookTitle, "1");
-                setViewPictures(bookTwo, sellersId, bookTitle, "2");
-                setViewPictures(bookThree, sellersId, bookTitle, "3");
-                //setViewPictures(bookFour, sellersId, bookTitle, "2");
+                for(int j = 0; j < 4; j++){
+                    setViewPictures(sellersId, bookTitle, Integer.toString(j+1));
+                    Log.e("j", j + "");
+                }
                 try {
                     JSONObject fileData = new JSONObject(content);
                     Iterator<String> keys = fileData.keys();
@@ -636,35 +635,44 @@ public class Explore extends Fragment {
 
     }
 
-    public void setViewPictures(final ImageView view, String userId, String title, final String number){
-            imageRef = storageRef.child(userId).child(title).child("image"+ number);
-            new Thread() {
-                @Override
-                public void run() {
-                    imageRef.getBytes(Constants.ONE_MEGABYTE).addOnCompleteListener(new OnCompleteListener<byte[]>() {
-                        @Override
-                        public void onComplete(@NonNull Task<byte[]> task) {
-                            Log.e("completion", "SUCCCESS!");
+    public void setViewPictures(String userId, String title, String number){
 
-                            imageRef.getBytes(Long.MAX_VALUE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                                @Override
-                                public void onSuccess(byte[] bytes) {
-                                    Log.e("bytes", "SUCCESS");
-                                    Log.e("image", number);
-                                    Bitmap displayBitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                                    view.setImageBitmap(displayBitmap);
-                                }
-                            }).addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception exception) {
-                                    // Handle any errors
-                                    Log.e("getting image", "failed");
-                                }
-                            });
+            final StorageReference imageRef = storageRef.child(userId).child(title).child("image" + number);
+            imageRef.getBytes(Constants.ONE_MEGABYTE).addOnCompleteListener(new OnCompleteListener<byte[]>() {
+                @Override
+                public void onComplete(@NonNull Task<byte[]> task) {
+                    Log.e("completion", "SUCCCESS!");
+
+                    imageRef.getBytes(Long.MAX_VALUE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                        @Override
+                        public void onSuccess(byte[] bytes) {
+                            Log.e("bytes", "SUCCESS");
+                            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                            displayBM.add(bitmap);
+                            Log.e("sizeafteradd", displayBM.size() + "");
+                            Log.e("bitmap", bitmap.toString());
+                            if (displayBM.size() == 4) {
+                                ImageView bookOne = (ImageView) infoView.findViewById(R.id.imageDisplayOne);
+                                ImageView bookTwo = (ImageView) infoView.findViewById(R.id.imageDisplayTwo);
+                                ImageView bookThree = (ImageView) infoView.findViewById(R.id.imageDisplayThree);
+                                ImageView bookFour = (ImageView) infoView.findViewById(R.id.imageDisplayFour);
+                                bookOne.setImageBitmap(displayBM.get(0));
+                                bookTwo.setImageBitmap(displayBM.get(1));
+                                bookThree.setImageBitmap(displayBM.get(2));
+                                bookFour.setImageBitmap(displayBM.get(3));
+                                displayBM.clear();
+                            }
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            // Handle any errors
+                            Log.e("getting image", "failed");
                         }
                     });
                 }
-            }.start();
+            });
     }
+
 }
 
