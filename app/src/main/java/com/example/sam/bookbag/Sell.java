@@ -38,6 +38,8 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -180,15 +182,15 @@ public class Sell extends Fragment {
                 if (!correctInfo) {
                     //Do nothing
                 } else {
-                    for (int i = 0; i < photoList.length; i++){
+                    for (int i = 0; i < photoList.length; i++) {
                         sendTextBookPhoto(photoList[i]);
                     }
                     sendPostData();
                     toastMaker("Posted!");
                     clearPostData();
                 }
-                }
-            });
+            }
+        });
         }
     public void setEdittextId(){
         className = (EditText)view.findViewById(R.id.className);
@@ -284,10 +286,11 @@ public class Sell extends Fragment {
     }
     public String BitMapToString(Bitmap bitmap){
         ByteArrayOutputStream baos=new  ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG,100, baos);
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
         byte [] b=baos.toByteArray();
         String temp=Base64.encodeToString(b, Base64.DEFAULT);
         return temp;
     }
+
 }
 

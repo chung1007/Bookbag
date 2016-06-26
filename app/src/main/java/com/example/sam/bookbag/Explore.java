@@ -26,6 +26,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.login.widget.ProfilePictureView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -577,6 +578,9 @@ public class Explore extends Fragment {
                 String bookTitle = boxTitle.getText().toString();
                 String fileName = sellersId+"_"+(bookTitle.replace(" ", ""));
                 String content = readFile("/sdcard/Bookbag_explore/"+fileName);
+                ProfilePictureView profilePictureView;
+                profilePictureView = (ProfilePictureView)infoView.findViewById(R.id.sellerImage);
+                profilePictureView.setProfileId(sellersId);
                 for(int j = 0; j < 4; j++){
                     setViewPictures(sellersId, bookTitle, Integer.toString(j+1));
                     Log.e("j", j + "");
