@@ -88,7 +88,8 @@ public class Explore extends Fragment {
     String author;
     String notes;
     String seller;
-    File dir;
+    File exploreDir;
+    File wishDir;
     int counter;
     PrintWriter file;
 
@@ -103,7 +104,8 @@ public class Explore extends Fragment {
         View view = inflater.inflate(R.layout.explore, container, false);
         exploreList = (ListView) view.findViewById(R.id.exploreBoxList);
         checkPostFile();
-        dir = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/Bookbag_explore");
+        exploreDir = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/Bookbag_explore");
+        wishDir = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/Bookbag_wishList");
         searchBar = (EditText) view.findViewById(R.id.searchBar);
         sortList = (Spinner) view.findViewById(R.id.exploreSpinner);
         keysAndValues = new HashMap<>();
@@ -260,8 +262,8 @@ public class Explore extends Fragment {
                     }
                     try {
                         file = null;
-                        dir.mkdir();
-                        file = new PrintWriter(new FileOutputStream(new File(dir, (userId + "_" + (postKey.replace(" ", ""))))));
+                        exploreDir.mkdir();
+                        file = new PrintWriter(new FileOutputStream(new File(exploreDir, (userId + "_" + (postKey.replace(" ", ""))))));
                         file.println(postData);
                         file.close();
                     } catch (IOException IOE) {
@@ -574,6 +576,7 @@ public class Explore extends Fragment {
                 infoView = View.inflate(getContext(), R.layout.bookinfopage, null);
                 TextView Id = (TextView) view.findViewById(R.id.userId);
                 TextView boxTitle = (TextView) view.findViewById(R.id.exploreBoxTitle);
+                ImageView wishListAdd = (ImageView)infoView.findViewById(R.id.addToWishList);
                 String sellersId = Id.getText().toString();
                 String bookTitle = boxTitle.getText().toString();
                 String fileName = sellersId+"_"+(bookTitle.replace(" ", ""));
@@ -601,6 +604,7 @@ public class Explore extends Fragment {
                             ISBN, condition, notes, seller));
                     setViewData(infoView, viewDataList);
                     setUpViewingDialog(infoView);
+                    setWishListAddClicked(wishListAdd, content, sellersId, bookTitle);
                 }catch (JSONException JSE){
                     Log.e("item click listener", "json failed!");
                 }
@@ -637,6 +641,24 @@ public class Explore extends Fragment {
                     }
                 }).show();
 
+    }
+
+    public void setWishListAddClicked(ImageView view, final String data, final String userId, final String postKey){
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    file = null;
+                    wishDir.mkdir();
+                    file = new PrintWriter(new FileOutputStream(new File(wishDir, (userId + "_" + (postKey.replace(" ", ""))))));
+                    file.println(data);
+                    file.close();
+                    toastMaker("Added to WishList!");
+                } catch (IOException IOE) {
+                    Log.e("file", "NOT FOUND");
+                }
+            }
+        });
     }
 
     public void setViewPictures(String userId, String title, String number){

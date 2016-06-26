@@ -13,7 +13,8 @@
         android:paddingTop="10dp"
         android:paddingRight="10dp"
         android:src="@drawable/addtowishlist"
-        android:layout_gravity="top|right"/>
+        android:layout_gravity="top|right"
+        android:clickable="true"/>
 
     <ScrollView
         android:layout_width="match_parent"
