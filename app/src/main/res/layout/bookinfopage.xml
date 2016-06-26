@@ -4,6 +4,19 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/alreadyAdded"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp"
+        android:paddingLeft="10dp"
+        android:layout_alignParentLeft="true"
+        android:src="@drawable/star"/>
 
     <ImageView
         android:id="@+id/addToWishList"
@@ -13,8 +26,10 @@
         android:paddingTop="10dp"
         android:paddingRight="10dp"
         android:src="@drawable/addtowishlist"
-        android:layout_gravity="top|right"
+        android:layout_alignParentRight="true"
         android:clickable="true"/>
+
+    </RelativeLayout>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -29,7 +44,7 @@
         android:layout_width="147dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:paddingTop="10dp"
+        android:paddingTop="25dp"
         android:scrollbarSize="3dp"
         android:scrollbarStyle="insideOverlay">
 

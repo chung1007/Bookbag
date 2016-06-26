@@ -131,6 +131,7 @@ public class Explore extends Fragment {
     }
 
     public void setAddedPostsListener(ArrayList<String> previousKeys){
+        Log.e("previousKeys", previousKeys.toString());
         for(int i =0; i < previousKeys.size(); i++){
             afterUserIdAdded(previousKeys.get(i));
             Log.e("changes to prev keys", "listening");
@@ -167,21 +168,19 @@ public class Explore extends Fragment {
         ref.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                long childCount = dataSnapshot.getChildrenCount();
                 lastOfFirstKey.clear();
                 String firstKey = dataSnapshot.getKey();
                 lastOfFirstKey.add(firstKey);
-                if (lastOfFirstKey.size()==childCount){
-                    setAddedPostsListener(lastOfFirstKey);
-                }
+                setAddedPostsListener(lastOfFirstKey);
                 Log.e("lastOfFirstKeyList", lastOfFirstKey.toString());
-                if(!checkFirstListening.isEmpty()) {
+                if (!checkFirstListening.isEmpty()) {
                     checkFirstListening.clear();
-                Log.e("lastFirstKey", lastOfFirstKey.get((lastOfFirstKey.size() - 1)));
-                Log.e("lastFirstKeySize", lastOfFirstKey.size() + "");
-                afterUserIdAdded(lastOfFirstKey.get(lastOfFirstKey.size() - 1));
+                    Log.e("lastFirstKey", lastOfFirstKey.get((lastOfFirstKey.size() - 1)));
+                    Log.e("lastFirstKeySize", lastOfFirstKey.size() + "");
+                    afterUserIdAdded(lastOfFirstKey.get(lastOfFirstKey.size() - 1));
                 }
             }
+
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {}
             @Override
@@ -189,7 +188,8 @@ public class Explore extends Fragment {
             @Override
             public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
             @Override
-            public void onCancelled(DatabaseError databaseError) {}
+            public void onCancelled(DatabaseError databaseError) {
+            }
         });
     }
 
@@ -209,14 +209,22 @@ public class Explore extends Fragment {
                     getPostData(firstKey, lastOfPostKey.get(lastOfPostKey.size() - 1));
                 }
             }
+
             @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {}
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            }
+
             @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {}
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+            }
+
             @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            }
+
             @Override
-            public void onCancelled(DatabaseError databaseError) {}
+            public void onCancelled(DatabaseError databaseError) {
+            }
         });
     }
 
@@ -589,6 +597,7 @@ public class Explore extends Fragment {
                     String seller = jsonToRead.getString("seller");
                     ArrayList<String> viewDataList = new ArrayList<>(Arrays.asList(price, bookTitle, edition, author,
                             ISBN, condition, notes, seller));
+                    checkifAlreadyAdded(infoView, sellersId, bookTitle);
                     setViewData(infoView, viewDataList);
                     setUpViewingDialog(infoView);
                     setWishListAddClicked(wishListAdd, content, sellersId, bookTitle);
@@ -685,6 +694,17 @@ public class Explore extends Fragment {
                     });
                 }
             });
+        }
+    public void checkifAlreadyAdded(View view, String sellersId, String bookTitle){
+        ImageView star = (ImageView)view.findViewById(R.id.alreadyAdded);
+        String fileName = sellersId+"_"+(bookTitle.replace(" ", ""));
+        String content = readFile("/sdcard/Bookbag_wishList/"+fileName);
+        if(content!=null){
+            Log.e("item", "inWishList!");
+        }else{
+            star.setImageResource(0);
+        }
+
     }
 
 }
