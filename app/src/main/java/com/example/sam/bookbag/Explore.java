@@ -130,6 +130,13 @@ public class Explore extends Fragment {
         Log.e("onThisScreen", "onCreate");
     }
 
+    public void setAddedPostsListener(ArrayList<String> previousKeys){
+        for(int i =0; i < previousKeys.size(); i++){
+            afterUserIdAdded(previousKeys.get(i));
+            Log.e("changes to prev keys", "listening");
+        }
+    }
+
     public void checkIfFirstListeningIsDone() {
         ref.addValueEventListener(new ValueEventListener() {
             @Override
@@ -160,33 +167,29 @@ public class Explore extends Fragment {
         ref.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                long childCount = dataSnapshot.getChildrenCount();
                 lastOfFirstKey.clear();
                 String firstKey = dataSnapshot.getKey();
                 lastOfFirstKey.add(firstKey);
+                if (lastOfFirstKey.size()==childCount){
+                    setAddedPostsListener(lastOfFirstKey);
+                }
                 Log.e("lastOfFirstKeyList", lastOfFirstKey.toString());
-                //if (!checkFirstListening.isEmpty()) {
-                checkFirstListening.clear();
+                if(!checkFirstListening.isEmpty()) {
+                    checkFirstListening.clear();
                 Log.e("lastFirstKey", lastOfFirstKey.get((lastOfFirstKey.size() - 1)));
                 Log.e("lastFirstKeySize", lastOfFirstKey.size() + "");
                 afterUserIdAdded(lastOfFirstKey.get(lastOfFirstKey.size() - 1));
-                // }
+                }
             }
-
             @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-            }
-
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {}
             @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-            }
-
+            public void onChildRemoved(DataSnapshot dataSnapshot) {}
             @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-            }
-
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
             @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
+            public void onCancelled(DatabaseError databaseError) {}
         });
     }
 
@@ -206,22 +209,14 @@ public class Explore extends Fragment {
                     getPostData(firstKey, lastOfPostKey.get(lastOfPostKey.size() - 1));
                 }
             }
-
             @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-            }
-
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {}
             @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-            }
-
+            public void onChildRemoved(DataSnapshot dataSnapshot) {}
             @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-            }
-
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
             @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
+            public void onCancelled(DatabaseError databaseError) {}
         });
     }
 
@@ -274,22 +269,14 @@ public class Explore extends Fragment {
                     //keep adding on to keys and values list;
                 }
             }
-
             @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-            }
-
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {}
             @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-            }
-
+            public void onChildRemoved(DataSnapshot dataSnapshot) {}
             @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-            }
-
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
             @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
+            public void onCancelled(DatabaseError databaseError) {}
         });
     }
 
