@@ -2,26 +2,18 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
-    
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-        <ImageView
-            android:id="@+id/addWantItem"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:src="@drawable/addwantitem"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true"
-            android:paddingTop="5dp"
-            android:paddingRight="5dp"/>
-    </RelativeLayout>
 
+<RelativeLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:paddingTop="30dp">
+        android:id="@+id/wishButtons"
+        android:paddingTop="6dp"
+        android:layout_toLeftOf="@+id/addWantItem"
+        android:paddingRight="15dp">
 
         <Button
             android:id="@+id/button1"
@@ -40,6 +32,21 @@
             android:textColor="#000000"/>
 
     </RelativeLayout>
+
+
+        <ImageView
+            android:id="@+id/addWantItem"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/addwantitem"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:paddingTop="3dp"
+            android:paddingRight="5dp"/>
+
+
+</RelativeLayout>
+
 
     <ListView
         android:paddingTop="20dp"
