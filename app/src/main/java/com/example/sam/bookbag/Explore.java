@@ -2,15 +2,17 @@ package com.example.sam.bookbag;
 
 
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.NotificationCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -25,7 +27,6 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.facebook.login.widget.ProfilePictureView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -66,6 +67,7 @@ public class Explore extends Fragment {
     EditText searchBar;
     StorageReference storageRef;
     ExploreListAdapter adapter;
+    NotificationManager mNotificationManager;
     Spinner sortList;
     DatabaseReference ref;
     Map<String, String> keysAndValues;
@@ -182,11 +184,17 @@ public class Explore extends Fragment {
             }
 
             @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {}
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            }
+
             @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {}
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+            }
+
             @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            }
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
             }
@@ -267,6 +275,8 @@ public class Explore extends Fragment {
                         file = null;
                         exploreDir.mkdir();
                         file = new PrintWriter(new FileOutputStream(new File(exploreDir, (userId + "_" + (postKey.replace(" ", ""))))));
+                        String fileName = postKey.replace(" ", "_")+"_"+ISBN;
+                        checkIfWishExists(fileName, postKey);
                         file.println(postData);
                         file.close();
                     } catch (IOException IOE) {
@@ -705,6 +715,22 @@ public class Explore extends Fragment {
             star.setImageResource(0);
         }
 
+    }
+    public void checkIfWishExists(String fileName, String bookTitle){
+        String content = readFile("/sdcard/Bookbag_wishList/wishes/"+fileName);
+        if(content!=null){
+            Log.e("item", "inWishList!");
+            mNotificationManager =
+                    (NotificationManager)getContext(). getSystemService(Context.NOTIFICATION_SERVICE);
+            int notifyID = 1;
+            android.support.v4.app.NotificationCompat.Builder mNotifyBuilder = new NotificationCompat.Builder(getContext())
+                    .setContentTitle("Your Wish Book!")
+                    .setContentText(bookTitle + " is available.")
+                    .setSmallIcon(R.drawable.bookbagicon);
+            mNotificationManager.notify(
+                    notifyID,
+                    mNotifyBuilder.build());
+        }
     }
 
 }
