@@ -105,7 +105,7 @@ public class Explore extends Fragment {
         exploreList = (ListView) view.findViewById(R.id.exploreBoxList);
         checkPostFile();
         exploreDir = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/Bookbag_explore");
-        wishDir = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/Bookbag_wishList");
+        wishDir = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/Bookbag_wishList/existing");
         searchBar = (EditText) view.findViewById(R.id.searchBar);
         sortList = (Spinner) view.findViewById(R.id.exploreSpinner);
         keysAndValues = new HashMap<>();
@@ -698,7 +698,7 @@ public class Explore extends Fragment {
     public void checkifAlreadyAdded(View view, String sellersId, String bookTitle){
         ImageView star = (ImageView)view.findViewById(R.id.alreadyAdded);
         String fileName = sellersId+"_"+(bookTitle.replace(" ", ""));
-        String content = readFile("/sdcard/Bookbag_wishList/"+fileName);
+        String content = readFile("/sdcard/Bookbag_wishList/existing/"+fileName);
         if(content!=null){
             Log.e("item", "inWishList!");
         }else{
