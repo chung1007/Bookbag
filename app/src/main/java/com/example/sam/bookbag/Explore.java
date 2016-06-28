@@ -276,7 +276,7 @@ public class Explore extends Fragment {
                     }
                     try {
                         exploreDir.mkdir();
-                        String fileName = postKey.replace(" ", "_")+"_"+ISBN;
+                        String fileName = postKey.replace(" ", "_") + "_" + ISBN;
                         file = null;
                         file = new PrintWriter(new FileOutputStream(new File(exploreDir, (userId + "_" + (postKey.replace(" ", ""))))));
                         file.println(postData);
@@ -290,14 +290,22 @@ public class Explore extends Fragment {
                     //keep adding on to keys and values list;
                 }
             }
+
             @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {}
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            }
+
             @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {}
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+            }
+
             @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            }
+
             @Override
-            public void onCancelled(DatabaseError databaseError) {}
+            public void onCancelled(DatabaseError databaseError) {
+            }
         });
     }
 
@@ -656,6 +664,10 @@ public class Explore extends Fragment {
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+            if(view.getTag()!=null){
+                toastMaker("Already in Wist List!");
+                Log.e("item", "already in list!");
+            }else {
                 try {
                     file = null;
                     wishDir.mkdir();
@@ -666,6 +678,7 @@ public class Explore extends Fragment {
                 } catch (IOException IOE) {
                     Log.e("file", "NOT FOUND");
                 }
+            }
             }
         });
     }
@@ -714,8 +727,10 @@ public class Explore extends Fragment {
         String content = readFile("/sdcard/Bookbag_wishList/existing/"+fileName);
         if(content!=null){
             Log.e("item", "inWishList!");
+            addIcon.setImageResource(R.drawable.addedicon);
+            addIcon.setTag(R.drawable.addedicon);
         }else{
-            addIcon.setBackgroundColor(R.color.tabSelected);
+            //Do nothing
         }
 
     }
@@ -735,11 +750,20 @@ public class Explore extends Fragment {
                     mNotifyBuilder.build());
             try {
                 Log.e("wishExistsFile", "start");
-                wishExistDir.mkdir();
-                anotherFile = null;
-                anotherFile =  new PrintWriter(new FileOutputStream(new File(wishExistDir, (bookTitle + "_" + (ISBN)))));
-                anotherFile.println("");
-                anotherFile.close();
+                try {
+                    JSONObject existingWishData = new JSONObject();
+                    existingWishData.put("bookName", bookTitle);
+                    existingWishData.put("bookISBN", ISBN);
+                    wishExistDir.mkdir();
+                    anotherFile = null;
+                    anotherFile =  new PrintWriter(new FileOutputStream(new File(wishExistDir, (bookTitle + "_" + (ISBN)))));
+                    anotherFile.println(existingWishData);
+                    anotherFile.close();
+                }catch (JSONException JSE){
+                    Log.e("existing", "Failed");
+                }
+                File file = new File("sdcard/Bookbag_wishList/wishes/"+bookTitle+"_"+ISBN);
+                file.delete();
                 Log.e("wishExistsFile", "end");
             }catch (IOException IOE){
                 Log.e("wishExists", "failed");

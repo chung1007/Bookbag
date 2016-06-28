@@ -7,4 +7,5 @@
     <color name="tabSelected">#FF443B</color>
     <color name="appColor">#34CAD8</color>
     <color name="infoColor">#000000</color>
+    <color name="capsuleSelected">#757474</color>
 </resources>

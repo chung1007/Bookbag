@@ -12,16 +12,18 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:id="@+id/wishButtons"
-        android:paddingTop="8dp"
+        android:paddingTop="5dp"
+        android:paddingBottom="3dp"
         android:layout_toLeftOf="@+id/addWantItem"
-        android:paddingRight="20dp">
+        android:paddingRight="12dp">
 
         <Button
             android:id="@+id/button1"
             android:layout_width="110dp"
             android:layout_height="30dp"
             android:background="@drawable/wishlistbutton1"
-            android:text="Available"
+            android:text="@string/button1"
+            android:textAllCaps="false"
             android:textColor="#ffffff"/>
         <Button
             android:id="@+id/button2"
@@ -29,7 +31,8 @@
             android:layout_height="30dp"
             android:background="@drawable/wishlistbutton2"
             android:layout_toRightOf="@id/button1"
-            android:text="Your Wishes"
+            android:text="@string/button2"
+            android:textAllCaps="false"
             android:textColor="#ffffff"/>
 
     </RelativeLayout>
@@ -37,12 +40,21 @@
 
         <ImageView
             android:id="@+id/addWantItem"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:src="@drawable/addwantitem"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true"
-            android:paddingRight="5dp"/>
+            android:paddingRight="12dp"
+            android:layout_alignBottom="@+id/wishButtons"
+            android:layout_alignParentEnd="true" />
+    <ImageView
+        android:id="@+id/seeWishItems"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:src="@drawable/unavailable"
+        android:paddingLeft="15dp"
+        android:layout_alignBottom="@+id/wishButtons"
+        android:layout_alignParentLeft="true"
+        android:clickable="true"/>
 
 
 </RelativeLayout>

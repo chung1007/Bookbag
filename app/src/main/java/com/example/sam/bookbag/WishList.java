@@ -60,6 +60,7 @@ public class WishList extends Fragment {
     Button button1;
     Button button2;
     ImageView addWantItem;
+    ImageView seeWishItems;
     File wishBookDir;
     PrintWriter file;
     View dialogDisplay;
@@ -75,6 +76,7 @@ public class WishList extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.wishlist, container, false);
         wishList = (ListView)view.findViewById(R.id.userWishList);
+        seeWishItems = (ImageView)view.findViewById(R.id.seeWishItems);
         button2 = (Button)view.findViewById(R.id.button2);
         button1 = (Button)view.findViewById(R.id.button1);
         displayBM = new ArrayList<>();
@@ -83,9 +85,10 @@ public class WishList extends Fragment {
         wishBookDir = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/Bookbag_wishList/wishes");
         dialogDisplay = View.inflate(getContext(), R.layout.suggestwantitem, null);
         checkPostFile();
-        setBookMatchListener();
+        setWishesListener();
         listenForListItemClicked();
         setPlusButtonListener(dialogDisplay);
+        setUnavailableItemListener();
         return view;
     }
 
@@ -117,9 +120,9 @@ public class WishList extends Fragment {
         }
 
     }
-    public void getFiles() {
+    public void getFiles(String path, String otherPath) {
         ArrayList<String> postFiles = new ArrayList<>();
-        File file = new File("/sdcard/Bookbag_wishList/wishExist");
+        File file = new File("/sdcard/Bookbag_wishList/" + path);
         File list[] = file.listFiles();
         try {
             for (int i = 0; i < list.length; i++) {
@@ -132,14 +135,14 @@ public class WishList extends Fragment {
         if (!postFiles.isEmpty()) {
             Log.e("post", "there has been previous posts!");
             Log.e("postFiles", postFiles.toString());
-            wishNames(postFiles);
+            wishNames(postFiles, otherPath);
         }
 
     }
-    public void wishNames(ArrayList<String> postNames) {
+    public void wishNames(ArrayList<String> postNames, String path) {
         wishListWanted = new ArrayList<>();
         for (int i = 0; i < postNames.size(); i++) {
-            String fileName =  "sdcard/Bookbag_wishList/wishes/" + postNames.get(i);
+            String fileName =  "sdcard/Bookbag_wishList/" + path + "/" + postNames.get(i);
             String content = readFile(fileName);
             try {
                 JSONObject postDataRead = new JSONObject(content);
@@ -170,7 +173,6 @@ public class WishList extends Fragment {
             Log.e("File Error", "Failed To Read From File");
             return null;
         }
-        Log.e("dataOfFile", dataOfFile);
         return dataOfFile;
     }
 
@@ -196,7 +198,7 @@ public class WishList extends Fragment {
     public void displayPostBoxes(List<JSONObject> datapoints, ArrayList<String> userIds) {
         adapter = new ExploreListAdapter(getContext(), datapoints, userIds);
         if(datapoints.size()>0){
-            button2.setTextColor(Color.RED);
+            button2.setTextColor(R.color.capsuleSelected);
             button1.setTextColor(Color.WHITE);
             wishList.setAdapter(null);
             wishList.setAdapter(adapter);
@@ -205,7 +207,8 @@ public class WishList extends Fragment {
         button2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                button2.setTextColor(Color.RED);
+                checkPostFile();
+                button2.setTextColor(R.color.capsuleSelected);
                 button1.setTextColor(Color.WHITE);
                 wishList.setAdapter(null);
                 wishList.setAdapter(adapter);
@@ -222,15 +225,25 @@ public class WishList extends Fragment {
 
         Log.e("boxes", "made");
     }
-    public void setBookMatchListener(){
+    public void setWishesListener(){
         button1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getFiles();
-                button1.setTextColor(Color.RED);
+                wishList.setAdapter(null);
+                getFiles("wishExist", "wishExist");
+                button1.setTextColor(R.color.capsuleSelected);
                 button2.setTextColor(Color.WHITE);
             }
         });
+    }
+    public void setUnavailableItemListener(){
+        seeWishItems.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getFiles("wishes", "wishes");
+            }
+        });
+
     }
     public void toastMaker(String message) {
         Toast toast = Toast.makeText(getContext(), message, Toast.LENGTH_SHORT);
@@ -245,7 +258,7 @@ public class WishList extends Fragment {
                 builder.setTitle("");
                 if(dialogView.getParent()!=null) {
                     ((ViewGroup) dialogView.getParent()).removeView(dialogView);
-                }// <- f
+                }
                 builder.setView(dialogView)
                         .setCancelable(false)
                         .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
