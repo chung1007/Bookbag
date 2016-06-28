@@ -13,7 +13,7 @@
         android:id="@+id/wishButtons"
         android:paddingTop="6dp"
         android:layout_toLeftOf="@+id/addWantItem"
-        android:paddingRight="15dp">
+        android:paddingRight="20dp">
 
         <Button
             android:id="@+id/button1"
@@ -36,8 +36,8 @@
 
         <ImageView
             android:id="@+id/addWantItem"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
             android:src="@drawable/addwantitem"
             android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"

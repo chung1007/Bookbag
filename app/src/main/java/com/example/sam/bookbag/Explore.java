@@ -92,8 +92,10 @@ public class Explore extends Fragment {
     String seller;
     File exploreDir;
     File wishDir;
+    File wishExistDir;
     int counter;
     PrintWriter file;
+    PrintWriter anotherFile;
 
     public Explore() {
 
@@ -108,6 +110,7 @@ public class Explore extends Fragment {
         checkPostFile();
         exploreDir = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/Bookbag_explore");
         wishDir = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/Bookbag_wishList/existing");
+        wishExistDir = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/Bookbag_wishList/wishExist");
         searchBar = (EditText) view.findViewById(R.id.searchBar);
         sortList = (Spinner) view.findViewById(R.id.exploreSpinner);
         keysAndValues = new HashMap<>();
@@ -272,13 +275,13 @@ public class Explore extends Fragment {
                         Log.e("JSON", "FAILED");
                     }
                     try {
-                        file = null;
                         exploreDir.mkdir();
-                        file = new PrintWriter(new FileOutputStream(new File(exploreDir, (userId + "_" + (postKey.replace(" ", ""))))));
                         String fileName = postKey.replace(" ", "_")+"_"+ISBN;
-                        checkIfWishExists(fileName, postKey);
+                        file = null;
+                        file = new PrintWriter(new FileOutputStream(new File(exploreDir, (userId + "_" + (postKey.replace(" ", ""))))));
                         file.println(postData);
                         file.close();
+                        checkIfWishExists(fileName, postKey, ISBN);
                     } catch (IOException IOE) {
                         Log.e("file", "NOT FOUND");
                     }
@@ -716,7 +719,7 @@ public class Explore extends Fragment {
         }
 
     }
-    public void checkIfWishExists(String fileName, String bookTitle){
+    public void checkIfWishExists(String fileName, String bookTitle, String ISBN){
         String content = readFile("/sdcard/Bookbag_wishList/wishes/"+fileName);
         if(content!=null){
             Log.e("item", "inWishList!");
@@ -730,6 +733,17 @@ public class Explore extends Fragment {
             mNotificationManager.notify(
                     notifyID,
                     mNotifyBuilder.build());
+            try {
+                Log.e("wishExistsFile", "start");
+                wishExistDir.mkdir();
+                anotherFile = null;
+                anotherFile =  new PrintWriter(new FileOutputStream(new File(wishExistDir, (bookTitle + "_" + (ISBN)))));
+                anotherFile.println("");
+                anotherFile.close();
+                Log.e("wishExistsFile", "end");
+            }catch (IOException IOE){
+                Log.e("wishExists", "failed");
+            }
         }
     }
 

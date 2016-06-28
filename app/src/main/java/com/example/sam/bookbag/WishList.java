@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.DialogPreference;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -118,7 +119,7 @@ public class WishList extends Fragment {
     }
     public void getFiles() {
         ArrayList<String> postFiles = new ArrayList<>();
-        File file = new File("/sdcard/Bookbag_wishList/wishes");
+        File file = new File("/sdcard/Bookbag_wishList/wishExist");
         File list[] = file.listFiles();
         try {
             for (int i = 0; i < list.length; i++) {
@@ -130,7 +131,7 @@ public class WishList extends Fragment {
         Log.e("files", postFiles.toString());
         if (!postFiles.isEmpty()) {
             Log.e("post", "there has been previous posts!");
-            Log.e("userId's", userIdlist.toString());
+            Log.e("postFiles", postFiles.toString());
             wishNames(postFiles);
         }
 
@@ -138,7 +139,7 @@ public class WishList extends Fragment {
     public void wishNames(ArrayList<String> postNames) {
         wishListWanted = new ArrayList<>();
         for (int i = 0; i < postNames.size(); i++) {
-            String fileName = "sdcard/Bookbag_wishList/wishes/" + postNames.get(i);
+            String fileName =  "sdcard/Bookbag_wishList/wishes/" + postNames.get(i);
             String content = readFile(fileName);
             try {
                 JSONObject postDataRead = new JSONObject(content);
@@ -169,6 +170,7 @@ public class WishList extends Fragment {
             Log.e("File Error", "Failed To Read From File");
             return null;
         }
+        Log.e("dataOfFile", dataOfFile);
         return dataOfFile;
     }
 
@@ -193,6 +195,13 @@ public class WishList extends Fragment {
 
     public void displayPostBoxes(List<JSONObject> datapoints, ArrayList<String> userIds) {
         adapter = new ExploreListAdapter(getContext(), datapoints, userIds);
+        if(datapoints.size()>0){
+            button2.setTextColor(R.color.tabSelected);
+            button1.setTextColor(Color.BLACK);
+            wishList.setAdapter(null);
+            wishList.setAdapter(adapter);
+            adapter.notifyDataSetChanged();
+        }
         button2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

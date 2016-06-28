@@ -63,4 +63,5 @@ public class WishListAdapter extends BaseAdapter {
         }
         return convertView;
     }
+
 }
