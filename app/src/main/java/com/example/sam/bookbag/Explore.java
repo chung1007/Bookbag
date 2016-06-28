@@ -709,13 +709,13 @@ public class Explore extends Fragment {
             });
         }
     public void checkifAlreadyAdded(View view, String sellersId, String bookTitle){
-        ImageView star = (ImageView)view.findViewById(R.id.alreadyAdded);
+        ImageView addIcon = (ImageView)view.findViewById(R.id.addToWishList);
         String fileName = sellersId+"_"+(bookTitle.replace(" ", ""));
         String content = readFile("/sdcard/Bookbag_wishList/existing/"+fileName);
         if(content!=null){
             Log.e("item", "inWishList!");
         }else{
-            star.setImageResource(0);
+            addIcon.setBackgroundColor(R.color.tabSelected);
         }
 
     }

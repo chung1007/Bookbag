@@ -5,15 +5,15 @@
 <RelativeLayout
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:paddingLeft="10dp"
+    android:paddingLeft="20dp"
     android:paddingTop="10dp">
     <TextView
         android:id="@+id/wantedBookName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Textbook Name: "
+        android:text="Title: "
         android:textColor="#000000"
-        android:textSize="20sp"
+        android:textSize="15sp"
         android:textStyle="bold"/>
 
     <EditText
@@ -21,7 +21,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingLeft="10dp"
-        android:textSize="20dp"
+        android:textSize="15dp"
         android:hint="Enter Name"
         android:paddingRight="10dp"
         android:layout_toRightOf="@id/wantedBookName"
@@ -32,14 +32,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingTop="20dp"
-        android:paddingLeft="10dp">
+        android:paddingLeft="20dp">
         <TextView
             android:id="@+id/wantedBookISBN"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Textbook ISBN: "
+            android:text="ISBN: "
             android:textColor="#000000"
-            android:textSize="20sp"
+            android:textSize="15sp"
             android:textStyle="bold"/>
 
         <EditText
@@ -47,7 +47,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingLeft="10dp"
-            android:textSize="20dp"
+            android:textSize="15dp"
             android:hint="Enter ISBN"
             android:layout_toRightOf="@id/wantedBookISBN"
             android:background="@android:color/transparent"/>

@@ -5,31 +5,32 @@
 
 <RelativeLayout
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:paddingTop="20dp">
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:id="@+id/wishButtons"
-        android:paddingTop="6dp"
+        android:paddingTop="8dp"
         android:layout_toLeftOf="@+id/addWantItem"
         android:paddingRight="20dp">
 
         <Button
             android:id="@+id/button1"
-            android:layout_width="115dp"
-            android:layout_height="40dp"
+            android:layout_width="110dp"
+            android:layout_height="30dp"
             android:background="@drawable/wishlistbutton1"
-            android:text="Book Match"
-            android:textColor="#000000"/>
+            android:text="Available"
+            android:textColor="#ffffff"/>
         <Button
             android:id="@+id/button2"
-            android:layout_width="115dp"
-            android:layout_height="40dp"
+            android:layout_width="110dp"
+            android:layout_height="30dp"
             android:background="@drawable/wishlistbutton2"
             android:layout_toRightOf="@id/button1"
-            android:text="Your Wish"
-            android:textColor="#000000"/>
+            android:text="Your Wishes"
+            android:textColor="#ffffff"/>
 
     </RelativeLayout>
 
@@ -41,7 +42,6 @@
             android:src="@drawable/addwantitem"
             android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"
-            android:paddingTop="3dp"
             android:paddingRight="5dp"/>
 
 

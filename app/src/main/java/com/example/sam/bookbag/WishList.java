@@ -196,8 +196,8 @@ public class WishList extends Fragment {
     public void displayPostBoxes(List<JSONObject> datapoints, ArrayList<String> userIds) {
         adapter = new ExploreListAdapter(getContext(), datapoints, userIds);
         if(datapoints.size()>0){
-            button2.setTextColor(R.color.tabSelected);
-            button1.setTextColor(Color.BLACK);
+            button2.setTextColor(Color.RED);
+            button1.setTextColor(Color.WHITE);
             wishList.setAdapter(null);
             wishList.setAdapter(adapter);
             adapter.notifyDataSetChanged();
@@ -205,8 +205,8 @@ public class WishList extends Fragment {
         button2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                button2.setTextColor(R.color.tabSelected);
-                button1.setTextColor(Color.BLACK);
+                button2.setTextColor(Color.RED);
+                button1.setTextColor(Color.WHITE);
                 wishList.setAdapter(null);
                 wishList.setAdapter(adapter);
                 adapter.notifyDataSetChanged();
@@ -227,8 +227,8 @@ public class WishList extends Fragment {
             @Override
             public void onClick(View view) {
                 getFiles();
-                button1.setTextColor(R.color.tabSelected);
-                button2.setTextColor(Color.BLACK);
+                button1.setTextColor(Color.RED);
+                button2.setTextColor(Color.WHITE);
             }
         });
     }
@@ -243,6 +243,9 @@ public class WishList extends Fragment {
             public void onClick(View view) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                 builder.setTitle("");
+                if(dialogView.getParent()!=null) {
+                    ((ViewGroup) dialogView.getParent()).removeView(dialogView);
+                }// <- f
                 builder.setView(dialogView)
                         .setCancelable(false)
                         .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -290,9 +293,7 @@ public class WishList extends Fragment {
                     Log.e("button", "clicked");
                     infoView = View.inflate(getContext(), R.layout.bookinfopage, null);
                     ImageView add = (ImageView)infoView.findViewById(R.id.addToWishList);
-                    ImageView star = (ImageView)infoView.findViewById(R.id.alreadyAdded);
                     ((ViewGroup) add.getParent()).removeView(add);
-                    ((ViewGroup) star.getParent()).removeView(star);
                     TextView Id = (TextView) view.findViewById(R.id.userId);
                     TextView boxTitle = (TextView) view.findViewById(R.id.exploreBoxTitle);
                     String sellersId = Id.getText().toString();
