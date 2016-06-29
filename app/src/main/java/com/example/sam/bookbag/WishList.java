@@ -65,6 +65,7 @@ public class WishList extends Fragment {
     PrintWriter file;
     View dialogDisplay;
     View infoView;
+    int whichList;
     ArrayList<Bitmap> displayBM;
 
     public WishList() {
@@ -84,11 +85,13 @@ public class WishList extends Fragment {
         addWantItem = (ImageView)view.findViewById(R.id.addWantItem);
         wishBookDir = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/Bookbag_wishList/wishes");
         dialogDisplay = View.inflate(getContext(), R.layout.suggestwantitem, null);
+        whichList = 2;
         checkPostFile();
         setWishesListener();
         listenForListItemClicked();
         setPlusButtonListener(dialogDisplay);
         setUnavailableItemListener();
+        setListItemDelete();
         return view;
     }
 
@@ -207,6 +210,7 @@ public class WishList extends Fragment {
         button2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                whichList = 2;
                 checkPostFile();
                 button2.setTextColor(R.color.capsuleSelected);
                 button1.setTextColor(Color.WHITE);
@@ -229,6 +233,7 @@ public class WishList extends Fragment {
         button1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                whichList = 1;
                 wishList.setAdapter(null);
                 getFiles("wishExist", "wishExist");
                 button1.setTextColor(R.color.capsuleSelected);
@@ -240,6 +245,10 @@ public class WishList extends Fragment {
         seeWishItems.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                whichList = 0;
+                wishList.setAdapter(null);
+                button1.setTextColor(Color.WHITE);
+                button2.setTextColor(Color.WHITE);
                 getFiles("wishes", "wishes");
             }
         });
@@ -256,7 +265,7 @@ public class WishList extends Fragment {
             public void onClick(View view) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                 builder.setTitle("");
-                if(dialogView.getParent()!=null) {
+                if (dialogView.getParent() != null) {
                     ((ViewGroup) dialogView.getParent()).removeView(dialogView);
                 }
                 builder.setView(dialogView)
@@ -273,6 +282,8 @@ public class WishList extends Fragment {
                                 String bookName = textBookName.getText().toString();
                                 String bookISBN = textBookISBN.getText().toString();
                                 saveWantedBookInfo(bookName, bookISBN);
+                                textBookName.setText("");
+                                textBookISBN.setText("");
                             }
                         }).show();
 
@@ -302,7 +313,7 @@ public class WishList extends Fragment {
         wishList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                if(button2.getCurrentTextColor()!=Color.BLACK){
+                if(button2.getCurrentTextColor() != Color.WHITE){
                     Log.e("button", "clicked");
                     infoView = View.inflate(getContext(), R.layout.bookinfopage, null);
                     ImageView add = (ImageView)infoView.findViewById(R.id.addToWishList);
@@ -411,6 +422,69 @@ public class WishList extends Fragment {
                 });
             }
         });
+    }
+    public void setListItemDelete(){
+        wishList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                if (whichList == 0){
+                    Log.e("whichList", whichList+" ");
+                    TextView bookName = (TextView)view.findViewById(R.id.bookNameDisplay);
+                    TextView bookISBN = (TextView)view.findViewById(R.id.bookISBNDisplay);
+                    String name = bookName.getText().toString();
+                    String ISBN = bookISBN.getText().toString();
+                    String fileName = "sdcard/Bookbag_wishList/wishes/"+ name.replace(" ", "_")+ "_" + ISBN;
+                    setUpDeleteDialog(fileName, 0);
+                }else if(whichList == 1){
+                    Log.e("whichList", whichList+" ");
+                    TextView bookName = (TextView)view.findViewById(R.id.bookNameDisplay);
+                    TextView bookISBN = (TextView)view.findViewById(R.id.bookISBNDisplay);
+                    String name = bookName.getText().toString();
+                    String ISBN = bookISBN.getText().toString();
+                    String fileName = "sdcard/Bookbag_wishList/wishExist/"+ name.replace(" ", "_")+ "_" + ISBN;
+                    setUpDeleteDialog(fileName, 1);
+
+                }else if(whichList == 2){
+                    Log.e("whichList", whichList+" ");
+                    TextView bookName = (TextView)view.findViewById(R.id.exploreBoxTitle);
+                    TextView sellerId = (TextView)view.findViewById(R.id.userId);
+                    String name = bookName.getText().toString();
+                    String id = sellerId.getText().toString();
+                    String fileName = "sdcard/Bookbag_wishList/existing/"+id+"_"+name.replace(" ", "");
+                    setUpDeleteDialog(fileName, 2);
+
+                }
+                return false;
+            }
+        });
+    }
+    public void setUpDeleteDialog(final String fileName, final int whichList){
+        new AlertDialog.Builder(getContext())
+                .setTitle("Delete entry")
+                .setMessage("Are you sure you want to delete this entry?")
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        File file =  new File(fileName);
+                        file.delete();
+                        if(whichList == 0){
+                            seeWishItems.performClick();
+                            seeWishItems.setPressed(true);
+                        }else if (whichList == 1){
+                            button1.performClick();
+                            button1.setPressed(true);
+                        }else if (whichList == 2){
+                            button2.performClick();
+                            button2.setPressed(true);
+                        }
+                    }
+                })
+                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
     }
 
 }
