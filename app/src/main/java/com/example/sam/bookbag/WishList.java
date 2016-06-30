@@ -5,8 +5,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Environment;
-import android.preference.DialogPreference;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -22,17 +20,14 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.facebook.login.widget.ProfilePictureView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.storage.StorageReference;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -92,6 +87,7 @@ public class WishList extends Fragment {
         setPlusButtonListener(dialogDisplay);
         setUnavailableItemListener();
         setListItemDelete();
+        Log.e("whichList", whichList + "");
         return view;
     }
 
@@ -154,6 +150,7 @@ public class WishList extends Fragment {
                 Log.e("assign json", "failed");
             }
         }
+        Collections.reverse(wishListWanted);
         displayWishBoxes(wishListWanted);
     }
 
@@ -282,6 +279,8 @@ public class WishList extends Fragment {
                                 String bookName = textBookName.getText().toString();
                                 String bookISBN = textBookISBN.getText().toString();
                                 saveWantedBookInfo(bookName, bookISBN);
+                                seeWishItems.performClick();
+                                seeWishItems.setPressed(true);
                                 textBookName.setText("");
                                 textBookISBN.setText("");
                             }
@@ -434,7 +433,7 @@ public class WishList extends Fragment {
                     String name = bookName.getText().toString();
                     String ISBN = bookISBN.getText().toString();
                     String fileName = "sdcard/Bookbag_wishList/wishes/"+ name.replace(" ", "_")+ "_" + ISBN;
-                    setUpDeleteDialog(fileName, 0);
+                    setUpDeleteDialog(fileName, 0, name);
                 }else if(whichList == 1){
                     Log.e("whichList", whichList+" ");
                     TextView bookName = (TextView)view.findViewById(R.id.bookNameDisplay);
@@ -442,7 +441,7 @@ public class WishList extends Fragment {
                     String name = bookName.getText().toString();
                     String ISBN = bookISBN.getText().toString();
                     String fileName = "sdcard/Bookbag_wishList/wishExist/"+ name.replace(" ", "_")+ "_" + ISBN;
-                    setUpDeleteDialog(fileName, 1);
+                    setUpDeleteDialog(fileName, 1, name);
 
                 }else if(whichList == 2){
                     Log.e("whichList", whichList+" ");
@@ -451,17 +450,17 @@ public class WishList extends Fragment {
                     String name = bookName.getText().toString();
                     String id = sellerId.getText().toString();
                     String fileName = "sdcard/Bookbag_wishList/existing/"+id+"_"+name.replace(" ", "");
-                    setUpDeleteDialog(fileName, 2);
+                    setUpDeleteDialog(fileName, 2, name);
 
                 }
                 return false;
             }
         });
     }
-    public void setUpDeleteDialog(final String fileName, final int whichList){
+    public void setUpDeleteDialog(final String fileName, final int whichList, String bookName){
         new AlertDialog.Builder(getContext())
                 .setTitle("Delete entry")
-                .setMessage("Are you sure you want to delete this entry?")
+                .setMessage("Are you sure you want to delete " + bookName.toUpperCase() + "?")
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         File file =  new File(fileName);
