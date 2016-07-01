@@ -15,7 +15,8 @@
         android:paddingTop="5dp"
         android:paddingBottom="3dp"
         android:layout_toLeftOf="@+id/addWantItem"
-        android:paddingRight="12dp">
+        android:paddingRight="20dp"
+        android:paddingLeft="40dp">
 
         <Button
             android:id="@+id/button1"
@@ -40,18 +41,18 @@
 
         <ImageView
             android:id="@+id/addWantItem"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:src="@drawable/addwantitem"
-            android:paddingRight="12dp"
+            android:paddingRight="25dp"
             android:layout_alignBottom="@+id/wishButtons"
             android:layout_alignParentEnd="true" />
     <ImageView
         android:id="@+id/seeWishItems"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
         android:src="@drawable/unavailable"
-        android:paddingLeft="15dp"
+        android:paddingLeft="23dp"
         android:layout_alignBottom="@+id/wishButtons"
         android:layout_alignParentLeft="true"
         android:clickable="true"/>
