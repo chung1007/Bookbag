@@ -7,7 +7,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#f1f4f4"
+        android:background="#F4F4F4"
         android:id="@+id/titleLayout">
 
     <TextView
@@ -102,6 +102,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:hint="Textbook Name :"
+                android:textColor="#000000"
+                android:textStyle="bold"
                 android:textSize="15dp"
                 android:paddingLeft="10dp"
                 android:background="@android:color/transparent"
@@ -113,7 +115,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                android:background="#f1f4f4">
+                android:background="#F4F4F4">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -233,7 +235,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                android:background="#f1f4f4">
+                android:background="#F4F4F4">
 
                 <TextView
                     android:layout_width="wrap_content"

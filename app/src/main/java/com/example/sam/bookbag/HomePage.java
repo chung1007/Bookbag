@@ -32,7 +32,7 @@ import java.util.List;
 public class HomePage extends AppCompatActivity {
     private Toolbar toolbar;
     public static TabLayout tabLayout;
-    CustomViewPager viewPager;
+    public static CustomViewPager viewPager;
     public static String userId;
     public static String userName;
     Intent getUserInfo;
