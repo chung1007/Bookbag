@@ -6,6 +6,7 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -21,6 +22,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -622,6 +624,7 @@ public class Explore extends Fragment {
                     setViewData(infoView, viewDataList);
                     setUpViewingDialog(infoView);
                     setWishListAddClicked(wishListAdd, content, sellersId, bookTitle);
+                    setContactSellerListener(infoView, sellersId, seller, bookTitle);
                 }catch (JSONException JSE){
                     Log.e("item click listener", "json failed!");
                 }
@@ -643,6 +646,19 @@ public class Explore extends Fragment {
         for (int i = 0; i < values.size(); i++){
             textviews.get(i).setText(values.get(i));
         }
+    }
+    public void setContactSellerListener(View view, final String sellerId, final String sellerName, final String bookName){
+        Button contactSeller = (Button)view.findViewById(R.id.contactSellerButton);
+        contactSeller.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), ChatPage.class);
+                intent.putExtra("sellerId", sellerId);
+                intent.putExtra("sellerName", sellerName);
+                intent.putExtra("bookName", bookName);
+                startActivity(intent);
+            }
+        });
 
     }
 
