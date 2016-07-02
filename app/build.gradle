@@ -18,6 +18,10 @@ android {
         versionCode 1
         versionName "1.0"
     }
+    /*dexOptions {
+        javaMaxHeapSize "4g" //specify the heap size for the dex process
+        preDexLibraries = false //delete the already predexed libraries
+    }*/
     buildTypes {
         release {
             minifyEnabled false
@@ -37,5 +41,6 @@ dependencies {
     compile 'com.google.firebase:firebase-database:9.0.2'
     compile 'com.google.firebase:firebase-storage:9.0.2'
     compile "com.google.firebase:firebase-auth:9.0.1"
+    //compile 'com.firebase:firebase-client-android:2.5.2+'
 }
 apply plugin: 'com.google.gms.google-services'

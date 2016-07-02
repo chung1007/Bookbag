@@ -22,6 +22,7 @@ import com.facebook.Profile;
 import com.facebook.ProfileTracker;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.firebase.client.Firebase;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -81,6 +82,7 @@ public class FacebookLogin extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(getContext());
+        Firebase.setAndroidContext(getContext());
         mCallbackManager = CallbackManager.Factory.create();
         setupTokenTracker();
         setupProfileTracker();
