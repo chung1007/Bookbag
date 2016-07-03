@@ -7,9 +7,12 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.format.DateFormat;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.facebook.FacebookSdk;
@@ -39,6 +42,7 @@ public class ChatPage extends AppCompatActivity {
     Button sendButton;
     String time;
     Boolean done;
+    LinearLayout messagePage;
     ArrayList<String> messageKeys;
     Map<String, String> keysAndMessages;
     String messageTime;
@@ -53,6 +57,7 @@ public class ChatPage extends AppCompatActivity {
         messageRoom = new Firebase(Constants.chatDataBase);
         messageKeys = new ArrayList<>();
         keysAndMessages = new HashMap<>();
+        messagePage = (LinearLayout)findViewById(R.id.messagePage);
         intent = getIntent();
         sellerId = intent.getStringExtra("sellerId");
         sellerName = intent.getStringExtra("sellerName");
@@ -129,6 +134,7 @@ public class ChatPage extends AppCompatActivity {
                     messageRoom.child(HomePage.userId).child(bookName).child(time).setValue(null);
                     String latestMessage = messageKeys.get(messageKeys.size() - 1);
                     String newMessage = keysAndMessages.get(latestMessage);
+                    addMessage(latestMessage, newMessage);
                     Log.e("latestKey", latestMessage);
                     Log.e("newMessage", newMessage);
                 }
@@ -150,6 +156,31 @@ public class ChatPage extends AppCompatActivity {
             public void onCancelled(FirebaseError firebaseError) {
             }
         });
+    }
+    public void addMessage(String key, String message){
+        if(key.contains(HomePage.userName)){
+            Log.e("message", "user's");
+            getUserMessageBox(key, message);
+        }else{
+            Log.e("message", "not users");
+        }
+    }
+    public View getUserMessageBox(String key, String message){
+        LayoutInflater inflater = (LayoutInflater) this.getSystemService(this.LAYOUT_INFLATER_SERVICE);
+        View userMessage = inflater.inflate(R.layout.usermessage, null);
+        TextView messageText = (TextView)userMessage.findViewById(R.id.usersMessageBox);
+        TextView timeStamp = (TextView)userMessage.findViewById(R.id.timeStamp);
+        messageText.setText(message);
+        key = key.substring(Math.max(key.length() - 8, 0));
+        Log.e("timeStamp", key);
+        return userMessage;
+    }
+    public View getOtherMessageBox(String key, String message){
+        LayoutInflater inflater = (LayoutInflater) this.getSystemService(this.LAYOUT_INFLATER_SERVICE);
+        View otherMessage = inflater.inflate(R.layout.othermessage, null);
+        TextView messageText = (TextView)otherMessage.findViewById(R.id.otherMessageBox);
+        TextView timeStamp = (TextView)otherMessage.findViewById(R.id.otherTimeStamp);
+        return otherMessage;
     }
 
 
