@@ -160,7 +160,8 @@ public class ChatPage extends AppCompatActivity {
     public void addMessage(String key, String message){
         if(key.contains(HomePage.userName)){
             Log.e("message", "user's");
-            getUserMessageBox(key, message);
+            View messageBox = getUserMessageBox(key, message);
+            messagePage.addView(messageBox);
         }else{
             Log.e("message", "not users");
         }
@@ -172,6 +173,7 @@ public class ChatPage extends AppCompatActivity {
         TextView timeStamp = (TextView)userMessage.findViewById(R.id.timeStamp);
         messageText.setText(message);
         key = key.substring(Math.max(key.length() - 8, 0));
+        timeStamp.setText(key);
         Log.e("timeStamp", key);
         return userMessage;
     }
