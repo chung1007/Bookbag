@@ -74,7 +74,9 @@ public class ChatPage extends AppCompatActivity {
     }
     public void setPageInfo(){
         Log.e("firstTime!", "true");
-        messageBox.setText("Hi! i am interested in buying " + bookName + ".");
+        if(messagePage.getChildAt(0)==null) {
+            messageBox.setText("Hi! i am interested in buying " + bookName + ".");
+        }
         chatMateName.setText(sellerName);
         back = (TextView)findViewById(R.id.backFromChat);
         back.setOnClickListener(new View.OnClickListener() {
@@ -139,19 +141,12 @@ public class ChatPage extends AppCompatActivity {
                     Log.e("newMessage", newMessage);
                 }
             }
-
             @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-            }
-
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {}
             @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-            }
-
+            public void onChildRemoved(DataSnapshot dataSnapshot) {}
             @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-            }
-
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
             @Override
             public void onCancelled(FirebaseError firebaseError) {
             }
@@ -162,7 +157,11 @@ public class ChatPage extends AppCompatActivity {
             Log.e("message", "user's");
             View messageBox = getUserMessageBox(key, message);
             messagePage.addView(messageBox);
+        }else if(message.equals("test")) {
+            //Do nothing
         }else{
+            View otherMessageBox = getOtherMessageBox(key, message);
+            messagePage.addView(otherMessageBox);
             Log.e("message", "not users");
         }
     }
@@ -182,6 +181,9 @@ public class ChatPage extends AppCompatActivity {
         View otherMessage = inflater.inflate(R.layout.othermessage, null);
         TextView messageText = (TextView)otherMessage.findViewById(R.id.otherMessageBox);
         TextView timeStamp = (TextView)otherMessage.findViewById(R.id.otherTimeStamp);
+        messageText.setText(message);
+        key = key.substring(Math.max(key.length() - 8, 0));
+        timeStamp.setText(key);
         return otherMessage;
     }
 
