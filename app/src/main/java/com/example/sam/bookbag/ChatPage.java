@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.facebook.FacebookSdk;
@@ -45,18 +46,21 @@ public class ChatPage extends AppCompatActivity {
     LinearLayout messagePage;
     ArrayList<String> messageKeys;
     Map<String, String> keysAndMessages;
+    ScrollView scroll;
     String messageTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(this);
+        Firebase.setAndroidContext(this);
         setContentView(R.layout.messagingpage);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         done = false;
         messageRoom = new Firebase(Constants.chatDataBase);
         messageKeys = new ArrayList<>();
         keysAndMessages = new HashMap<>();
+        scroll = (ScrollView)findViewById(R.id.messageScrollView);
         messagePage = (LinearLayout)findViewById(R.id.messagePage);
         intent = getIntent();
         sellerId = intent.getStringExtra("sellerId");
@@ -137,6 +141,12 @@ public class ChatPage extends AppCompatActivity {
                     String latestMessage = messageKeys.get(messageKeys.size() - 1);
                     String newMessage = keysAndMessages.get(latestMessage);
                     addMessage(latestMessage, newMessage);
+                    scroll.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            scroll.fullScroll(View.FOCUS_DOWN);
+                        }
+                    });
                     Log.e("latestKey", latestMessage);
                     Log.e("newMessage", newMessage);
                 }
