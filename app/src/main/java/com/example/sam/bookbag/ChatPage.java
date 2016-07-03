@@ -37,7 +37,8 @@ public class ChatPage extends AppCompatActivity {
     TextView chatMateName;
     Firebase messageRoom;
     Button sendButton;
-    Boolean done = false;
+    String time;
+    Boolean done;
     ArrayList<String> messageKeys;
     Map<String, String> keysAndMessages;
     String messageTime;
@@ -48,6 +49,7 @@ public class ChatPage extends AppCompatActivity {
         FacebookSdk.sdkInitialize(this);
         setContentView(R.layout.messagingpage);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        done = false;
         messageRoom = new Firebase(Constants.chatDataBase);
         messageKeys = new ArrayList<>();
         keysAndMessages = new HashMap<>();
@@ -60,8 +62,13 @@ public class ChatPage extends AppCompatActivity {
         sendButton  = (Button)findViewById(R.id.sendButton);
         setPageInfo();
         listenForSendClicked();
+        time = getCurrentTime();
+        checkIfNewMessageIsDone(bookName);
+        listenForNewMessages(bookName);
+        messageRoom.child(HomePage.userId).child(bookName).child(time).setValue("test");
     }
     public void setPageInfo(){
+        Log.e("firstTime!", "true");
         messageBox.setText("Hi! i am interested in buying " + bookName + ".");
         chatMateName.setText(sellerName);
         back = (TextView)findViewById(R.id.backFromChat);
@@ -81,8 +88,6 @@ public class ChatPage extends AppCompatActivity {
                 messageBox.setText("");
                 messageRoom.child(HomePage.userId).child(bookName).child(getCurrentTime() +"_"+ HomePage.userName + "_" + messageTime).setValue(message);
                 messageRoom.child(sellerId).child(bookName).child(getCurrentTime()+"_"+HomePage.userName + "_" + messageTime).setValue(message);
-                checkIfNewMessageIsDone(bookName);
-                listenForNewMessages(bookName);
 
             }
         });
@@ -95,7 +100,7 @@ public class ChatPage extends AppCompatActivity {
        return date;
     }
     public void checkIfNewMessageIsDone(String bookName){
-        messageRoom.child(HomePage.userId).child(bookName).addValueEventListener(new ValueEventListener() {
+        messageRoom.child(HomePage.userId).child(bookName).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Log.e("data", "done reading");
@@ -109,7 +114,7 @@ public class ChatPage extends AppCompatActivity {
             }
         });
     }
-    public void listenForNewMessages(String bookName){
+    public void listenForNewMessages(final String bookName){
         messageRoom.child(HomePage.userId).child(bookName).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -118,9 +123,11 @@ public class ChatPage extends AppCompatActivity {
                 String message = dataSnapshot.getValue().toString();
                 messageKeys.add(key);
                 keysAndMessages.put(key, message);
-                if(done){
+                Log.e("done after listening", done.toString());
+                if (done) {
                     Log.e("done", " is true");
-                    String latestMessage = messageKeys.get(messageKeys.size()-1);
+                    messageRoom.child(HomePage.userId).child(bookName).child(time).setValue(null);
+                    String latestMessage = messageKeys.get(messageKeys.size() - 1);
                     String newMessage = keysAndMessages.get(latestMessage);
                     Log.e("latestKey", latestMessage);
                     Log.e("newMessage", newMessage);
@@ -129,22 +136,18 @@ public class ChatPage extends AppCompatActivity {
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
             }
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-
             }
 
             @Override
             public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
             }
 
             @Override
             public void onCancelled(FirebaseError firebaseError) {
-
             }
         });
     }
