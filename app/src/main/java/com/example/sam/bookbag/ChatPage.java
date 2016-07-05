@@ -23,6 +23,13 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -47,6 +54,8 @@ public class ChatPage extends AppCompatActivity {
     ArrayList<String> messageKeys;
     Map<String, String> keysAndMessages;
     ScrollView scroll;
+    File messageDir;
+    PrintWriter file;
     String messageTime;
 
     @Override
@@ -69,6 +78,7 @@ public class ChatPage extends AppCompatActivity {
         messageBox = (EditText)findViewById(R.id.messageBox);
         chatMateName = (TextView)findViewById(R.id.chatMateName);
         sendButton  = (Button)findViewById(R.id.sendButton);
+        messageDir = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/Bookbag_chat");
         setPageInfo();
         listenForSendClicked();
         time = getCurrentTime();
@@ -96,10 +106,13 @@ public class ChatPage extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 String message = messageBox.getText().toString();
-                messageBox.setText("");
-                messageRoom.child(HomePage.userId).child(bookName).child(getCurrentTime() +"_"+ HomePage.userName + "_" + messageTime).setValue(message);
-                messageRoom.child(sellerId).child(bookName).child(getCurrentTime()+"_"+HomePage.userName + "_" + messageTime).setValue(message);
-
+                if(message.equals("")){
+                    //Do Nothing
+                }else {
+                    messageBox.setText("");
+                    messageRoom.child(HomePage.userId).child(bookName).child(getCurrentTime() + "_" + HomePage.userName + "_" + messageTime).setValue(message);
+                    messageRoom.child(sellerId).child(bookName).child(getCurrentTime() + "_" + HomePage.userName + "_" + messageTime).setValue(message);
+                }
             }
         });
     }
@@ -140,6 +153,7 @@ public class ChatPage extends AppCompatActivity {
                     messageRoom.child(HomePage.userId).child(bookName).child(time).setValue(null);
                     String latestMessage = messageKeys.get(messageKeys.size() - 1);
                     String newMessage = keysAndMessages.get(latestMessage);
+                    writeToFile(newMessage);
                     addMessage(latestMessage, newMessage);
                     scroll.post(new Runnable() {
                         @Override
@@ -151,12 +165,19 @@ public class ChatPage extends AppCompatActivity {
                     Log.e("newMessage", newMessage);
                 }
             }
+
             @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {}
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            }
+
             @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {}
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+            }
+
             @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            }
+
             @Override
             public void onCancelled(FirebaseError firebaseError) {
             }
@@ -196,6 +217,45 @@ public class ChatPage extends AppCompatActivity {
         timeStamp.setText(key);
         return otherMessage;
     }
-
+    public void writeToFile(String message){
+        
+        try {
+            messageDir.mkdir();
+            file = null;
+            file = new PrintWriter(new FileOutputStream(new File(messageDir, (sellerName.replace(" ", "") + "_" + bookName.replace(" ", "_")))));
+            file.println(message);
+            file.close();
+        }catch(IOException IOE){
+            Log.e("chat", "saving conv. failed");
+        }
+    }
+    public String readFile(String name) {
+        BufferedReader file;
+        try {
+            file = new BufferedReader(new InputStreamReader(new FileInputStream(
+                    new File(name))));
+        } catch (IOException ioe) {
+            Log.e("File Error", "Failed To Open File");
+            return null;
+        }
+        String dataOfFile = "";
+        String buf;
+        try {
+            while ((buf = file.readLine()) != null) {
+                dataOfFile = dataOfFile.concat(buf + "\n");
+            }
+        } catch (IOException ioe) {
+            Log.e("File Error", "Failed To Read From File");
+            return null;
+        }
+        return dataOfFile;
+    }
+    /*String name = sellerName.replace(" ", "") + "_" + bookName.replace(" ", "_");
+    String splitName[] = name.split("_");
+    ArrayList<String> chars = new ArrayList<>();
+    for(int i = 1; i < splitName.length; i++){
+        chars.add(splitName[i]);
+    }
+    Log.e("splitName", chars.toString());*/
 
 }
