@@ -40,7 +40,7 @@ public class MyApplication extends Application {
             for (Signature signature : info.signatures) {
                 MessageDigest md = MessageDigest.getInstance("SHA");
                 md.update(signature.toByteArray());
-                Log.d("Bookbag KeyHash: ", Base64.encodeToString(md.digest(), Base64.DEFAULT));
+                Log.e("Bookbag KeyHash: ", Base64.encodeToString(md.digest(), Base64.DEFAULT));
             }
         } catch (PackageManager.NameNotFoundException e) {
 
