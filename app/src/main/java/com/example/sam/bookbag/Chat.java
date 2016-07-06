@@ -9,10 +9,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TableLayout;
+import android.widget.TextView;
 
+import com.facebook.login.widget.ProfilePictureView;
 import com.shaded.fasterxml.jackson.databind.util.JSONPObject;
 
 import org.json.JSONException;
@@ -26,6 +29,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by sam on 6/6/16.
@@ -35,16 +39,19 @@ public class Chat extends Fragment {
     List<JSONObject> convoJson;
     ChatListAdapter adapter;
 
-    public Chat(){
+    public Chat() {
 
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.chat, container, false);
-        chatListView = (ListView)view.findViewById(R.id.chatListView);
+        chatListView = (ListView) view.findViewById(R.id.chatListView);
         Log.e("Chat", "started");
+        chatListView.setAdapter(null);
         checkPostFile();
+        listenForChatBoxClicked();
         return view;
 
     }
@@ -54,6 +61,7 @@ public class Chat extends Fragment {
         super.onCreate(savedInstanceState);
 
     }
+
     public void checkPostFile() {
         ArrayList<String> convoFiles = new ArrayList<>();
         File file = new File("/sdcard/Bookbag_chat");
@@ -105,6 +113,7 @@ public class Chat extends Fragment {
                 postDataRead.put("bookName", data.get(2));
                 postDataRead.put("message", data.get(3));
                 Log.e("messageData", postDataRead.toString());
+                Log.e("postData", data.get(2));
                 convoJson.add(postDataRead);
             } catch (JSONException JSE) {
                 Log.e("assign json", "failed");
@@ -132,7 +141,7 @@ public class Chat extends Fragment {
         Log.e("first", firstAndLast[0]);
         Log.e("last", firstAndLast[1]);
         Log.e("splitName", splitName.toString());
-        String sellerName = firstAndLast[0]+" "+firstAndLast[1];
+        String sellerName = firstAndLast[0] + " " + firstAndLast[1];
         ArrayList<String> chars = new ArrayList<>();
         for (int i = 1; i < splitName.length; i++) {
             chars.add(splitName[i]);
@@ -140,16 +149,19 @@ public class Chat extends Fragment {
         String sellerId = chars.get(0);
         data.add(sellerId);
         data.add(sellerName);
-        for(int i = 1; i < chars.size(); i++){
+        for (int i = 1; i < chars.size(); i++) {
             nameChar.add(chars.get(i));
         }
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < nameChar.size(); i++)
-        {
+        for (int i = 0; i < nameChar.size(); i++) {
             sb.append(nameChar.get(i));
-            sb.append(" ");
+            if(i != nameChar.size()-1) {
+                sb.append(" ");
+            }
         }
         String nameOfBook = sb.toString();
+        String test = nameOfBook + "test";
+        Log.e("booknametest", test.toString());
         String message = readFile(filePath);
         data.add(nameOfBook);
         data.add(message);
@@ -157,5 +169,22 @@ public class Chat extends Fragment {
         Log.e("splitName", chars.toString());
         return data;
     }
+    public void listenForChatBoxClicked(){
+        chatListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                TextView sellerName = (TextView)view.findViewById(R.id.chatName);
+                TextView sellerId = (TextView)view.findViewById(R.id.sellerId);
+                TextView bookTitle= (TextView)view.findViewById(R.id.titleOfTextBook);
+                Intent intent = new Intent(getContext(), ChatPage.class);
+                intent.putExtra("sellerId", sellerId.getText().toString());
+                intent.putExtra("sellerName", sellerName.getText().toString());
+                intent.putExtra("bookName", bookTitle.getText().toString());
+                intent.putExtra("isContinued", "continued");
+                startActivity(intent);
+            }
+        });
+    }
 
 }
+

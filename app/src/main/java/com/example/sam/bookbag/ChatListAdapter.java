@@ -1,6 +1,11 @@
 package com.example.sam.bookbag;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapShader;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Shader;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -55,12 +60,14 @@ public class ChatListAdapter extends BaseAdapter {
             TextView sellerName = (TextView)chatBox.findViewById(R.id.chatName);
             TextView latestMessage = (TextView)chatBox.findViewById(R.id.latestMessage);
             TextView bookName = (TextView)chatBox.findViewById(R.id.titleOfTextBook);
+            TextView sellerId = (TextView)chatBox.findViewById(R.id.sellerId);
             ProfilePictureView sellerPicture = (ProfilePictureView)chatBox.findViewById(R.id.chatImage);
             JSONObject bookJson = messageData.get(position);
             try {
                 sellerPicture.setProfileId(bookJson.getString("sellerId"));
                 sellerName.setText(bookJson.getString("sellerName"));
                 latestMessage.setText(bookJson.getString("message"));
+                sellerId.setText(bookJson.getString("sellerId"));
                 bookName.setText(bookJson.getString("bookName"));
                 convertView = chatBox;
             }catch (JSONException JSE){

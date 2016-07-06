@@ -1,6 +1,7 @@
 package com.example.sam.bookbag;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -46,6 +48,7 @@ public class ChatPage extends AppCompatActivity {
     EditText messageBox;
     TextView back;
     TextView chatMateName;
+    public boolean isContinued = false;
     Firebase messageRoom;
     Button sendButton;
     String time;
@@ -75,6 +78,7 @@ public class ChatPage extends AppCompatActivity {
         sellerId = intent.getStringExtra("sellerId");
         sellerName = intent.getStringExtra("sellerName");
         bookName = intent.getStringExtra("bookName");
+        checkIfBoxClicked();
         messageBox = (EditText)findViewById(R.id.messageBox);
         chatMateName = (TextView)findViewById(R.id.chatMateName);
         sendButton  = (Button)findViewById(R.id.sendButton);
@@ -84,11 +88,13 @@ public class ChatPage extends AppCompatActivity {
         time = getCurrentTime();
         checkIfNewMessageIsDone(bookName);
         listenForNewMessages(bookName);
-        messageRoom.child(HomePage.userId).child(bookName).child(time).setValue("test");
+        messageRoom.child(HomePage.userId).child(bookName).child(time).setValue("sjvsdvbsdbv");
+        HomePage.viewPager.setCurrentItem(1);
+        hideSoftKeyboard();
     }
     public void setPageInfo(){
         Log.e("firstTime!", "true");
-        if(messagePage.getChildAt(0)==null) {
+        if(isContinued == false) {
             messageBox.setText("Hi! i am interested in buying " + bookName + ".");
         }
         chatMateName.setText(sellerName);
@@ -96,19 +102,24 @@ public class ChatPage extends AppCompatActivity {
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                finish();
                 HomePage.viewPager.setCurrentItem(3);
+                finish();
+
             }
         });
+    }
+    @Override
+    public void onBackPressed() {
+       HomePage.viewPager.setCurrentItem(3);
     }
     public void listenForSendClicked(){
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String message = messageBox.getText().toString();
-                if(message.equals("")){
+                if (message.equals("")) {
                     //Do Nothing
-                }else {
+                } else {
                     messageBox.setText("");
                     messageRoom.child(HomePage.userId).child(bookName).child(getCurrentTime() + "_" + HomePage.userName + "_" + messageTime).setValue(message);
                     messageRoom.child(sellerId).child(bookName).child(getCurrentTime() + "_" + HomePage.userName + "_" + messageTime).setValue(message);
@@ -153,14 +164,14 @@ public class ChatPage extends AppCompatActivity {
                     messageRoom.child(HomePage.userId).child(bookName).child(time).setValue(null);
                     String latestMessage = messageKeys.get(messageKeys.size() - 1);
                     String newMessage = keysAndMessages.get(latestMessage);
-                    writeToFile(newMessage);
-                    addMessage(latestMessage, newMessage);
-                    scroll.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            scroll.fullScroll(View.FOCUS_DOWN);
-                        }
-                    });
+                    if (newMessage.equals("sjvsdvbsdbv")) {
+                        Log.e("message", "was test");
+
+                    } else {
+                        addMessage(latestMessage, newMessage);
+                        writeToFile(newMessage);
+                    }
+                    scrollDown();
                     Log.e("latestKey", latestMessage);
                     Log.e("newMessage", newMessage);
                 }
@@ -229,6 +240,23 @@ public class ChatPage extends AppCompatActivity {
             Log.e("chat", "saving conv. failed");
         }
     }
+
+    public void checkIfBoxClicked(){
+        String continued = intent.getStringExtra("isContinued");
+        if(continued!=null){
+            isContinued = true;
+        }else{
+            isContinued = false;
+        }
+    }
+    public void scrollDown(){
+        scroll.post(new Runnable() {
+            @Override
+            public void run() {
+                scroll.fullScroll(View.FOCUS_DOWN);
+            }
+        });
+    }
     public String readFile(String name) {
         BufferedReader file;
         try {
@@ -249,6 +277,13 @@ public class ChatPage extends AppCompatActivity {
             return null;
         }
         return dataOfFile;
+    }
+
+    public void hideSoftKeyboard() {
+        scrollDown();
+        messageBox.setFocusableInTouchMode(false);
+        messageBox.setFocusable(true);
+        messageBox.setFocusableInTouchMode(true);
     }
 
 
