@@ -10,12 +10,31 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TableLayout;
+
+import com.shaded.fasterxml.jackson.databind.util.JSONPObject;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by sam on 6/6/16.
  */
 public class Chat extends Fragment {
+    ListView chatListView;
+    List<JSONObject> convoJson;
+    ChatListAdapter adapter;
+
     public Chat(){
 
     }
@@ -23,6 +42,9 @@ public class Chat extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.chat, container, false);
+        chatListView = (ListView)view.findViewById(R.id.chatListView);
+        Log.e("Chat", "started");
+        checkPostFile();
         return view;
 
     }
@@ -32,4 +54,108 @@ public class Chat extends Fragment {
         super.onCreate(savedInstanceState);
 
     }
+    public void checkPostFile() {
+        ArrayList<String> convoFiles = new ArrayList<>();
+        File file = new File("/sdcard/Bookbag_chat");
+        File list[] = file.listFiles();
+        try {
+            for (int i = 0; i < list.length; i++) {
+                convoFiles.add(list[i].getName());
+            }
+        } catch (NullPointerException NPE) {
+        }
+        if (!convoFiles.isEmpty()) {
+            Log.e("conversations", "there has been previous conversations");
+            listPostNames(convoFiles);
+        }
+
+    }
+
+    public String readFile(String name) {
+        BufferedReader file;
+        try {
+            file = new BufferedReader(new InputStreamReader(new FileInputStream(
+                    new File(name))));
+        } catch (IOException ioe) {
+            Log.e("File Error", "Failed To Open File");
+            return null;
+        }
+        String dataOfFile = "";
+        String buf;
+        try {
+            while ((buf = file.readLine()) != null) {
+                dataOfFile = dataOfFile.concat(buf + "\n");
+            }
+        } catch (IOException ioe) {
+            Log.e("File Error", "Failed To Read From File");
+            return null;
+        }
+        return dataOfFile;
+    }
+
+    public void listPostNames(ArrayList<String> postNames) {
+        convoJson = new ArrayList<>();
+        for (int i = 0; i < postNames.size(); i++) {
+            String fileName = "sdcard/Bookbag_chat/" + postNames.get(i);
+            ArrayList<String> data = getData(postNames.get(i), fileName);
+            try {
+                JSONObject postDataRead = new JSONObject();
+                postDataRead.put("sellerId", data.get(0));
+                postDataRead.put("sellerName", data.get(1));
+                postDataRead.put("bookName", data.get(2));
+                postDataRead.put("message", data.get(3));
+                Log.e("messageData", postDataRead.toString());
+                convoJson.add(postDataRead);
+            } catch (JSONException JSE) {
+                Log.e("assign json", "failed");
+            }
+
+        }
+
+        displayPostBoxes(convoJson);
+    }
+
+    public void displayPostBoxes(List<JSONObject> datapoints) {
+        adapter = new ChatListAdapter(getContext(), datapoints);
+        chatListView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+        Log.e("boxes", "made");
+    }
+    //http://stackoverflow.com/questions/599161/best-way-to-convert-an-arraylist-to-a-string
+
+    public ArrayList<String> getData(String fileName, String filePath) {
+        ArrayList<String> data = new ArrayList<>();
+        ArrayList<String> nameChar = new ArrayList<>();
+        String splitName[] = fileName.split("_");
+        String sellerNameNoSpace = splitName[0];
+        String[] firstAndLast = sellerNameNoSpace.split("([-_ ]|(?<=[^-_ A-Z])(?=[A-Z]))");
+        Log.e("first", firstAndLast[0]);
+        Log.e("last", firstAndLast[1]);
+        Log.e("splitName", splitName.toString());
+        String sellerName = firstAndLast[0]+" "+firstAndLast[1];
+        ArrayList<String> chars = new ArrayList<>();
+        for (int i = 1; i < splitName.length; i++) {
+            chars.add(splitName[i]);
+        }
+        String sellerId = chars.get(0);
+        data.add(sellerId);
+        data.add(sellerName);
+        for(int i = 1; i < chars.size(); i++){
+            nameChar.add(chars.get(i));
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < nameChar.size(); i++)
+        {
+            sb.append(nameChar.get(i));
+            sb.append(" ");
+        }
+        String nameOfBook = sb.toString();
+        String message = readFile(filePath);
+        data.add(nameOfBook);
+        data.add(message);
+
+        Log.e("splitName", chars.toString());
+        return data;
+    }
+
 }

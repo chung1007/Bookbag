@@ -218,11 +218,11 @@ public class ChatPage extends AppCompatActivity {
         return otherMessage;
     }
     public void writeToFile(String message){
-        
+
         try {
             messageDir.mkdir();
             file = null;
-            file = new PrintWriter(new FileOutputStream(new File(messageDir, (sellerName.replace(" ", "") + "_" + bookName.replace(" ", "_")))));
+            file = new PrintWriter(new FileOutputStream(new File(messageDir, (sellerName.replace(" ", "") + "_" + sellerId + "_" + bookName.replace(" ", "_")))));
             file.println(message);
             file.close();
         }catch(IOException IOE){
@@ -250,12 +250,6 @@ public class ChatPage extends AppCompatActivity {
         }
         return dataOfFile;
     }
-    /*String name = sellerName.replace(" ", "") + "_" + bookName.replace(" ", "_");
-    String splitName[] = name.split("_");
-    ArrayList<String> chars = new ArrayList<>();
-    for(int i = 1; i < splitName.length; i++){
-        chars.add(splitName[i]);
-    }
-    Log.e("splitName", chars.toString());*/
+
 
 }

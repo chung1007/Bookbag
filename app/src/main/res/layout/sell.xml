@@ -96,16 +96,26 @@
                 android:id="@+id/notesSection"
                 android:layout_width="match_parent"
                 android:layout_height="40dp">
+                <TextView
+                    android:id="@+id/titleTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:text="Title : "
+                    android:textColor="#000000"
+                    android:textStyle="bold"
+                    android:paddingLeft="10dp"
+                    android:textSize="15sp"
+                    android:layout_centerVertical="true"/>
 
             <EditText
                 android:id="@+id/className"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="Textbook Name :"
-                android:textColor="#000000"
-                android:textStyle="bold"
+                android:hint="title"
                 android:textSize="15dp"
-                android:paddingLeft="10dp"
+                android:layout_toRightOf="@+id/titleTextView"
+                android:paddingLeft="5dp"
                 android:background="@android:color/transparent"
                 android:layout_centerVertical="true"/>
 
@@ -173,7 +183,7 @@
                     android:id="@+id/ISBNTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="ISBN :"
+                    android:text="ISBN-10 :"
                     android:textColor="@color/infoColor"
                     android:textSize="15sp"
                     android:textStyle="bold"
