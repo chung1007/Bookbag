@@ -20,6 +20,7 @@ import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 import com.shaded.fasterxml.jackson.databind.util.JSONPObject;
 
 import org.json.JSONException;
@@ -32,6 +33,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -43,6 +45,11 @@ public class Chat extends Fragment {
     List<JSONObject> convoJson;
     ChatListAdapter adapter;
     Firebase chatDataBase;
+    boolean newSellerDone;
+    boolean newConvoDone;
+    ArrayList<String>sellers;
+    HashMap<String, String> conversations;
+    ArrayList<String> messageKeyList;
 
     public Chat() {
 
@@ -54,10 +61,15 @@ public class Chat extends Fragment {
         View view = inflater.inflate(R.layout.chat, container, false);
         chatListView = (ListView) view.findViewById(R.id.chatListView);
         chatDataBase = new Firebase(Constants.chatDataBase);
+        sellers = new ArrayList<>();
+        messageKeyList= new ArrayList<>();
+        conversations =  new HashMap<>();
         Log.e("Chat", "started");
         chatListView.setAdapter(null);
         checkPostFile();
         listenForChatBoxClicked();
+        setNewSellerListener();
+        setAllMessagesListener();
         return view;
 
     }
@@ -179,9 +191,9 @@ public class Chat extends Fragment {
         chatListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                TextView sellerName = (TextView)view.findViewById(R.id.chatName);
-                TextView sellerId = (TextView)view.findViewById(R.id.sellerId);
-                TextView bookTitle= (TextView)view.findViewById(R.id.titleOfTextBook);
+                TextView sellerName = (TextView) view.findViewById(R.id.chatName);
+                TextView sellerId = (TextView) view.findViewById(R.id.sellerId);
+                TextView bookTitle = (TextView) view.findViewById(R.id.titleOfTextBook);
                 Intent intent = new Intent(getContext(), ChatPage.class);
                 intent.putExtra("sellerId", sellerId.getText().toString());
                 intent.putExtra("sellerName", sellerName.getText().toString());
@@ -191,11 +203,32 @@ public class Chat extends Fragment {
             }
         });
     }
+    public void setNewSellerListener(){
+        chatDataBase.child(HomePage.userId).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                newSellerDone = true;
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
+    }
     public void setAllMessagesListener(){
         chatDataBase.child(HomePage.userId).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 String sellerKey = dataSnapshot.getKey();
+                sellers.add(sellerKey);
+                if (newSellerDone) {
+                    String latestChatMate = sellers.get(sellers.size() - 1);
+                    getNewChatTopic(latestChatMate);
+                    newSellerDone = false;
+                    sellers.clear();
+                    Log.e("lastChatMate", latestChatMate);
+                }
             }
 
             @Override
@@ -211,6 +244,92 @@ public class Chat extends Fragment {
             @Override
             public void onChildMoved(DataSnapshot dataSnapshot, String s) {
 
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
+    }
+    public void getNewChatTopic(final String sellerKey){
+        chatDataBase.child(HomePage.userId).child(sellerKey).addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                String newTopic = dataSnapshot.getKey();
+                getMessages(sellerKey, newTopic);
+                Log.e("newTopic", newTopic);
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
+    }
+    public void getMessages(final String newChatMate, final String newTopic){
+        chatDataBase.child(HomePage.userId).child(newChatMate).child(newTopic).addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                checkForLatestMessage(newChatMate, newTopic);
+                String messageKeys = dataSnapshot.getKey();
+                Log.e("keys", messageKeys);
+                String messages = dataSnapshot.getValue().toString();
+                Log.e("messages", messages);
+                messageKeyList.add(messageKeys);
+                conversations.put(messageKeys, messages);
+                if(newConvoDone){
+                    newConvoDone = false;
+                    String lastMessageKey = messageKeyList.get(messageKeyList.size()-1);
+                    String lastMessage = conversations.get(lastMessageKey);
+                    Log.e("lastKey", lastMessageKey);
+                    Log.e("lastMessage", lastMessage);
+
+                }
+
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
+    }
+    public void checkForLatestMessage(String chatMate, String newTopic){
+        chatDataBase.child(HomePage.userId).child(chatMate).child(newTopic).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                newConvoDone = true;
             }
 
             @Override
