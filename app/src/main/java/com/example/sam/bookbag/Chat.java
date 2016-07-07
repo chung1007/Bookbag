@@ -16,6 +16,7 @@ import android.widget.TableLayout;
 import android.widget.TextView;
 
 import com.facebook.login.widget.ProfilePictureView;
+import com.firebase.client.Firebase;
 import com.shaded.fasterxml.jackson.databind.util.JSONPObject;
 
 import org.json.JSONException;
@@ -38,6 +39,7 @@ public class Chat extends Fragment {
     ListView chatListView;
     List<JSONObject> convoJson;
     ChatListAdapter adapter;
+    Firebase chatDataBase;
 
     public Chat() {
 
@@ -48,6 +50,7 @@ public class Chat extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.chat, container, false);
         chatListView = (ListView) view.findViewById(R.id.chatListView);
+        chatDataBase = new Firebase(Constants.chatDataBase);
         Log.e("Chat", "started");
         chatListView.setAdapter(null);
         checkPostFile();
@@ -184,6 +187,9 @@ public class Chat extends Fragment {
                 startActivity(intent);
             }
         });
+    }
+    public void setAllMessagesListener(){
+        chatDataBase.child(HomePage.userId).add
     }
 
 }

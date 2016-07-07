@@ -90,7 +90,6 @@ public class ChatPage extends AppCompatActivity {
         listenForNewMessages(bookName);
         messageRoom.child(HomePage.userId).child(bookName).child(time).setValue("sjvsdvbsdbv");
         HomePage.viewPager.setCurrentItem(1);
-        hideSoftKeyboard();
     }
     public void setPageInfo(){
         Log.e("firstTime!", "true");
@@ -278,13 +277,5 @@ public class ChatPage extends AppCompatActivity {
         }
         return dataOfFile;
     }
-
-    public void hideSoftKeyboard() {
-        scrollDown();
-        messageBox.setFocusableInTouchMode(false);
-        messageBox.setFocusable(true);
-        messageBox.setFocusableInTouchMode(true);
-    }
-
 
 }
