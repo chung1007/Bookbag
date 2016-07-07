@@ -28,6 +28,7 @@
         android:paddingLeft="10dp"
         android:layout_below="@id/otherMessageBox"
         android:text="Time Stamp"
+        android:textColor="#98999B"
         android:paddingTop="1dp"
         android:textSize="10sp"/>
 

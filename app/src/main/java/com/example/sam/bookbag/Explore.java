@@ -19,6 +19,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -114,6 +115,7 @@ public class Explore extends Fragment {
         wishDir = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/Bookbag_wishList/existing");
         wishExistDir = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/Bookbag_wishList/wishExist");
         searchBar = (EditText) view.findViewById(R.id.searchBar);
+        searchBar.setCursorVisible(false);
         sortList = (Spinner) view.findViewById(R.id.exploreSpinner);
         keysAndValues = new HashMap<>();
         lastOfFirstKey = new ArrayList<>();
@@ -128,6 +130,7 @@ public class Explore extends Fragment {
         checkIfFirstListeningIsDone();
         setFirebaseListener();
         listenForListItemClicked();
+        setSearchBarClickListener();
         return view;
     }
 
@@ -406,6 +409,15 @@ public class Explore extends Fragment {
             }
         });
     }
+    public void setSearchBarClickListener(){
+        searchBar.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                searchBar.setCursorVisible(true);
+                return false;
+            }
+        });
+    }
 
     public void setSearchBarListener() {
 
@@ -417,6 +429,7 @@ public class Explore extends Fragment {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 if (searchBar.getText().toString().equals("")) {
+                    searchBar.setCursorVisible(false);
                     exploreList.setAdapter(null);
                     checkPostFile();
                 } else {

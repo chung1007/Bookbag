@@ -16,7 +16,10 @@ import android.widget.TableLayout;
 import android.widget.TextView;
 
 import com.facebook.login.widget.ProfilePictureView;
+import com.firebase.client.ChildEventListener;
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
 import com.shaded.fasterxml.jackson.databind.util.JSONPObject;
 
 import org.json.JSONException;
@@ -189,7 +192,32 @@ public class Chat extends Fragment {
         });
     }
     public void setAllMessagesListener(){
-        chatDataBase.child(HomePage.userId).add
+        chatDataBase.child(HomePage.userId).addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                String sellerKey = dataSnapshot.getKey();
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
     }
 
 }

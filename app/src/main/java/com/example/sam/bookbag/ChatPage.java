@@ -1,7 +1,5 @@
 package com.example.sam.bookbag;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
@@ -10,21 +8,17 @@ import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
-
 import com.facebook.FacebookSdk;
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -88,7 +82,7 @@ public class ChatPage extends AppCompatActivity {
         time = getCurrentTime();
         checkIfNewMessageIsDone(bookName);
         listenForNewMessages(bookName);
-        messageRoom.child(HomePage.userId).child(bookName).child(time).setValue("sjvsdvbsdbv");
+        messageRoom.child(HomePage.userId).child(sellerId).child(bookName).child(time).setValue("sjvsdvbsdbv");
         HomePage.viewPager.setCurrentItem(1);
     }
     public void setPageInfo(){
@@ -120,8 +114,8 @@ public class ChatPage extends AppCompatActivity {
                     //Do Nothing
                 } else {
                     messageBox.setText("");
-                    messageRoom.child(HomePage.userId).child(bookName).child(getCurrentTime() + "_" + HomePage.userName + "_" + messageTime).setValue(message);
-                    messageRoom.child(sellerId).child(bookName).child(getCurrentTime() + "_" + HomePage.userName + "_" + messageTime).setValue(message);
+                    messageRoom.child(HomePage.userId).child(sellerId).child(bookName).child(getCurrentTime() + "_" + HomePage.userName + "_" + messageTime).setValue(message);
+                    messageRoom.child(sellerId).child(HomePage.userId).child(bookName).child(getCurrentTime() + "_" + HomePage.userName + "_" + messageTime).setValue(message);
                 }
             }
         });
@@ -134,7 +128,7 @@ public class ChatPage extends AppCompatActivity {
        return date;
     }
     public void checkIfNewMessageIsDone(String bookName){
-        messageRoom.child(HomePage.userId).child(bookName).addListenerForSingleValueEvent(new ValueEventListener() {
+        messageRoom.child(HomePage.userId).child(sellerId).child(bookName).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Log.e("data", "done reading");
@@ -149,7 +143,7 @@ public class ChatPage extends AppCompatActivity {
         });
     }
     public void listenForNewMessages(final String bookName){
-        messageRoom.child(HomePage.userId).child(bookName).addChildEventListener(new ChildEventListener() {
+        messageRoom.child(HomePage.userId).child(sellerId).child(bookName).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Log.e("listening", "for new messages");
@@ -160,7 +154,7 @@ public class ChatPage extends AppCompatActivity {
                 Log.e("done after listening", done.toString());
                 if (done) {
                     Log.e("done", " is true");
-                    messageRoom.child(HomePage.userId).child(bookName).child(time).setValue(null);
+                    messageRoom.child(HomePage.userId).child(sellerId).child(bookName).child(time).setValue(null);
                     String latestMessage = messageKeys.get(messageKeys.size() - 1);
                     String newMessage = keysAndMessages.get(latestMessage);
                     if (newMessage.equals("sjvsdvbsdbv")) {
@@ -255,27 +249,6 @@ public class ChatPage extends AppCompatActivity {
                 scroll.fullScroll(View.FOCUS_DOWN);
             }
         });
-    }
-    public String readFile(String name) {
-        BufferedReader file;
-        try {
-            file = new BufferedReader(new InputStreamReader(new FileInputStream(
-                    new File(name))));
-        } catch (IOException ioe) {
-            Log.e("File Error", "Failed To Open File");
-            return null;
-        }
-        String dataOfFile = "";
-        String buf;
-        try {
-            while ((buf = file.readLine()) != null) {
-                dataOfFile = dataOfFile.concat(buf + "\n");
-            }
-        } catch (IOException ioe) {
-            Log.e("File Error", "Failed To Read From File");
-            return null;
-        }
-        return dataOfFile;
     }
 
 }

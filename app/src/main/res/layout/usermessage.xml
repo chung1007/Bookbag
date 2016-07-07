@@ -30,6 +30,7 @@
         android:layout_below="@id/usersMessageBox"
         android:text="Time Stamp"
         android:paddingTop="1dp"
+        android:textColor="#98999B"
         android:textSize="10sp"/>
 
 </RelativeLayout>
