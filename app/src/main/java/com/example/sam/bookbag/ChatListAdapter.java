@@ -20,6 +20,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Text;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.List;
 
 /**
@@ -65,7 +70,16 @@ public class ChatListAdapter extends BaseAdapter {
             ProfilePictureView sellerPicture = (ProfilePictureView)chatBox.findViewById(R.id.chatImage);
             JSONObject bookJson = messageData.get(position);
             try {
-                newMessageIndicator.setVisibility(View.GONE);
+                String name = bookJson.getString("sellerName").replace(" ", "");
+                String id = bookJson.getString("sellerId");
+                String book = bookJson.getString("bookName").replace(" ", "_");
+                String fileName = name+"_"+id+"_"+book;
+                String filePath = "sdcard/Bookbag_newChat/"+fileName;
+                if(readFile(filePath)!=null){
+                    Log.e("indicator", "visible");
+                }else {
+                    newMessageIndicator.setVisibility(View.GONE);
+                }
                 sellerPicture.setProfileId(bookJson.getString("sellerId"));
                 sellerName.setText(bookJson.getString("sellerName"));
                 latestMessage.setText(bookJson.getString("message"));
@@ -77,6 +91,27 @@ public class ChatListAdapter extends BaseAdapter {
             }
         }
         return convertView;
+    }
+    public String readFile(String name) {
+        BufferedReader file;
+        try {
+            file = new BufferedReader(new InputStreamReader(new FileInputStream(
+                    new File(name))));
+        } catch (IOException ioe) {
+            Log.e("File Error", "Failed To Open File");
+            return null;
+        }
+        String dataOfFile = "";
+        String buf;
+        try {
+            while ((buf = file.readLine()) != null) {
+                dataOfFile = dataOfFile.concat(buf + "\n");
+            }
+        } catch (IOException ioe) {
+            Log.e("File Error", "Failed To Read From File");
+            return null;
+        }
+        return dataOfFile;
     }
 
 }

@@ -53,39 +53,42 @@ public class Chat extends Fragment {
     HashMap<String, String> conversations;
     ArrayList<String> messageKeyList;
     File messageDir;
+    File newMessageDir;
     public static  String messageFromPage = "";
     PrintWriter file;
+    PrintWriter newFile;
     Intent intent;
 
     public Chat() {
 
     }
 
-        @Override
-        public View onCreateView (LayoutInflater inflater, ViewGroup container,
-                Bundle savedInstanceState){
-            View view = inflater.inflate(R.layout.chat, container, false);
-            Firebase.setAndroidContext(getContext());
-            chatListView = (ListView) view.findViewById(R.id.chatListView);
-            chatDataBase = new Firebase(Constants.chatDataBase);
-            messageDir = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/Bookbag_chat");
-            sellers = new ArrayList<>();
-            messageKeyList = new ArrayList<>();
-            conversations = new HashMap<>();
-            Log.e("Chat", "started");
-            chatListView.setAdapter(null);
-            checkPostFile();
-            listenForChatBoxClicked();
-            setNewSellerListener();
-            setAllMessagesListener();
-            return view;
-        }
+    @Override
+    public View onCreateView (LayoutInflater inflater, ViewGroup container,
+                              Bundle savedInstanceState){
+        View view = inflater.inflate(R.layout.chat, container, false);
+        Firebase.setAndroidContext(getContext());
+        chatListView = (ListView) view.findViewById(R.id.chatListView);
+        chatDataBase = new Firebase(Constants.chatDataBase);
+        messageDir = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/Bookbag_chat");
+        newMessageDir = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/Bookbag_newChat");
+        sellers = new ArrayList<>();
+        messageKeyList = new ArrayList<>();
+        conversations = new HashMap<>();
+        Log.e("Chat", "started");
+        chatListView.setAdapter(null);
+        checkPostFile();
+        listenForChatBoxClicked();
+        setNewSellerListener();
+        setAllMessagesListener();
+        return view;
+    }
 
-        @Override
-        public void onCreate (Bundle savedInstanceState){
-            super.onCreate(savedInstanceState);
+    @Override
+    public void onCreate (Bundle savedInstanceState){
+        super.onCreate(savedInstanceState);
 
-        }
+    }
 
 
     public void checkPostFile() {
@@ -210,6 +213,15 @@ public class Chat extends Fragment {
                 intent.putExtra("sellerName", sellerName.getText().toString());
                 intent.putExtra("bookName", bookTitle.getText().toString());
                 intent.putExtra("isContinued", "continued");
+                String name = sellerName.getText().toString();
+                String ID = sellerId.getText().toString();
+                String book = bookTitle.getText().toString();
+                String fileName = name.replace(" ", "") + "_" + ID + "_" + book.replace(" ", "_");
+                String filePath = "sdcard/Bookbag_newChat/"+fileName;
+                if(readFile(filePath)!=null){
+                    File toDelete = new File(filePath);
+                    toDelete.delete();
+                }
                 startActivity(intent);
             }
         });
@@ -318,7 +330,7 @@ public class Chat extends Fragment {
                     String lastMessage = conversations.get(lastMessageKey);
                     Log.e("lastKey", lastMessageKey);
                     Log.e("lastMessage", lastMessage);
-                    writeToFileAndUpdate(newChatMate, newTopic, lastMessage);
+                    writeToFileAndUpdate(newChatMate, newTopic, lastMessage, lastMessageKey);
 
                 }
 
@@ -360,8 +372,9 @@ public class Chat extends Fragment {
         });
     }
 
-    public void writeToFileAndUpdate(String sellerAndId, String messageKey, String message) {
+    public void writeToFileAndUpdate(String sellerAndId, String messageKey, String message, String lastMessageKey) {
         Log.e("new convo", "writing to file!");
+        Log.e("lastMessageKey", lastMessageKey);
         String[] sellerAndIdSplit = sellerAndId.split("_");
         String sellerId = sellerAndIdSplit[0];
         Log.e("sellerId", sellerId);
@@ -370,13 +383,14 @@ public class Chat extends Fragment {
         String bookName = messageKey;
         Log.e("lastestBook", bookName);
         try {
-            if(message.equals(messageFromPage)) {
+            if(message.equals(messageFromPage) && !lastMessageKey.contains("_"+HomePage.userName+"_")) {
                 messageDir.mkdir();
                 file = null;
                 file = new PrintWriter(new FileOutputStream(new File(messageDir, (sellerName.replace(" ", "") + "_" + sellerId + "_" + bookName.replace(" ", "_")))));
                 file.println(message);
                 Log.e("fromChat", message);
                 file.close();
+                saveNewChats(sellerName, sellerId, bookName, message);
                 refreshChatPage();
                 Log.e("chat page", "refreshed");
             }
@@ -389,8 +403,19 @@ public class Chat extends Fragment {
         chatListView.setAdapter(null);
         checkPostFile();
     }
+    public void saveNewChats(String sellerName, String sellerId, String bookName, String message){
+        newMessageDir.mkdir();
+        newFile = null;
+        try {
+            newFile = new PrintWriter(new FileOutputStream(new File(newMessageDir, (sellerName.replace(" ", "") + "_" + sellerId + "_" + bookName.replace(" ", "_")))));
+            newFile.println(message);
+            newFile.close();
+        }catch (IOException IOE){
+            Log.e("file", "failed");
+        }
+
+    }
 
     //Erica L.Meltzer.
 
 }
-

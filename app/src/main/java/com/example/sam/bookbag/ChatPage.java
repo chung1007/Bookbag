@@ -103,7 +103,7 @@ public class ChatPage extends AppCompatActivity {
     }
     @Override
     public void onBackPressed() {
-       HomePage.viewPager.setCurrentItem(3);
+        HomePage.viewPager.setCurrentItem(3);
     }
     public void listenForSendClicked(){
         sendButton.setOnClickListener(new View.OnClickListener() {
@@ -125,7 +125,7 @@ public class ChatPage extends AppCompatActivity {
         String delegate2 = "hh:mm aaa";
         String date = (String) DateFormat.format(delegate, Calendar.getInstance().getTime());
         messageTime = (String) DateFormat.format(delegate2, Calendar.getInstance().getTime());
-       return date;
+        return date;
     }
     public void checkIfNewMessageIsDone(String bookName){
         messageRoom.child(HomePage.userId).child(sellerId+"_"+sellerName).child(bookName).addListenerForSingleValueEvent(new ValueEventListener() {
