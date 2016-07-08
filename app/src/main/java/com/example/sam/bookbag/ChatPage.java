@@ -162,11 +162,12 @@ public class ChatPage extends AppCompatActivity {
 
                     } else {
                         addMessage(latestMessage, newMessage);
+                        Log.e("latestKey", latestMessage);
+                        Log.e("newMessage", newMessage);
                         writeToFile(newMessage);
                     }
                     scrollDown();
-                    Log.e("latestKey", latestMessage);
-                    Log.e("newMessage", newMessage);
+
                 }
             }
 
@@ -228,7 +229,9 @@ public class ChatPage extends AppCompatActivity {
             file = null;
             file = new PrintWriter(new FileOutputStream(new File(messageDir, (sellerName.replace(" ", "") + "_" + sellerId + "_" + bookName.replace(" ", "_")))));
             file.println(message);
+            Log.e("fromChatPage", message);
             file.close();
+            Chat.messageFromPage = message;
         }catch(IOException IOE){
             Log.e("chat", "saving conv. failed");
         }

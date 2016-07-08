@@ -53,38 +53,40 @@ public class Chat extends Fragment {
     HashMap<String, String> conversations;
     ArrayList<String> messageKeyList;
     File messageDir;
+    public static  String messageFromPage = "";
     PrintWriter file;
+    Intent intent;
 
     public Chat() {
 
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.chat, container, false);
-        Firebase.setAndroidContext(getContext());
-        chatListView = (ListView) view.findViewById(R.id.chatListView);
-        chatDataBase = new Firebase(Constants.chatDataBase);
-        messageDir = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/Bookbag_chat");
-        sellers = new ArrayList<>();
-        messageKeyList= new ArrayList<>();
-        conversations =  new HashMap<>();
-        Log.e("Chat", "started");
-        chatListView.setAdapter(null);
-        checkPostFile();
-        listenForChatBoxClicked();
-        setNewSellerListener();
-        setAllMessagesListener();
-        return view;
+        @Override
+        public View onCreateView (LayoutInflater inflater, ViewGroup container,
+                Bundle savedInstanceState){
+            View view = inflater.inflate(R.layout.chat, container, false);
+            Firebase.setAndroidContext(getContext());
+            chatListView = (ListView) view.findViewById(R.id.chatListView);
+            chatDataBase = new Firebase(Constants.chatDataBase);
+            messageDir = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/Bookbag_chat");
+            sellers = new ArrayList<>();
+            messageKeyList = new ArrayList<>();
+            conversations = new HashMap<>();
+            Log.e("Chat", "started");
+            chatListView.setAdapter(null);
+            checkPostFile();
+            listenForChatBoxClicked();
+            setNewSellerListener();
+            setAllMessagesListener();
+            return view;
+        }
 
-    }
+        @Override
+        public void onCreate (Bundle savedInstanceState){
+            super.onCreate(savedInstanceState);
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+        }
 
-    }
 
     public void checkPostFile() {
         ArrayList<String> convoFiles = new ArrayList<>();
@@ -181,7 +183,7 @@ public class Chat extends Fragment {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < nameChar.size(); i++) {
             sb.append(nameChar.get(i));
-            if(i != nameChar.size()-1) {
+            if (i != nameChar.size() - 1) {
                 sb.append(" ");
             }
         }
@@ -195,7 +197,8 @@ public class Chat extends Fragment {
         Log.e("splitName", chars.toString());
         return data;
     }
-    public void listenForChatBoxClicked(){
+
+    public void listenForChatBoxClicked() {
         chatListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -211,7 +214,8 @@ public class Chat extends Fragment {
             }
         });
     }
-    public void setNewSellerListener(){
+
+    public void setNewSellerListener() {
         chatDataBase.child(HomePage.userId).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -224,10 +228,12 @@ public class Chat extends Fragment {
             }
         });
     }
-    public void setAllMessagesListener(){
+
+    public void setAllMessagesListener() {
         chatDataBase.child(HomePage.userId).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Log.e("newChatMate", "added!");
                 String sellerKey = dataSnapshot.getKey();
                 sellers.add(sellerKey);
                 if (newSellerDone) {
@@ -260,10 +266,12 @@ public class Chat extends Fragment {
             }
         });
     }
-    public void getNewChatTopic(final String sellerKey){
+
+    public void getNewChatTopic(final String sellerKey) {
         chatDataBase.child(HomePage.userId).child(sellerKey).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Log.e("newBook", "added");
                 String newTopic = dataSnapshot.getKey();
                 getMessages(sellerKey, newTopic);
                 Log.e("newTopic", newTopic);
@@ -290,10 +298,12 @@ public class Chat extends Fragment {
             }
         });
     }
-    public void getMessages(final String newChatMate, final String newTopic){
+
+    public void getMessages(final String newChatMate, final String newTopic) {
         chatDataBase.child(HomePage.userId).child(newChatMate).child(newTopic).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Log.e("new messages", "added");
                 checkForLatestMessage(newChatMate, newTopic);
                 String messageKeys = dataSnapshot.getKey();
                 Log.e("keys", messageKeys);
@@ -301,9 +311,10 @@ public class Chat extends Fragment {
                 Log.e("messages", messages);
                 messageKeyList.add(messageKeys);
                 conversations.put(messageKeys, messages);
-                if(newConvoDone){
+                if (newConvoDone) {
                     newConvoDone = false;
-                    String lastMessageKey = messageKeyList.get(messageKeyList.size()-1);
+                    Log.e("conversatons", conversations.toString());
+                    String lastMessageKey = messageKeyList.get(messageKeyList.size() - 1);
                     String lastMessage = conversations.get(lastMessageKey);
                     Log.e("lastKey", lastMessageKey);
                     Log.e("lastMessage", lastMessage);
@@ -334,7 +345,8 @@ public class Chat extends Fragment {
             }
         });
     }
-    public void checkForLatestMessage(String chatMate, String newTopic){
+
+    public void checkForLatestMessage(String chatMate, String newTopic) {
         chatDataBase.child(HomePage.userId).child(chatMate).child(newTopic).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -347,7 +359,9 @@ public class Chat extends Fragment {
             }
         });
     }
-    public void writeToFileAndUpdate(String sellerAndId, String messageKey, String message){
+
+    public void writeToFileAndUpdate(String sellerAndId, String messageKey, String message) {
+        Log.e("new convo", "writing to file!");
         String[] sellerAndIdSplit = sellerAndId.split("_");
         String sellerId = sellerAndIdSplit[0];
         Log.e("sellerId", sellerId);
@@ -356,15 +370,26 @@ public class Chat extends Fragment {
         String bookName = messageKey;
         Log.e("lastestBook", bookName);
         try {
-            messageDir.mkdir();
-            file = null;
-            file = new PrintWriter(new FileOutputStream(new File(messageDir, (sellerName.replace(" ", "") + "_" + sellerId + "_" + bookName.replace(" ", "_")))));
-            file.println(message);
-            file.close();
-        }catch(IOException IOE){
+            if(message.equals(messageFromPage)) {
+                messageDir.mkdir();
+                file = null;
+                file = new PrintWriter(new FileOutputStream(new File(messageDir, (sellerName.replace(" ", "") + "_" + sellerId + "_" + bookName.replace(" ", "_")))));
+                file.println(message);
+                Log.e("fromChat", message);
+                file.close();
+                refreshChatPage();
+                Log.e("chat page", "refreshed");
+            }
+        } catch (IOException IOE) {
             Log.e("chat", "saving conv. failed");
         }
     }
+
+    public void refreshChatPage() {
+        chatListView.setAdapter(null);
+        checkPostFile();
+    }
+
     //Erica L.Meltzer.
 
 }

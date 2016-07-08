@@ -61,9 +61,11 @@ public class ChatListAdapter extends BaseAdapter {
             TextView latestMessage = (TextView)chatBox.findViewById(R.id.latestMessage);
             TextView bookName = (TextView)chatBox.findViewById(R.id.titleOfTextBook);
             TextView sellerId = (TextView)chatBox.findViewById(R.id.sellerId);
+            ImageView newMessageIndicator = (ImageView)chatBox.findViewById(R.id.newMessageIndicator);
             ProfilePictureView sellerPicture = (ProfilePictureView)chatBox.findViewById(R.id.chatImage);
             JSONObject bookJson = messageData.get(position);
             try {
+                newMessageIndicator.setVisibility(View.GONE);
                 sellerPicture.setProfileId(bookJson.getString("sellerId"));
                 sellerName.setText(bookJson.getString("sellerName"));
                 latestMessage.setText(bookJson.getString("message"));
