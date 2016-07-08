@@ -29,8 +29,10 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -50,6 +52,8 @@ public class Chat extends Fragment {
     ArrayList<String>sellers;
     HashMap<String, String> conversations;
     ArrayList<String> messageKeyList;
+    File messageDir;
+    PrintWriter file;
 
     public Chat() {
 
@@ -62,6 +66,7 @@ public class Chat extends Fragment {
         Firebase.setAndroidContext(getContext());
         chatListView = (ListView) view.findViewById(R.id.chatListView);
         chatDataBase = new Firebase(Constants.chatDataBase);
+        messageDir = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/Bookbag_chat");
         sellers = new ArrayList<>();
         messageKeyList= new ArrayList<>();
         conversations =  new HashMap<>();
@@ -124,6 +129,7 @@ public class Chat extends Fragment {
         convoJson = new ArrayList<>();
         for (int i = 0; i < postNames.size(); i++) {
             String fileName = "sdcard/Bookbag_chat/" + postNames.get(i);
+            Log.e("postNames", postNames.get(i));
             ArrayList<String> data = getData(postNames.get(i), fileName);
             try {
                 JSONObject postDataRead = new JSONObject();
@@ -152,6 +158,7 @@ public class Chat extends Fragment {
     //http://stackoverflow.com/questions/599161/best-way-to-convert-an-arraylist-to-a-string
 
     public ArrayList<String> getData(String fileName, String filePath) {
+        Log.e("fileName", fileName);
         ArrayList<String> data = new ArrayList<>();
         ArrayList<String> nameChar = new ArrayList<>();
         String splitName[] = fileName.split("_");
@@ -300,6 +307,7 @@ public class Chat extends Fragment {
                     String lastMessage = conversations.get(lastMessageKey);
                     Log.e("lastKey", lastMessageKey);
                     Log.e("lastMessage", lastMessage);
+                    writeToFileAndUpdate(newChatMate, newTopic, lastMessage);
 
                 }
 
@@ -339,6 +347,25 @@ public class Chat extends Fragment {
             }
         });
     }
+    public void writeToFileAndUpdate(String sellerAndId, String messageKey, String message){
+        String[] sellerAndIdSplit = sellerAndId.split("_");
+        String sellerId = sellerAndIdSplit[0];
+        Log.e("sellerId", sellerId);
+        String sellerName = sellerAndIdSplit[1];
+        Log.e("sellerName", sellerName);
+        String bookName = messageKey;
+        Log.e("lastestBook", bookName);
+        try {
+            messageDir.mkdir();
+            file = null;
+            file = new PrintWriter(new FileOutputStream(new File(messageDir, (sellerName.replace(" ", "") + "_" + sellerId + "_" + bookName.replace(" ", "_")))));
+            file.println(message);
+            file.close();
+        }catch(IOException IOE){
+            Log.e("chat", "saving conv. failed");
+        }
+    }
+    //Erica L.Meltzer.
 
 }
 

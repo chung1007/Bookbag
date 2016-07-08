@@ -82,7 +82,7 @@ public class ChatPage extends AppCompatActivity {
         time = getCurrentTime();
         checkIfNewMessageIsDone(bookName);
         listenForNewMessages(bookName);
-        messageRoom.child(HomePage.userId).child(sellerId).child(bookName).child(time).setValue("sjvsdvbsdbv");
+        messageRoom.child(HomePage.userId).child(sellerId+"_"+sellerName).child(bookName).child(time).setValue("sjvsdvbsdbv");
         HomePage.viewPager.setCurrentItem(1);
     }
     public void setPageInfo(){
@@ -114,8 +114,8 @@ public class ChatPage extends AppCompatActivity {
                     //Do Nothing
                 } else {
                     messageBox.setText("");
-                    messageRoom.child(HomePage.userId).child(sellerId).child(bookName).child(getCurrentTime() + "_" + HomePage.userName + "_" + messageTime).setValue(message);
-                    messageRoom.child(sellerId).child(HomePage.userId).child(bookName).child(getCurrentTime() + "_" + HomePage.userName + "_" + messageTime).setValue(message);
+                    messageRoom.child(HomePage.userId).child(sellerId+"_"+sellerName).child(bookName).child(getCurrentTime() + "_" + HomePage.userName + "_" + messageTime).setValue(message);
+                    messageRoom.child(sellerId).child(HomePage.userId+"_"+HomePage.userName).child(bookName).child(getCurrentTime() + "_" + HomePage.userName + "_" + messageTime).setValue(message);
                 }
             }
         });
@@ -128,7 +128,7 @@ public class ChatPage extends AppCompatActivity {
        return date;
     }
     public void checkIfNewMessageIsDone(String bookName){
-        messageRoom.child(HomePage.userId).child(sellerId).child(bookName).addListenerForSingleValueEvent(new ValueEventListener() {
+        messageRoom.child(HomePage.userId).child(sellerId+"_"+sellerName).child(bookName).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Log.e("data", "done reading");
@@ -143,7 +143,7 @@ public class ChatPage extends AppCompatActivity {
         });
     }
     public void listenForNewMessages(final String bookName){
-        messageRoom.child(HomePage.userId).child(sellerId).child(bookName).addChildEventListener(new ChildEventListener() {
+        messageRoom.child(HomePage.userId).child(sellerId+"_"+sellerName).child(bookName).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Log.e("listening", "for new messages");
@@ -154,7 +154,7 @@ public class ChatPage extends AppCompatActivity {
                 Log.e("done after listening", done.toString());
                 if (done) {
                     Log.e("done", " is true");
-                    messageRoom.child(HomePage.userId).child(sellerId).child(bookName).child(time).setValue(null);
+                    messageRoom.child(HomePage.userId).child(sellerId+"_"+sellerName).child(bookName).child(time).setValue(null);
                     String latestMessage = messageKeys.get(messageKeys.size() - 1);
                     String newMessage = keysAndMessages.get(latestMessage);
                     if (newMessage.equals("sjvsdvbsdbv")) {
