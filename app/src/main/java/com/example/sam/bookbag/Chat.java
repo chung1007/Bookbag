@@ -416,6 +416,4 @@ public class Chat extends Fragment {
 
     }
 
-    //Erica L.Meltzer.
-
 }
