@@ -57,5 +57,14 @@
         android:text="Calculus AB"
         android:textColor="#1ABC9C"/>
 
+    <ImageView
+        android:id="@+id/newMessageIndicator"
+        android:layout_width="95dp"
+        android:layout_height="95dp"
+        android:layout_centerVertical="true"
+        android:paddingLeft="85dp"
+        android:src="@drawable/greendot"
+        android:layout_toRightOf="@id/latestMessage"/>
+
 
 </RelativeLayout>

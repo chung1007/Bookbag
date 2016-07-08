@@ -59,6 +59,7 @@ public class Chat extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.chat, container, false);
+        Firebase.setAndroidContext(getContext());
         chatListView = (ListView) view.findViewById(R.id.chatListView);
         chatDataBase = new Firebase(Constants.chatDataBase);
         sellers = new ArrayList<>();
