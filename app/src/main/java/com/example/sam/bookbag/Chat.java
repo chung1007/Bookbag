@@ -1,10 +1,12 @@
 package com.example.sam.bookbag;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -81,6 +83,7 @@ public class Chat extends Fragment {
         listenForChatBoxClicked();
         setNewSellerListener();
         setAllMessagesListener();
+        setDeleteClickListener();
         return view;
     }
 
@@ -414,6 +417,42 @@ public class Chat extends Fragment {
             Log.e("file", "failed");
         }
 
+    }
+    public void setDeleteClickListener(){
+        chatListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                TextView sellerName = (TextView) view.findViewById(R.id.chatName);
+                TextView sellerId = (TextView) view.findViewById(R.id.sellerId);
+                TextView bookTitle = (TextView) view.findViewById(R.id.titleOfTextBook);
+                String name = sellerName.getText().toString();
+                String ID = sellerId.getText().toString();
+                String book = bookTitle.getText().toString();
+                String fileName = name.replace(" ", "") + "_" + ID + "_" + book.replace(" ", "_");
+                String filePath = "sdcard/Bookbag_chat/"+fileName;
+                conversationDeleteDialog(filePath);
+                return false;
+            }
+        });
+    }
+    public void conversationDeleteDialog(final String fileName){
+        new AlertDialog.Builder(getContext())
+                .setTitle("Are you sure?")
+                .setMessage("Delete this conversation?")
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        File file =  new File(fileName);
+                        file.delete();
+                        refreshChatPage();
+                    }
+                })
+                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
     }
 
 }
