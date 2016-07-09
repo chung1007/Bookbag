@@ -32,6 +32,13 @@
 
     </RelativeLayout>
 
+    <View
+        android:id="@+id/nameBoxLine"
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/header"
+        android:background="#C2C2C2" />
+
     <ScrollView
         android:id="@+id/messageScrollView"
         android:layout_width="match_parent"
@@ -46,6 +53,13 @@
 
         </LinearLayout>
     </ScrollView>
+
+    <View
+        android:id="@+id/messageBoxLine"
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:layout_above="@+id/messagingBox"
+        android:background="#C2C2C2"/>
 
     <RelativeLayout
         android:id="@+id/messagingBox"
