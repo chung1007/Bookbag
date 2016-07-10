@@ -110,7 +110,6 @@ public class Chat extends Fragment {
         }
 
     }
-
     public String readFile(String name) {
         BufferedReader file;
         try {

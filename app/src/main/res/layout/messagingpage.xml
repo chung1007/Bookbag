@@ -25,9 +25,18 @@
             android:text="Back"
             android:textSize="17dp"
             android:textColor="#34CAD8"
-            android:layout_alignParentLeft="true"
-            android:paddingLeft="10dp"
+            android:layout_toRightOf="@+id/arrow"
+            android:paddingLeft="1dp"
             android:layout_centerVertical="true"/>
+
+        <ImageView
+            android:layout_width="25dp"
+            android:layout_height="35dp"
+            android:id="@+id/arrow"
+            android:paddingLeft="5dp"
+            android:src="@drawable/backarrow"
+            android:layout_centerVertical="true"
+            android:layout_alignParentLeft="true"/>
 
 
     </RelativeLayout>
