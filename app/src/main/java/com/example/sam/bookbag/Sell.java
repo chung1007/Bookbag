@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.ListPopupWindow;
 import android.util.Base64;
@@ -71,6 +72,7 @@ public class Sell extends Fragment {
     Bitmap imageOneBitmap;
     int photoCounter;
     boolean correctInfo;
+    Toast toast;
 
     public Sell() {}
 
@@ -98,6 +100,7 @@ public class Sell extends Fragment {
         setPhotoAddListener(textBookImageThree, 2);
         setPhotoAddListener(textBookImageFour, 3);
         setPostClickListener();
+        //tabChangeListener();
         return view;
     }
 
@@ -188,6 +191,9 @@ public class Sell extends Fragment {
                     sendPostData();
                     toastMaker("Posted!");
                     clearPostData();
+                    if(toast!=null){
+                        HomePage.tabLayout.getTabAt(2);
+                    }
                 }
             }
         });
@@ -257,11 +263,19 @@ public class Sell extends Fragment {
         imageView.setImageBitmap(null);
         imageView.destroyDrawingCache();
     }
+
     public void sendPostData(){
         ArrayList<String> dataNames = new ArrayList<>(Arrays.asList("className", "authorName", "ISBN", "condition", "price", "edition", "notes"));
         DatabaseReference postKey = MyApplication.ref.child(HomePage.userId);
         for (int i = 0; i < editTextList.length; i++){
-            postKey.child(className.getText().toString()).child(dataNames.get(i)).setValue(editTextList[i].getText().toString());
+            String dataValue = editTextList[i].getText().toString();
+            if (dataValue.charAt(dataValue.length() - 1)==' '){
+                Log.e("Title", "has space at the end");
+                dataValue = dataValue.replace(dataValue.substring(dataValue.length()-1), "");
+                Log.e("no space test", dataValue + "test");
+            }
+            Log.e("no space test2", dataValue + "test");
+            postKey.child(className.getText().toString()).child(dataNames.get(i)).setValue(dataValue);
         }
         postKey.child(className.getText().toString()).child("bitmap").setValue(BitMapToString(imageOneBitmap));
         postKey.child(className.getText().toString()).child("seller").setValue(HomePage.userName);
@@ -280,7 +294,7 @@ public class Sell extends Fragment {
         photoCounter = 1;
     }
     public void toastMaker(String message){
-        Toast toast = Toast.makeText(getContext(), message, Toast.LENGTH_SHORT);
+        toast = Toast.makeText(getContext(), message, Toast.LENGTH_SHORT);
         toast.setGravity(Gravity.CENTER, 0, 0);
         toast.show();
     }

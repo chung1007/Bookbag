@@ -43,11 +43,14 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.StorageReference;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -114,6 +117,7 @@ public class Explore extends Fragment {
         exploreDir = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/Bookbag_explore");
         wishDir = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/Bookbag_wishList/existing");
         wishExistDir = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/Bookbag_wishList/wishExist");
+        initializeFiles();
         searchBar = (EditText) view.findViewById(R.id.searchBar);
         searchBar.setCursorVisible(false);
         sortList = (Spinner) view.findViewById(R.id.exploreSpinner);
@@ -140,6 +144,19 @@ public class Explore extends Fragment {
         Log.e("onThisScreen", "onCreate");
     }
 
+    public void initializeFiles(){
+        try {
+            File testFile;
+            testFile = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/Bookbag_wishList");
+            testFile.mkdir();
+            file = null;
+            file = new PrintWriter(new FileOutputStream(new File(testFile, (""))));
+            file.println("");
+            file.close();
+        }catch (IOException IOE){
+            Log.e("file initializing", "failed");
+        }
+    }
     public void setAddedPostsListener(ArrayList<String> previousKeys){
         Log.e("previousKeys", previousKeys.toString());
         for(int i =0; i < previousKeys.size(); i++){
@@ -693,6 +710,7 @@ public class Explore extends Fragment {
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+            Log.e("wishIcon", "clicked");
             if(view.getTag()!=null){
                 toastMaker("Already in Wist List!");
                 Log.e("item", "already in list!");

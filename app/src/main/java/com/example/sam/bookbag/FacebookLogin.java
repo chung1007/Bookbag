@@ -39,6 +39,7 @@ public class FacebookLogin extends Fragment {
     private LoginButton mButtonLogin;
     private AccessToken accessToken;
     public static Profile profile;
+    DatabaseReference ref;
     public static boolean firstTime;
     private FacebookCallback<LoginResult> mFacebookCallback = new FacebookCallback<LoginResult>() {
         @Override
@@ -83,6 +84,7 @@ public class FacebookLogin extends Fragment {
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(getContext());
         Firebase.setAndroidContext(getContext());
+        ref = MyApplication.ref;
         mCallbackManager = CallbackManager.Factory.create();
         setupTokenTracker();
         setupProfileTracker();

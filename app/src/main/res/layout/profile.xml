@@ -7,7 +7,8 @@
    <RelativeLayout
        android:layout_width="match_parent"
        android:layout_height="wrap_content"
-       android:paddingLeft="5dp">
+       android:paddingLeft="5dp"
+       android:paddingBottom="3dp">
 
        <EditText
            android:id="@+id/profileSearchBar"
@@ -20,7 +21,7 @@
            android:textSize="16sp"/>
 
        <ImageView
-           android:id="@+id/userSellItems"
+           android:id="@+id/userListings"
            android:layout_width="33dp"
            android:layout_height="33dp"
            android:src="@drawable/unavailable"
@@ -28,13 +29,15 @@
            android:layout_toRightOf="@+id/profileSearchBar"
            android:layout_centerVertical="true"
            android:paddingLeft="8dp"
-           android:paddingTop="5dp"/>
+           android:paddingTop="3dp"/>
 
    </RelativeLayout>
 
     <ListView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:id="@+id/profileList"
+        android:divider="@null">
 
     </ListView>
 

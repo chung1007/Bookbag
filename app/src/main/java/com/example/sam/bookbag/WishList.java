@@ -109,7 +109,7 @@ public class WishList extends Fragment {
                 userIdlist.add(userId);
             }
         } catch (NullPointerException NPE) {
-            toastMaker("No posts currently");
+            toastMaker("You have no bookmarks");
         }
         Log.e("files", postFiles.toString());
         if (!postFiles.isEmpty()) {
@@ -128,7 +128,7 @@ public class WishList extends Fragment {
                 postFiles.add(list[i].getName());
             }
         } catch (NullPointerException NPE) {
-            toastMaker("No posts currently");
+            toastMaker("No items currently");
         }
         Log.e("files", postFiles.toString());
         if (!postFiles.isEmpty()) {
