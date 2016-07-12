@@ -22,6 +22,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -102,6 +103,7 @@ public class Explore extends Fragment {
     int counter;
     PrintWriter file;
     PrintWriter anotherFile;
+    View view;
 
     public Explore() {
 
@@ -111,7 +113,7 @@ public class Explore extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Log.e("onThisScreen", "onCreateView");
-        View view = inflater.inflate(R.layout.explore, container, false);
+        view = inflater.inflate(R.layout.explore, container, false);
         exploreList = (ListView) view.findViewById(R.id.exploreBoxList);
         checkPostFile();
         exploreDir = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/Bookbag_explore");
@@ -449,6 +451,7 @@ public class Explore extends Fragment {
                     searchBar.setCursorVisible(false);
                     exploreList.setAdapter(null);
                     checkPostFile();
+                    putDownKeyBoard();
                 } else {
                     for (int j = 0; j < dataPoints.size(); j++) {
                         JSONObject jsonFirst = dataPoints.get(j);
@@ -710,22 +713,22 @@ public class Explore extends Fragment {
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-            Log.e("wishIcon", "clicked");
-            if(view.getTag()!=null){
-                toastMaker("Already in Wist List!");
-                Log.e("item", "already in list!");
-            }else {
-                try {
-                    file = null;
-                    wishDir.mkdir();
-                    file = new PrintWriter(new FileOutputStream(new File(wishDir, (userId + "_" + (postKey.replace(" ", ""))))));
-                    file.println(data);
-                    file.close();
-                    toastMaker("Added to WishList!");
-                } catch (IOException IOE) {
-                    Log.e("file", "NOT FOUND");
+                Log.e("wishIcon", "clicked");
+                if (view.getTag() != null) {
+                    toastMaker("Already in Wist List!");
+                    Log.e("item", "already in list!");
+                } else {
+                    try {
+                        file = null;
+                        wishDir.mkdir();
+                        file = new PrintWriter(new FileOutputStream(new File(wishDir, (userId + "_" + (postKey.replace(" ", ""))))));
+                        file.println(data);
+                        file.close();
+                        toastMaker("Added to WishList!");
+                    } catch (IOException IOE) {
+                        Log.e("file", "NOT FOUND");
+                    }
                 }
-            }
             }
         });
     }
@@ -815,6 +818,12 @@ public class Explore extends Fragment {
             }catch (IOException IOE){
                 Log.e("wishExists", "failed");
             }
+        }
+    }
+    public void putDownKeyBoard(){
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager)getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
 
