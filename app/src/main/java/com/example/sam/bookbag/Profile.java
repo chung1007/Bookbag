@@ -5,6 +5,8 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -18,6 +20,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.login.widget.ProfilePictureView;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -49,7 +54,9 @@ public class Profile extends Fragment {
     boolean listShowing = false;
     DatabaseReference ref;
     boolean deletingDone = false;
-
+    ArrayList<String> rateKeys;
+    ArrayList<String> rateKeysToShow;
+    Firebase rateDataBase;
 
     public Profile() {
 
@@ -59,16 +66,9 @@ public class Profile extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.profile, container, false);
-        profileList = (ListView) view.findViewById(R.id.profileList);
-        list = (ImageView) view.findViewById(R.id.userListings);
-        searchBar = (EditText) view.findViewById(R.id.profileSearchBar);
-        ref = MyApplication.ref;
-        ref.child(HomePage.userId).child("Initialized").setValue("listeners initialized");
-        searchBar.setCursorVisible(false);
-        setShowListClickedListener();
-        setSearchBarClickListener();
-        listItemClickListener();
-        setDataBaseListener();
+        Firebase.setAndroidContext(getContext());
+        initializations(view);
+        setListeners();
         return view;
     }
 
@@ -307,5 +307,78 @@ public class Profile extends Fragment {
                 wish.delete();
             }
         }
+    }
+    public void getAllRateKeys(){
+        rateDataBase.addChildEventListener(new com.firebase.client.ChildEventListener() {
+            @Override
+            public void onChildAdded(com.firebase.client.DataSnapshot dataSnapshot, String s) {
+                rateKeys.add(dataSnapshot.getKey());
+                Log.e("rateKeys", rateKeys.toString());
+            }
+
+            @Override
+            public void onChildChanged(com.firebase.client.DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(com.firebase.client.DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(com.firebase.client.DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
+    }
+    public void initializations(View view){
+        rateDataBase = new Firebase(Constants.ratingDataBase);
+        profileList = (ListView) view.findViewById(R.id.profileList);
+        list = (ImageView) view.findViewById(R.id.userListings);
+        searchBar = (EditText) view.findViewById(R.id.profileSearchBar);
+        ref = MyApplication.ref;
+        ref.child(HomePage.userId).child("Initialized").setValue("listeners initialized");
+        rateKeys = new ArrayList<>();
+        rateKeysToShow = new ArrayList<>();
+        getAllRateKeys();
+        searchBar.setCursorVisible(false);
+    }
+
+    public void setListeners(){
+        setShowListClickedListener();
+        setSearchBarClickListener();
+        listItemClickListener();
+        setDataBaseListener();
+        setProfileSearchBarlistener();
+    }
+
+    public void setProfileSearchBarlistener(){
+        searchBar.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (searchBar.getText().toString().replace(" ", "").length() > 3) {
+                    for (int i = 0; i < rateKeys.size(); i++) {
+                        if (rateKeys.get(i).contains("_" + (searchBar.getText().toString()).replace(" ", ""))) {
+                            if (!rateKeysToShow.contains(rateKeys.get(i))) {
+                                rateKeysToShow.add(rateKeys.get(i));
+                            }
+                        }
+                    }
+                    Log.e("rateKeysToShow", rateKeysToShow.toString());
+                }
+            }
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
     }
 }

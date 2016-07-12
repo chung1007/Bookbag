@@ -40,6 +40,7 @@ public class FacebookLogin extends Fragment {
     private AccessToken accessToken;
     public static Profile profile;
     DatabaseReference ref;
+    Firebase ratingsDataBase;
     public static boolean firstTime;
     private FacebookCallback<LoginResult> mFacebookCallback = new FacebookCallback<LoginResult>() {
         @Override
@@ -196,6 +197,9 @@ public class FacebookLogin extends Fragment {
     }
     public void sendUserData(Profile profile){
         MyApplication.ref.child(profile.getId());
+        ratingsDataBase = new Firebase(Constants.ratingDataBase);
+        ratingsDataBase.child(profile.getId()+"_"+profile.getName().replace(" ", "")).child("likes").setValue(Integer.parseInt("0"));
+        ratingsDataBase.child(profile.getId()+"_"+profile.getName().replace(" ", "")).child("dislikes").setValue(Integer.parseInt("0"));
         Log.e("Firebase", "sent Data");
     }
 }

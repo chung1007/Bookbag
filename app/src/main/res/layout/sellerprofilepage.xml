@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.facebook.login.widget.ProfilePictureView
+        android:id="@+id/profileImageOfSeller"
+        android:layout_width="170dp"
+        android:layout_height="200dp"
+        android:layout_alignParentLeft="true"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp"
+        android:paddingLeft="10dp"
+        android:layout_centerInParent="true"/>
+
+    <TextView
+        android:id="@+id/profileNameOfSeller"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Kasra Soltani nia"
+        android:layout_toRightOf="@id/profileImageOfSeller"
+        android:paddingTop="15dp"
+        android:textColor="#000000"
+        android:paddingLeft="10dp"
+        android:textSize="40sp"/>
+
+
+</RelativeLayout>
