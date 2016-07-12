@@ -24,7 +24,7 @@
         android:layout_alignParentTop="true"
         android:textColor="#000000"
         android:paddingLeft="30dp"
-        android:textSize="25sp"/>
+        android:textSize="27sp"/>
 
     <TextView
         android:id="@+id/profileLastNameOfSeller"
@@ -43,9 +43,9 @@
         android:layout_height="60dp"
         android:src="@drawable/happyicon"
         android:paddingLeft="30dp"
+        android:paddingBottom="20dp"
         android:layout_below="@+id/profileLastNameOfSeller"
-        android:layout_alignStart="@+id/smileCounter"
-        android:paddingBottom="5dp"/>
+        android:layout_alignStart="@+id/smileCounter" />
 
     <ImageView
         android:id="@+id/sad"
@@ -54,7 +54,7 @@
         android:src="@drawable/sadicon"
         android:paddingRight="5dp"
         android:paddingLeft="15dp"
-        android:paddingTop="5dp"
+        android:paddingBottom="10dp"
         android:layout_below="@+id/profileLastNameOfSeller"
         android:layout_toRightOf="@+id/sadCounter"/>
 
@@ -64,9 +64,9 @@
         android:layout_height="wrap_content"
         android:text="0"
         android:textColor="#000000"
-        android:textSize="25sp"
+        android:textSize="22sp"
         android:paddingLeft="1dp"
-        android:paddingTop="10dp"
+        android:paddingTop="5dp"
         android:layout_below="@+id/profileLastNameOfSeller"
         android:layout_toEndOf="@+id/profileImageOfSeller"
         android:layout_marginStart="31dp" />
@@ -77,11 +77,11 @@
         android:layout_height="wrap_content"
         android:text="0"
         android:textColor="#000000"
-        android:textSize="25sp"
-        android:paddingTop="10dp"
+        android:textSize="22sp"
+        android:paddingTop="5dp"
         android:paddingLeft="15dp"
-        android:layout_toRightOf="@+id/smile"
-        android:layout_below="@+id/profileLastNameOfSeller" />
+        android:layout_below="@+id/profileLastNameOfSeller"
+        android:layout_toEndOf="@+id/smile" />
 
 
 </RelativeLayout>
