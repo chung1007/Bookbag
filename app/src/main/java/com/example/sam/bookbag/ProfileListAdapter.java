@@ -51,11 +51,13 @@ public class ProfileListAdapter extends BaseAdapter {
             View profileBox = inflater.inflate(R.layout.sellerprofilebox, null);
             ProfilePictureView sellerView = (ProfilePictureView)profileBox.findViewById(R.id.sellerProfileImage);
             TextView sellerNameTextView = (TextView)profileBox.findViewById(R.id.sellerProfileName);
+            TextView sellerIdTextView = (TextView)profileBox.findViewById(R.id.sellerProfileId);
             String sellerProfile = profiles.get(position);
             String profileInfo[] = sellerProfile.split("_");
             String sellerId = profileInfo[0];
             String sellerName = profileInfo[1];
             sellerView.setProfileId(sellerId);
+            sellerIdTextView.setText(sellerId);
             sellerNameTextView.setText(sellerName);
             convertView = profileBox;
         }

@@ -2,6 +2,7 @@ package com.example.sam.bookbag;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -60,6 +61,7 @@ public class Profile extends Fragment {
     ArrayList<String> rateKeys;
     ArrayList<String> rateKeysToShow;
     Firebase rateDataBase;
+    boolean isProfilelist;
     View view;
 
     public Profile() {
@@ -167,6 +169,7 @@ public class Profile extends Fragment {
             public void onClick(View v) {
                 if (listShowing == false) {
                     checkPostFile();
+                    isProfilelist = false;
                     try {
                         ref.child(HomePage.userId).child("Initialized").setValue(null);
                     } catch (NullPointerException NPE) {
@@ -360,6 +363,7 @@ public class Profile extends Fragment {
         listItemClickListener();
         setDataBaseListener();
         setProfileSearchBarlistener();
+        profileBoxClickListener();
     }
 
     public void setProfileSearchBarlistener(){
@@ -373,7 +377,7 @@ public class Profile extends Fragment {
                 if (searchBar.getText().toString().equals("")) {
                     profileList.setAdapter(null);
                     searchBar.setCursorVisible(false);
-                    putDownKeyBoard();
+                    rateKeysToShow.clear();
                 } else if (searchBar.getText().toString().replace(" ", "").length() > 3) {
                     for (int i = 0; i < rateKeys.size(); i++) {
                         if (rateKeys.get(i).contains("_" + (searchBar.getText().toString()))) {
@@ -387,6 +391,7 @@ public class Profile extends Fragment {
                     profileList.setAdapter(null);
                     profileList.setAdapter(profileAdapter);
                     profileAdapter.notifyDataSetChanged();
+                    isProfilelist = true;
                 }
             }
 
@@ -401,5 +406,26 @@ public class Profile extends Fragment {
             InputMethodManager imm = (InputMethodManager)getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
+    }
+    public void profileBoxClickListener(){
+        profileList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if(!isProfilelist){
+                    //Don't do anything
+                }else{
+                    TextView sellerName = (TextView)view.findViewById(R.id.sellerProfileName);
+                    TextView sellerId = (TextView)view.findViewById(R.id.sellerProfileId);
+                    String name = sellerName.getText().toString();
+                    String ID = sellerId.getText().toString();
+                    Intent intent = new Intent(getContext(), RatingPage.class);
+                    intent.putExtra("profileName", name);
+                    intent.putExtra("profileId", ID);
+                    startActivity(intent);
+                    Log.e("profileName", name);
+                    Log.e("profileId", ID);
+                }
+            }
+        });
     }
 }
