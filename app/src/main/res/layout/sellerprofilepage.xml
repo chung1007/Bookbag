@@ -108,6 +108,12 @@
         android:textSize="15sp"
         android:paddingLeft="10dp"/>
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#F4F4F4"
+        android:paddingTop="2.5dp">
+
     <ListView
         android:id="@+id/sellerActiveListings"
         android:layout_width="match_parent"
@@ -116,5 +122,6 @@
 
     </ListView>
 
+    </RelativeLayout>
 
 </LinearLayout>
