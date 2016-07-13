@@ -452,7 +452,7 @@ public class Explore extends Fragment {
                     exploreList.setAdapter(null);
                     checkPostFile();
                     putDownKeyBoard();
-                } else {
+                } else if(dataPoints!=null){
                     for (int j = 0; j < dataPoints.size(); j++) {
                         JSONObject jsonFirst = dataPoints.get(j);
                         Iterator<String> keys = jsonFirst.keys();
