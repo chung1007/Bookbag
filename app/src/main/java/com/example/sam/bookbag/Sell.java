@@ -80,8 +80,9 @@ public class Sell extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.sell, container, false);
-        if (FacebookLogin.firstTime){
+        if (FacebookLogin.firstTime && HomePage.tabLayout.getSelectedTabPosition() == 2){
             toastMaker("Remember to take all four pictures!");
+            Log.e("message", "from chat..");
             FacebookLogin.firstTime = false;
         }
         autoCompleteTextView = (AutoCompleteTextView) view.findViewById(R.id.condition);

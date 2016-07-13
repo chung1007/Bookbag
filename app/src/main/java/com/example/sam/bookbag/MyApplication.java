@@ -12,6 +12,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.instabug.library.IBGInvocationEvent;
+import com.instabug.library.Instabug;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -31,6 +33,7 @@ public class MyApplication extends Application {
         FacebookSdk.sdkInitialize(getApplicationContext());
         printHashKey();
         initializeFirebase();
+        setInstabug();
     }
     public void printHashKey(){
         try {
@@ -47,6 +50,11 @@ public class MyApplication extends Application {
         } catch (NoSuchAlgorithmException e) {
 
         }
+    }
+    public void setInstabug(){
+        new Instabug.Builder(this, "8acf9a491975145b686561255f5e3410")
+                .setInvocationEvent(IBGInvocationEvent.IBGInvocationEventShake)
+                .build();
     }
 
     public void initializeFirebase(){

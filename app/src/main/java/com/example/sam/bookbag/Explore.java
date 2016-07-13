@@ -349,7 +349,7 @@ public class Explore extends Fragment {
             toastMaker("No posts currently");
         }
         Log.e("files", postFiles.toString());
-        if (!postFiles.isEmpty()) {
+        if (!postFiles.isEmpty() && !FacebookLogin.firstTime) {
             Log.e("post", "there has been previous posts!");
             Log.e("userId's", userIdlist.toString());
             listPostNames(postFiles, userIdlist);
@@ -635,6 +635,7 @@ public class Explore extends Fragment {
                 ProfilePictureView profilePictureView;
                 profilePictureView = (ProfilePictureView)infoView.findViewById(R.id.sellerImage);
                 profilePictureView.setProfileId(sellersId);
+
                 for(int j = 0; j < 4; j++){
                     setViewPictures(sellersId, bookTitle, Integer.toString(j+1));
                     Log.e("j", j + "");
@@ -658,9 +659,21 @@ public class Explore extends Fragment {
                     setUpViewingDialog(infoView);
                     setWishListAddClicked(wishListAdd, content, sellersId, bookTitle);
                     setContactSellerListener(infoView, sellersId, seller, bookTitle);
+                    setProfilePictureClickListener(profilePictureView, sellersId, seller);
                 }catch (JSONException JSE){
                     Log.e("item click listener", "json failed!");
                 }
+            }
+        });
+    }
+    public void setProfilePictureClickListener(ProfilePictureView view, final String sellerId, final String sellerName){
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), RatingPage.class);
+                intent.putExtra("profileId", sellerId);
+                intent.putExtra("profileName", sellerName);
+                startActivity(intent);
             }
         });
     }

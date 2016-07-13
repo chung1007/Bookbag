@@ -50,6 +50,7 @@ public class RatingPage extends AppCompatActivity {
     TextView profilePageLastName;
     TextView smileCounter;
     TextView sadCounter;
+    TextView noListings;
     boolean alreadyRated = false;
     HashMap<String, Integer> keysAndValues;
     ImageView smile;
@@ -74,6 +75,7 @@ public class RatingPage extends AppCompatActivity {
         smile = (ImageView)findViewById(R.id.smile);
         sad = (ImageView)findViewById(R.id.sad);
         activeListing = (ListView)findViewById(R.id.sellerActiveListings);
+        noListings = (TextView)findViewById(R.id.noListingsText);
         keys = new ArrayList<>();
         keysAndValues = new HashMap<>();
         setPageInfo();
@@ -239,6 +241,13 @@ public class RatingPage extends AppCompatActivity {
         activeListing.setAdapter(adapter);
         adapter.notifyDataSetChanged();
         Log.e("boxes", "made");
+        if(adapter.isEmpty()){
+            noListings.setVisibility(View.VISIBLE);
+            Log.e("noListings", "set visible true");
+        }else{
+            noListings.setVisibility(View.INVISIBLE);
+            Log.e("noListings", "set visible false");
+        }
     }
 
 

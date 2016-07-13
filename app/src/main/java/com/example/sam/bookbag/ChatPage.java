@@ -84,6 +84,7 @@ public class ChatPage extends AppCompatActivity {
         listenForNewMessages(bookName);
         messageRoom.child(HomePage.userId).child(sellerId+"_"+sellerName).child(bookName).child(time).setValue("sjvsdvbsdbv");
         HomePage.viewPager.setCurrentItem(1);
+        chateMateNameClicked();
     }
     public void setPageInfo(){
         Log.e("firstTime!", "true");
@@ -114,8 +115,8 @@ public class ChatPage extends AppCompatActivity {
                     //Do Nothing
                 } else {
                     messageBox.setText("");
-                    messageRoom.child(HomePage.userId).child(sellerId+"_"+sellerName).child(bookName).child(getCurrentTime() + "_" + HomePage.userName + "_" + messageTime).setValue(message);
-                    messageRoom.child(sellerId).child(HomePage.userId+"_"+HomePage.userName).child(bookName).child(getCurrentTime() + "_" + HomePage.userName + "_" + messageTime).setValue(message);
+                    messageRoom.child(HomePage.userId).child(sellerId + "_" + sellerName).child(bookName).child(getCurrentTime() + "_" + HomePage.userName + "_" + messageTime).setValue(message);
+                    messageRoom.child(sellerId).child(HomePage.userId + "_" + HomePage.userName).child(bookName).child(getCurrentTime() + "_" + HomePage.userName + "_" + messageTime).setValue(message);
                 }
             }
         });
@@ -154,7 +155,7 @@ public class ChatPage extends AppCompatActivity {
                 Log.e("done after listening", done.toString());
                 if (done) {
                     Log.e("done", " is true");
-                    messageRoom.child(HomePage.userId).child(sellerId+"_"+sellerName).child(bookName).child(time).setValue(null);
+                    messageRoom.child(HomePage.userId).child(sellerId + "_" + sellerName).child(bookName).child(time).setValue(null);
                     String latestMessage = messageKeys.get(messageKeys.size() - 1);
                     String newMessage = keysAndMessages.get(latestMessage);
                     if (newMessage.equals("sjvsdvbsdbv")) {
@@ -250,6 +251,18 @@ public class ChatPage extends AppCompatActivity {
             @Override
             public void run() {
                 scroll.fullScroll(View.FOCUS_DOWN);
+            }
+        });
+    }
+    public void chateMateNameClicked(){
+        chatMateName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), RatingPage.class);
+                intent.putExtra("profileId", sellerId);
+                intent.putExtra("profileName", sellerName);
+                startActivity(intent);
+
             }
         });
     }
