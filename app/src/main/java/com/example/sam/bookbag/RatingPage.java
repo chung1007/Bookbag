@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,9 +19,19 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 
 /**
@@ -43,6 +54,10 @@ public class RatingPage extends AppCompatActivity {
     HashMap<String, Integer> keysAndValues;
     ImageView smile;
     ImageView sad;
+    ListView activeListing;
+    ArrayList<String> userIdlist;
+    ExploreListAdapter adapter;
+    List<JSONObject> dataPoints;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,9 +73,11 @@ public class RatingPage extends AppCompatActivity {
         rateDataBase = new Firebase(Constants.ratingDataBase);
         smile = (ImageView)findViewById(R.id.smile);
         sad = (ImageView)findViewById(R.id.sad);
+        activeListing = (ListView)findViewById(R.id.sellerActiveListings);
         keys = new ArrayList<>();
         keysAndValues = new HashMap<>();
         setPageInfo();
+        checkPostFile();
         getCurrentRatings();
         listenForSmileClicked();
         listenForSadClicked();
@@ -152,4 +169,77 @@ public class RatingPage extends AppCompatActivity {
         toast.setGravity(Gravity.CENTER, 0, 0);
         toast.show();
     }
+    public void checkPostFile() {
+        ArrayList<String> postFiles = new ArrayList<>();
+        userIdlist = new ArrayList<>();
+        File file = new File("/sdcard/Bookbag_explore");
+        File list[] = file.listFiles();
+        try {
+            for (int i = 0; i < list.length; i++) {
+                if (list[i].getName().contains(sellerId)) {
+                    postFiles.add(list[i].getName());
+                    String splitName[] = list[i].getName().split("_");
+                    String userId = splitName[0];
+                    userIdlist.add(userId);
+                }
+            }
+        } catch (NullPointerException NPE) {
+            toastMaker("No posts currently");
+        }
+        Log.e("files", postFiles.toString());
+        if (!postFiles.isEmpty()) {
+            Log.e("post", "there has been previous posts!");
+            Log.e("userId's", userIdlist.toString());
+            listPostNames(postFiles, userIdlist);
+        }
+
+    }
+    public String readFile(String name) {
+        BufferedReader file;
+        try {
+            file = new BufferedReader(new InputStreamReader(new FileInputStream(
+                    new File(name))));
+        } catch (IOException ioe) {
+            Log.e("File Error", "Failed To Open File");
+            return null;
+        }
+        String dataOfFile = "";
+        String buf;
+        try {
+            while ((buf = file.readLine()) != null) {
+                dataOfFile = dataOfFile.concat(buf + "\n");
+            }
+        } catch (IOException ioe) {
+            Log.e("File Error", "Failed To Read From File");
+            return null;
+        }
+        return dataOfFile;
+    }
+
+    public void listPostNames(ArrayList<String> postNames, ArrayList<String> userIds) {
+        dataPoints = new ArrayList<>();
+        for (int i = 0; i < postNames.size(); i++) {
+            String fileName = "sdcard/Bookbag_explore/" + postNames.get(i);
+            String content = readFile(fileName);
+            try {
+                JSONObject postDataRead = new JSONObject(content);
+                dataPoints.add(postDataRead);
+            } catch (JSONException JSE) {
+                Log.e("assign json", "failed");
+            }
+
+        }
+        Collections.reverse(dataPoints);
+        Collections.reverse(userIds);
+        displayPostBoxes(dataPoints, userIds);
+    }
+
+    public void displayPostBoxes(List<JSONObject> datapoints, ArrayList<String> userIds) {
+        adapter = new ExploreListAdapter(this, datapoints, userIds);
+        activeListing.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+        Log.e("boxes", "made");
+    }
+
+
 }

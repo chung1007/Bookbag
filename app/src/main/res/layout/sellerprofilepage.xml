@@ -104,14 +104,15 @@
         android:textColor="#000000"
         android:layout_gravity="center_horizontal"
         android:paddingTop="20dp"
-        android:paddingBottom="10dp"
+        android:paddingBottom="20dp"
         android:textSize="15sp"
         android:paddingLeft="10dp"/>
 
     <ListView
         android:id="@+id/sellerActiveListings"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:divider="@null">
 
     </ListView>
 

@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
@@ -20,6 +21,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
+
 import com.facebook.FacebookSdk;
 import com.facebook.login.widget.ProfilePictureView;
 
@@ -49,6 +52,10 @@ public class HomePage extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         getSupportActionBar().setTitle("");
+        Typeface tf = Typeface.createFromAsset(getAssets(),
+                "fonts/Hero.otf");
+        TextView title = (TextView)toolbar.findViewById(R.id.toolbar_title);
+        title.setTypeface(tf);
         viewPager = (CustomViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);
         viewPager.setPagingEnabled(false);
