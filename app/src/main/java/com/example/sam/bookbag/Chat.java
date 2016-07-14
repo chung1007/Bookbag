@@ -50,7 +50,7 @@ public class Chat extends Fragment {
     ChatListAdapter adapter;
     Firebase chatDataBase;
     boolean newSellerDone;
-    boolean newConvoDone;
+    boolean newConvoDone = false;
     ArrayList<String>sellers;
     HashMap<String, String> conversations;
     ArrayList<String> messageKeyList;
@@ -82,6 +82,10 @@ public class Chat extends Fragment {
         checkPostFile();
         listenForChatBoxClicked();
         setNewSellerListener();
+        if(FacebookLogin.firstTime) {
+            chatDataBase.child(HomePage.userId).child("123456789_No Name").child("initialized").child("00:00:00 AM_No Name_00:00 AM").setValue("new messages initialized");
+            FacebookLogin.firstTime = false;
+        }
         setAllMessagesListener();
         setDeleteClickListener();
         return view;
@@ -247,6 +251,7 @@ public class Chat extends Fragment {
         chatDataBase.child(HomePage.userId).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                chatDataBase.child(HomePage.userId).child("123456789_No Name").setValue(null);
                 Log.e("newChatMate", "added!");
                 String sellerKey = dataSnapshot.getKey();
                 sellers.add(sellerKey);
@@ -287,6 +292,7 @@ public class Chat extends Fragment {
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Log.e("newBook", "added");
                 String newTopic = dataSnapshot.getKey();
+                checkForLatestMessage(sellerKey, newTopic);
                 getMessages(sellerKey, newTopic);
                 Log.e("newTopic", newTopic);
             }
@@ -318,23 +324,20 @@ public class Chat extends Fragment {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Log.e("new messages", "added");
-                checkForLatestMessage(newChatMate, newTopic);
                 String messageKeys = dataSnapshot.getKey();
                 Log.e("keys", messageKeys);
                 String messages = dataSnapshot.getValue().toString();
                 Log.e("messages", messages);
                 messageKeyList.add(messageKeys);
                 conversations.put(messageKeys, messages);
-                if (newConvoDone) {
-                    newConvoDone = false;
-                    Log.e("conversatons", conversations.toString());
-                    String lastMessageKey = messageKeyList.get(messageKeyList.size() - 1);
-                    String lastMessage = conversations.get(lastMessageKey);
-                    Log.e("lastKey", lastMessageKey);
-                    Log.e("lastMessage", lastMessage);
-                    writeToFileAndUpdate(newChatMate, newTopic, lastMessage, lastMessageKey);
-
-                }
+                //if (newConvoDone) {
+                newConvoDone = false;
+                Log.e("conversatons", conversations.toString());
+                String lastMessageKey = messageKeyList.get(messageKeyList.size() - 1);
+                String lastMessage = conversations.get(lastMessageKey);
+                Log.e("lastKey", lastMessageKey);
+                Log.e("lastMessage", lastMessage);
+                writeToFileAndUpdate(newChatMate, newTopic, lastMessage, lastMessageKey);
 
             }
 
@@ -361,10 +364,11 @@ public class Chat extends Fragment {
     }
 
     public void checkForLatestMessage(String chatMate, String newTopic) {
-        chatDataBase.child(HomePage.userId).child(chatMate).child(newTopic).addValueEventListener(new ValueEventListener() {
+        chatDataBase.child(HomePage.userId).child(chatMate).child(newTopic).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 newConvoDone = true;
+                Log.e("newConvoDone", "is True");
             }
 
             @Override
@@ -384,8 +388,9 @@ public class Chat extends Fragment {
         Log.e("sellerName", sellerName);
         String bookName = messageKey;
         Log.e("lastestBook", bookName);
+        String fileName = "sdcard/Bookbag_chat/"+sellerName.replace(" ", "") + "_" + sellerId + "_" + bookName.replace(" ", "_");
         try {
-            if(message.equals(messageFromPage) && !lastMessageKey.contains("_"+HomePage.userName+"_")) {
+            if(message.equals(messageFromPage) && !lastMessageKey.contains("_"+HomePage.userName+"_") || readFile(fileName) == null) {
                 messageDir.mkdir();
                 file = null;
                 file = new PrintWriter(new FileOutputStream(new File(messageDir, (sellerName.replace(" ", "") + "_" + sellerId + "_" + bookName.replace(" ", "_")))));

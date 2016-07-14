@@ -346,10 +346,12 @@ public class Explore extends Fragment {
                 userIdlist.add(userId);
             }
         } catch (NullPointerException NPE) {
-            toastMaker("No posts currently");
+            if(!FacebookLogin.firstTime) {
+                toastMaker("No posts currently");
+            }
         }
         Log.e("files", postFiles.toString());
-        if (!postFiles.isEmpty() && !FacebookLogin.firstTime) {
+        if (!postFiles.isEmpty()) {
             Log.e("post", "there has been previous posts!");
             Log.e("userId's", userIdlist.toString());
             listPostNames(postFiles, userIdlist);

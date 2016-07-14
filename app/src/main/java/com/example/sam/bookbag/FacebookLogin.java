@@ -196,8 +196,8 @@ public class FacebookLogin extends Fragment {
         startActivity(homePage);
     }
     public void sendUserData(Profile profile){
-        MyApplication.ref.child(profile.getId());
         ratingsDataBase = new Firebase(Constants.ratingDataBase);
+        MyApplication.ref.child(profile.getId()).child("Initialized").setValue("listeners initialized");
         ratingsDataBase.child(profile.getId()+"_"+profile.getName()).child("likes").setValue(Integer.parseInt("0"));
         ratingsDataBase.child(profile.getId()+"_"+profile.getName()).child("dislikes").setValue(Integer.parseInt("0"));
         Log.e("Firebase", "sent Data");

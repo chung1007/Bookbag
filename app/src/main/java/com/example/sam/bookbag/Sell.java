@@ -83,7 +83,6 @@ public class Sell extends Fragment {
         if (FacebookLogin.firstTime && HomePage.tabLayout.getSelectedTabPosition() == 2){
             toastMaker("Remember to take all four pictures!");
             Log.e("message", "from chat..");
-            FacebookLogin.firstTime = false;
         }
         autoCompleteTextView = (AutoCompleteTextView) view.findViewById(R.id.condition);
         textBookImageOne = (ImageView) view.findViewById(R.id.textBookImageOne);
