@@ -7,11 +7,16 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.NotificationCompat;
 import android.text.Editable;
@@ -114,6 +119,7 @@ public class Explore extends Fragment {
                              Bundle savedInstanceState) {
         Log.e("onThisScreen", "onCreateView");
         view = inflater.inflate(R.layout.explore, container, false);
+        checkVersionAndAskPermission();
         exploreList = (ListView) view.findViewById(R.id.exploreBoxList);
         checkPostFile();
         exploreDir = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/Bookbag_explore");
@@ -149,7 +155,7 @@ public class Explore extends Fragment {
     public void initializeFiles(){
         try {
             File testFile;
-            testFile = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/Bookbag_wishList");
+            testFile = new File("mnt/sdcard/Bookbag_explore");
             testFile.mkdir();
             file = null;
             file = new PrintWriter(new FileOutputStream(new File(testFile, (""))));
@@ -307,7 +313,7 @@ public class Explore extends Fragment {
                         file.close();
                         checkIfWishExists(fileName, postKey, ISBN);
                     } catch (IOException IOE) {
-                        Log.e("file", "NOT FOUND");
+                        Log.e("file", "NOT FOUND EXPLORE");
                     }
                     keysAndValues.clear();
                 } else {
@@ -454,7 +460,7 @@ public class Explore extends Fragment {
                     exploreList.setAdapter(null);
                     checkPostFile();
                     putDownKeyBoard();
-                } else if(dataPoints!=null){
+                } else if (dataPoints != null) {
                     for (int j = 0; j < dataPoints.size(); j++) {
                         JSONObject jsonFirst = dataPoints.get(j);
                         Iterator<String> keys = jsonFirst.keys();
@@ -741,7 +747,7 @@ public class Explore extends Fragment {
                         file.close();
                         toastMaker("Added to WishList!");
                     } catch (IOException IOE) {
-                        Log.e("file", "NOT FOUND");
+                        Log.e("file", "NOT FOUND WISHLIST");
                     }
                 }
             }
@@ -841,6 +847,43 @@ public class Explore extends Fragment {
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
+    public  boolean isStoragePermissionGranted() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    == PackageManager.PERMISSION_GRANTED) {
+                Log.e("permission","Permission is granted");
+                return true;
+            } else {
+
+                Log.e("Permission", "Permission is revoked");
+                ActivityCompat.requestPermissions(getActivity(), new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                return false;
+            }
+        }
+        else { //permission is automatically granted on sdk<23 upon installation
+            Log.e("Permission", "Permission is granted");
+            return true;
+        }
+
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(grantResults[0]== PackageManager.PERMISSION_GRANTED){
+            Log.e("Permission","Permission: "+permissions[0]+ "was "+grantResults[0]);
+            //resume tasks needing this permission
+        }
+    }
+    public void checkVersionAndAskPermission(){
+        if(FacebookLogin.firstTime) {
+            if (Build.VERSION.SDK_INT >= 21) {
+                isStoragePermissionGranted();
+            } else {
+                //Do Nothing
+            }
+        }
+    }
+
 
 }
 
