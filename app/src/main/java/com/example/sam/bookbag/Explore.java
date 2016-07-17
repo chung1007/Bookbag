@@ -143,6 +143,7 @@ public class Explore extends Fragment {
         setFirebaseListener();
         listenForListItemClicked();
         setSearchBarClickListener();
+        //setDataBaseDeleteListener();
         return view;
     }
 
@@ -250,19 +251,16 @@ public class Explore extends Fragment {
                     getPostData(firstKey, lastOfPostKey.get(lastOfPostKey.size() - 1));
                 }
             }
-
             @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-            }
-
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {}
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
+                String deletedItem = dataSnapshot.getKey();
+                deleteIfExists(firstKey, deletedItem);
+                Log.e("deleted item", deletedItem);
             }
-
             @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-            }
-
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
             @Override
             public void onCancelled(DatabaseError databaseError) {
             }
@@ -827,13 +825,13 @@ public class Explore extends Fragment {
                     existingWishData.put("bookISBN", ISBN);
                     wishExistDir.mkdir();
                     anotherFile = null;
-                    anotherFile =  new PrintWriter(new FileOutputStream(new File(wishExistDir, (bookTitle + "_" + (ISBN)))));
+                    anotherFile =  new PrintWriter(new FileOutputStream(new File(wishExistDir, (bookTitle.replace(" ", "_") + "_" + (ISBN)))));
                     anotherFile.println(existingWishData);
                     anotherFile.close();
                 }catch (JSONException JSE){
                     Log.e("existing", "Failed");
                 }
-                File file = new File("sdcard/Bookbag_wishList/wishes/"+bookTitle+"_"+ISBN);
+                File file = new File("sdcard/Bookbag_wishList/wishes/"+bookTitle.replace(" ", "_")+"_"+ISBN);
                 file.delete();
                 Log.e("wishExistsFile", "end");
             }catch (IOException IOE){
@@ -883,7 +881,70 @@ public class Explore extends Fragment {
             }
         }
     }
+    public void setDataBaseDeleteListener(){
+        ref.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            }
 
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+
+    }
+
+    public void getNameOfDeletedItem(final String userId){
+        ref.child(userId).addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+    }
+    public void deleteIfExists(String id, String bookName){
+        File explore = new File(android.os.Environment.getExternalStorageDirectory() + "/Bookbag_explore/" + id + "_" + bookName.replace(" ", ""));
+        File wish = new File(android.os.Environment.getExternalStorageDirectory() + "/Bookbag_wishList/existing/" + id + "_" + bookName.replace(" ", ""));
+        if (explore.exists()) {
+            Log.e("deleted Item", "existed in explore");
+            explore.delete();
+            exploreList.setAdapter(null);
+            checkPostFile();
+        }
+        if (wish.exists()) {
+            Log.e("deleted Item", "existed in wishlist");
+            wish.delete();
+        }
+    }
 
 }
 

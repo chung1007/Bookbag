@@ -112,7 +112,7 @@
                 android:id="@+id/className"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="title"
+                android:hint="no space at the end"
                 android:textSize="15dp"
                 android:layout_toRightOf="@+id/titleTextView"
                 android:paddingLeft="5dp"
