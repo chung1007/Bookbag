@@ -73,6 +73,7 @@ public class Sell extends Fragment {
     int photoCounter;
     boolean correctInfo;
     Toast toast;
+    String bookTitle = "";
 
     public Sell() {}
 
@@ -80,7 +81,7 @@ public class Sell extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.sell, container, false);
-        if (FacebookLogin.firstTime && HomePage.tabLayout.getSelectedTabPosition() == 2){
+        if (HomePage.tabLayout.getSelectedTabPosition() == 2){
             toastMaker("Remember to take all four pictures!");
             Log.e("message", "from chat..");
         }
@@ -185,10 +186,10 @@ public class Sell extends Fragment {
                 if (!correctInfo) {
                     //Do nothing
                 } else {
+                    sendPostData();
                     for (int i = 0; i < photoList.length; i++) {
                         sendTextBookPhoto(photoList[i]);
                     }
-                    sendPostData();
                     toastMaker("Posted!");
                     clearPostData();
                     if(toast!=null){
@@ -247,7 +248,7 @@ public class Sell extends Fragment {
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
             byte[] data = baos.toByteArray();
             StorageReference imageKey = MyApplication.storageRef.child(HomePage.userId);
-            UploadTask uploadTask = imageKey.child(className.getText().toString()).child("image" + Integer.toString(photoCounter)).putBytes(data);
+            UploadTask uploadTask = imageKey.child(bookTitle).child("image" + Integer.toString(photoCounter)).putBytes(data);
             uploadTask.addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception exception) {
@@ -263,22 +264,30 @@ public class Sell extends Fragment {
         imageView.setImageBitmap(null);
         imageView.destroyDrawingCache();
     }
-
     public void sendPostData(){
+        bookTitle = className.getText().toString();
         ArrayList<String> dataNames = new ArrayList<>(Arrays.asList("className", "authorName", "ISBN", "condition", "price", "edition", "notes"));
         DatabaseReference postKey = MyApplication.ref.child(HomePage.userId);
         for (int i = 0; i < editTextList.length; i++){
             String dataValue = editTextList[i].getText().toString();
-            if (dataValue.charAt(dataValue.length() - 1)==' '){
-                Log.e("Title", "has space at the end");
-                dataValue = dataValue.replace(dataValue.substring(dataValue.length()-1), "");
-                Log.e("no space test", dataValue + "test");
+            if (dataValue.endsWith(" ")){
+                if(dataValue.equals(className.getText().toString())){
+                    Log.e("title", "had space at the end");
+                    dataValue = dataValue.substring(0, dataValue.length() - 1);
+                    bookTitle = dataValue;
+                    postKey.child(dataValue).child(dataNames.get(i)).setValue(dataValue);
+                }else {
+                    Log.e("String", "has space at the end");
+                    dataValue = dataValue.substring(0, dataValue.length() - 1);
+                    Log.e("no space test", dataValue + "test");
+                    postKey.child(bookTitle).child(dataNames.get(i)).setValue(dataValue);
+                }
+            }else {
+                postKey.child(bookTitle).child(dataNames.get(i)).setValue(dataValue);
             }
-            Log.e("no space test2", dataValue + "test");
-            postKey.child(className.getText().toString()).child(dataNames.get(i)).setValue(dataValue);
         }
-        postKey.child(className.getText().toString()).child("bitmap").setValue(BitMapToString(imageOneBitmap));
-        postKey.child(className.getText().toString()).child("seller").setValue(HomePage.userName);
+        postKey.child(bookTitle).child("bitmap").setValue(BitMapToString(imageOneBitmap));
+        postKey.child(bookTitle).child("seller").setValue(HomePage.userName);
 
     }
     public void clearPostData(){
