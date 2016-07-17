@@ -12,7 +12,7 @@
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
-        android:icon="@drawable/newicon"
+        android:icon="@drawable/appicon"
         android:label="Bookbag"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">

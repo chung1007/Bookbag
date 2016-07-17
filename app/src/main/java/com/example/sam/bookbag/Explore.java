@@ -155,7 +155,7 @@ public class Explore extends Fragment {
     public void initializeFiles(){
         try {
             File testFile;
-            testFile = new File("mnt/sdcard/Bookbag_explore");
+            testFile = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/Bookbag_wishList");
             testFile.mkdir();
             file = null;
             file = new PrintWriter(new FileOutputStream(new File(testFile, (""))));
@@ -813,9 +813,9 @@ public class Explore extends Fragment {
                     (NotificationManager)getContext(). getSystemService(Context.NOTIFICATION_SERVICE);
             int notifyID = 1;
             android.support.v4.app.NotificationCompat.Builder mNotifyBuilder = new NotificationCompat.Builder(getContext())
-                    .setContentTitle("Your Wish Book!")
-                    .setContentText(bookTitle + " is available.")
-                    .setSmallIcon(R.drawable.bookbagicon);
+                    .setContentTitle("A Wish List Item is available!")
+                    .setContentText(bookTitle + " is on sale")
+                    .setSmallIcon(R.drawable.notification);
             mNotificationManager.notify(
                     notifyID,
                     mNotifyBuilder.build());
@@ -847,7 +847,7 @@ public class Explore extends Fragment {
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
-    public  boolean isStoragePermissionGranted() {
+    public boolean isStoragePermissionGranted() {
         if (Build.VERSION.SDK_INT >= 23) {
             if (ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     == PackageManager.PERMISSION_GRANTED) {
