@@ -813,7 +813,7 @@ public class Explore extends Fragment {
                     (NotificationManager)getContext(). getSystemService(Context.NOTIFICATION_SERVICE);
             int notifyID = 1;
             android.support.v4.app.NotificationCompat.Builder mNotifyBuilder = new NotificationCompat.Builder(getContext())
-                    .setContentTitle("A Wish List Item is available!")
+                    .setContentTitle("A Wish List item is available!")
                     .setContentText(bookTitle + " is on sale")
                     .setSmallIcon(R.drawable.notification);
             mNotificationManager.notify(
