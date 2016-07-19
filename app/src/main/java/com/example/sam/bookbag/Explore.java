@@ -4,16 +4,21 @@ package com.example.sam.bookbag;
 
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.Service;
+import android.bluetooth.BluetoothClass;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Binder;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.IBinder;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -59,6 +64,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.security.Provider;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -75,7 +81,8 @@ import java.util.Map;
  */
 
 //TODO save all the latest post data on sdcard file and on the onCreateView, populate adapter with those values.
-public class Explore extends Fragment {
+public class Explore extends Fragment{
+
     EditText searchBar;
     StorageReference storageRef;
     ExploreListAdapter adapter;
@@ -146,11 +153,15 @@ public class Explore extends Fragment {
         //setDataBaseDeleteListener();
         return view;
     }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.e("onThisScreen", "onCreate");
+    }
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        //getActivity().startService(new Intent(getContext(), Explore.class));
     }
 
     public void initializeFiles(){

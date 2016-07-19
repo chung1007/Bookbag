@@ -5,6 +5,7 @@ import android.content.pm.ActivityInfo;
 import android.graphics.Typeface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
 
 import com.facebook.FacebookSdk;
@@ -22,6 +23,13 @@ public class MainActivity extends AppCompatActivity {
         Typeface tf = Typeface.createFromAsset(getAssets(),
                 "fonts/Hero.otf");
         displayText.setTypeface(tf);
+    }
+    @Override
+    public void onDestroy(){
+        Log.e("MainActivity", "killed");
+        this.startService(new Intent(this, BackgroundListeners.class));
+        Log.e("started", "service");
+        super.onDestroy();
     }
 
 }
