@@ -128,7 +128,9 @@ public class Explore extends Fragment{
         view = inflater.inflate(R.layout.explore, container, false);
         checkVersionAndAskPermission();
         exploreList = (ListView) view.findViewById(R.id.exploreBoxList);
-        checkPostFile();
+        if(!FacebookLogin.firstTime) {
+            checkPostFile();
+        }
         exploreDir = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/Bookbag_explore");
         wishDir = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/Bookbag_wishList/existing");
         wishExistDir = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/Bookbag_wishList/wishExist");
@@ -255,6 +257,11 @@ public class Explore extends Fragment{
                 String postKey = dataSnapshot.getKey();
                 lastOfPostKey.add(postKey);
                 Log.e("lastOfPostKeyList", lastOfPostKey.toString());
+                if (!FacebookLogin.firstTime && isStoragePermissionGranted()) {
+                    if (!postKey.equals("Initialized")) {
+                        getPostData(firstKey, postKey);
+                    }
+                }
                 if (!checkPostListening.isEmpty()) {
                     checkPostListening.clear();
                     Log.e("lastPostKeySize", lastOfPostKey.size() + "");
@@ -262,16 +269,22 @@ public class Explore extends Fragment{
                     getPostData(firstKey, lastOfPostKey.get(lastOfPostKey.size() - 1));
                 }
             }
+
             @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {}
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            }
+
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
                 String deletedItem = dataSnapshot.getKey();
                 deleteIfExists(firstKey, deletedItem);
                 Log.e("deleted item", deletedItem);
             }
+
             @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            }
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
             }
@@ -320,6 +333,7 @@ public class Explore extends Fragment{
                         file = new PrintWriter(new FileOutputStream(new File(exploreDir, (userId + "_" + (postKey.replace(" ", ""))))));
                         file.println(postData);
                         file.close();
+                        refreshExplorePage();
                         checkIfWishExists(fileName, postKey, ISBN);
                     } catch (IOException IOE) {
                         Log.e("file", "NOT FOUND EXPLORE");
@@ -644,17 +658,17 @@ public class Explore extends Fragment{
                 infoView = View.inflate(getContext(), R.layout.bookinfopage, null);
                 TextView Id = (TextView) view.findViewById(R.id.userId);
                 TextView boxTitle = (TextView) view.findViewById(R.id.exploreBoxTitle);
-                ImageView wishListAdd = (ImageView)infoView.findViewById(R.id.addToWishList);
+                ImageView wishListAdd = (ImageView) infoView.findViewById(R.id.addToWishList);
                 String sellersId = Id.getText().toString();
                 String bookTitle = boxTitle.getText().toString();
-                String fileName = sellersId+"_"+(bookTitle.replace(" ", ""));
-                String content = readFile("/sdcard/Bookbag_explore/"+fileName);
+                String fileName = sellersId + "_" + (bookTitle.replace(" ", ""));
+                String content = readFile("/sdcard/Bookbag_explore/" + fileName);
                 ProfilePictureView profilePictureView;
-                profilePictureView = (ProfilePictureView)infoView.findViewById(R.id.sellerImage);
+                profilePictureView = (ProfilePictureView) infoView.findViewById(R.id.sellerImage);
                 profilePictureView.setProfileId(sellersId);
 
-                for(int j = 0; j < 4; j++){
-                    setViewPictures(sellersId, bookTitle, Integer.toString(j+1));
+                for (int j = 0; j < 4; j++) {
+                    setViewPictures(sellersId, bookTitle, Integer.toString(j + 1));
                     Log.e("j", j + "");
                 }
                 try {
@@ -677,7 +691,7 @@ public class Explore extends Fragment{
                     setWishListAddClicked(wishListAdd, content, sellersId, bookTitle);
                     setContactSellerListener(infoView, sellersId, seller, bookTitle);
                     setProfilePictureClickListener(profilePictureView, sellersId, seller);
-                }catch (JSONException JSE){
+                } catch (JSONException JSE) {
                     Log.e("item click listener", "json failed!");
                 }
             }
@@ -881,6 +895,7 @@ public class Explore extends Fragment{
         if(grantResults[0]== PackageManager.PERMISSION_GRANTED){
             Log.e("Permission","Permission: "+permissions[0]+ "was "+grantResults[0]);
             //resume tasks needing this permission
+            Log.e("permission", "GRANTED");
         }
     }
     public void checkVersionAndAskPermission(){
@@ -892,56 +907,7 @@ public class Explore extends Fragment{
             }
         }
     }
-    public void setDataBaseDeleteListener(){
-        ref.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-            }
 
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
-
-    }
-
-    public void getNameOfDeletedItem(final String userId){
-        ref.child(userId).addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
-    }
     public void deleteIfExists(String id, String bookName){
         File explore = new File(android.os.Environment.getExternalStorageDirectory() + "/Bookbag_explore/" + id + "_" + bookName.replace(" ", ""));
         File wish = new File(android.os.Environment.getExternalStorageDirectory() + "/Bookbag_wishList/existing/" + id + "_" + bookName.replace(" ", ""));
@@ -955,6 +921,10 @@ public class Explore extends Fragment{
             Log.e("deleted Item", "existed in wishlist");
             wish.delete();
         }
+    }
+    public void refreshExplorePage(){
+        exploreList.setAdapter(null);
+        checkPostFile();
     }
 
 }
