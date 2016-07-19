@@ -50,6 +50,7 @@
             android:paddingLeft="10dp"
             android:textSize="15dp"
             android:hint="Enter ISBN"
+            android:inputType="number"
             android:layout_toRightOf="@id/wantedBookISBN"
             android:background="@android:color/transparent"/>
     </RelativeLayout>

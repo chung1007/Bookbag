@@ -458,5 +458,11 @@ public class Chat extends Fragment {
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .show();
     }
+    @Override
+    public void onDestroy(){
+        Log.e("Chat", "killed");
+        //this.startService(new Intent(this, BackgroundListeners.class));
+        super.onDestroy();
+    }
 
 }

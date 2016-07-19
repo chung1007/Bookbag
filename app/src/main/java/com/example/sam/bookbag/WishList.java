@@ -109,9 +109,7 @@ public class WishList extends Fragment {
                 userIdlist.add(userId);
             }
         } catch (NullPointerException NPE) {
-            if(!FacebookLogin.firstTime) {
-                toastMaker("You have no bookmarks");
-            }
+
         }
         Log.e("files", postFiles.toString());
         if (!postFiles.isEmpty()) {

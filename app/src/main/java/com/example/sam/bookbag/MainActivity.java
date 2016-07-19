@@ -27,7 +27,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onDestroy(){
         Log.e("MainActivity", "killed");
-        this.startService(new Intent(this, BackgroundListeners.class));
+        //this.startService(new Intent(this, BackgroundListeners.class));
+        Intent i = new Intent(this, BackgroundListeners.class);
+        i.putExtra("userId", HomePage.userId);
+        i.putExtra("userName", HomePage.userName);
+        startService(i);
         Log.e("started", "service");
         super.onDestroy();
     }

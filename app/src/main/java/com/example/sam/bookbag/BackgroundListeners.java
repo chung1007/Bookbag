@@ -4,13 +4,17 @@ import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.IBinder;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Spinner;
 
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -29,6 +33,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -57,6 +62,17 @@ public class BackgroundListeners extends Service {
     JSONObject postData;
     JSONObject eachPostData;
     NotificationManager mNotificationManager;
+    Firebase chatDataBase;
+    boolean newSellerDone;
+    boolean newConvoDone = false;
+    ArrayList<String>sellers;
+    HashMap<String, String> conversations;
+    ArrayList<String> messageKeyList;
+    File messageDir;
+    File newMessageDir;
+    public static  String messageFromPage = "";
+    PrintWriter oldfile;
+    PrintWriter newFile;
 
     public BackgroundListeners(){
 
@@ -67,7 +83,9 @@ public class BackgroundListeners extends Service {
     @Override
     public void onCreate() {
         Log.e("oncreate", "of Background");
+        Firebase.setAndroidContext(this);
         ref = MyApplication.ref;
+        chatDataBase = new Firebase("https://scorching-heat-6663.firebaseio.com/");
         exploreDir = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/Bookbag_explore");
         wishDir = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/Bookbag_wishList/existing");
         wishExistDir = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/Bookbag_wishList/wishExist");
@@ -76,14 +94,42 @@ public class BackgroundListeners extends Service {
         lastOfPostKey = new ArrayList<>();
         checkFirstListening = new ArrayList<>();
         checkPostListening = new ArrayList<>();
-        ref = MyApplication.ref;
+        chatDataBase = new Firebase(Constants.chatDataBase);
+        messageDir = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/Bookbag_chat");
+        newMessageDir = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/Bookbag_newChat");
+        sellers = new ArrayList<>();
+        messageKeyList = new ArrayList<>();
+        conversations = new HashMap<>();
+        /*if(FacebookLogin.firstTime) {
+            chatDataBase.child(userId).child("123456789_No Name").child("initialized").child("00:00:00 AM_No Name_00:00 AM").setValue("new messages initialized");
+            FacebookLogin.firstTime = false;
+        }*/
+
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
         Log.e("started", "1");
-        checkIfFirstListeningIsDone();
-        setFirebaseListener();
+        if(!pref.contains("userId") && !pref.contains("userName")) {
+            String userIdFromIntent = intent.getStringExtra("userId");
+            String userNameFromIntent = intent.getStringExtra("userName");
+            editor.putString("userId", userIdFromIntent);
+            editor.putString("userName", userNameFromIntent);
+            editor.apply();
+            checkIfFirstListeningIsDone();
+            setFirebaseListener();
+            setNewSellerListener(userIdFromIntent);
+            setAllMessagesListener(userIdFromIntent, userNameFromIntent);
+        }else{
+            Log.e("userId", pref.getString("userId", null));
+            Log.e("userName", pref.getString("userName", null));
+            checkIfFirstListeningIsDone();
+            setFirebaseListener();
+            setNewSellerListener(pref.getString("userId", null));
+            setAllMessagesListener(pref.getString("userId", null), pref.getString("userName", null));
+        }
         Log.e("firebase", "listening!");
         return START_STICKY;
     }
@@ -347,6 +393,194 @@ public class BackgroundListeners extends Service {
             return null;
         }
         return dataOfFile;
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public void setNewSellerListener(String userId) {
+        chatDataBase.child(userId).addValueEventListener(new com.firebase.client.ValueEventListener() {
+            @Override
+            public void onDataChange(com.firebase.client.DataSnapshot dataSnapshot) {
+                newSellerDone = true;
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
+    }
+
+    public void setAllMessagesListener(final String userId, final String userName) {
+        chatDataBase.child(userId).addChildEventListener(new com.firebase.client.ChildEventListener() {
+            @Override
+            public void onChildAdded(com.firebase.client.DataSnapshot dataSnapshot, String s) {
+                chatDataBase.child(userId).child("123456789_No Name").setValue(null);
+                Log.e("newChatMate", "added!");
+                String sellerKey = dataSnapshot.getKey();
+                sellers.add(sellerKey);
+                getNewChatTopic(sellerKey, userId, userName);
+                if (newSellerDone) {
+                    String latestChatMate = sellers.get(sellers.size() - 1);
+                    getNewChatTopic(latestChatMate, userId, userName);
+                    newSellerDone = false;
+                    sellers.clear();
+                    Log.e("lastChatMate", latestChatMate);
+                }
+            }
+
+            @Override
+            public void onChildChanged(com.firebase.client.DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(com.firebase.client.DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(com.firebase.client.DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
+    }
+
+    public void getNewChatTopic(final String sellerKey, final String userId, final String userName) {
+        chatDataBase.child(userId).child(sellerKey).addChildEventListener(new com.firebase.client.ChildEventListener() {
+            @Override
+            public void onChildAdded(com.firebase.client.DataSnapshot dataSnapshot, String s) {
+                Log.e("newBook", "added");
+                String newTopic = dataSnapshot.getKey();
+                checkForLatestMessage(sellerKey, newTopic, userId);
+                getMessages(sellerKey, newTopic, userId, userName);
+                Log.e("newTopic", newTopic);
+            }
+
+            @Override
+            public void onChildChanged(com.firebase.client.DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(com.firebase.client.DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(com.firebase.client.DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
+    }
+
+    public void getMessages(final String newChatMate, final String newTopic, String userId, final String userName) {
+        chatDataBase.child(userId).child(newChatMate).child(newTopic).addChildEventListener(new com.firebase.client.ChildEventListener() {
+            @Override
+            public void onChildAdded(com.firebase.client.DataSnapshot dataSnapshot, String s) {
+                Log.e("new messages", "added");
+                String messageKeys = dataSnapshot.getKey();
+                Log.e("keys", messageKeys);
+                String messages = dataSnapshot.getValue().toString();
+                Log.e("messages", messages);
+                messageKeyList.add(messageKeys);
+                conversations.put(messageKeys, messages);
+                //if (newConvoDone) {
+                newConvoDone = false;
+                Log.e("conversatons", conversations.toString());
+                String lastMessageKey = messageKeyList.get(messageKeyList.size() - 1);
+                String lastMessage = conversations.get(lastMessageKey);
+                Log.e("lastKey", lastMessageKey);
+                Log.e("lastMessage", lastMessage);
+                writeToFileAndUpdate(newChatMate, newTopic, lastMessage, lastMessageKey, userName);
+
+            }
+
+            @Override
+            public void onChildChanged(com.firebase.client.DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(com.firebase.client.DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(com.firebase.client.DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
+    }
+
+    public void checkForLatestMessage(String chatMate, String newTopic, String userId) {
+        chatDataBase.child(userId).child(chatMate).child(newTopic).addListenerForSingleValueEvent(new com.firebase.client.ValueEventListener() {
+            @Override
+            public void onDataChange(com.firebase.client.DataSnapshot dataSnapshot) {
+                newConvoDone = true;
+                Log.e("newConvoDone", "is True");
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
+    }
+
+    public void writeToFileAndUpdate(String sellerAndId, String messageKey, String message, String lastMessageKey, String userName) {
+        Log.e("new convo", "writing to file!");
+        Log.e("lastMessageKey", lastMessageKey);
+        String[] sellerAndIdSplit = sellerAndId.split("_");
+        String sellerId = sellerAndIdSplit[0];
+        Log.e("sellerId", sellerId);
+        String sellerName = sellerAndIdSplit[1];
+        Log.e("sellerName", sellerName);
+        String bookName = messageKey;
+        Log.e("lastestBook", bookName);
+        String fileName = "sdcard/Bookbag_chat/"+sellerName.replace(" ", "") + "_" + sellerId + "_" + bookName.replace(" ", "_");
+        try {
+            if(!lastMessageKey.contains("_"+userName+"_") || readFile(fileName) == null) {
+                messageDir.mkdir();
+                oldfile = null;
+                oldfile = new PrintWriter(new FileOutputStream(new File(messageDir, (sellerName.replace(" ", "") + "_" + sellerId + "_" + bookName.replace(" ", "_")))));
+                oldfile.println(message);
+                Log.e("fromChat", message);
+                oldfile.close();
+                saveNewChats(sellerName, sellerId, bookName, message);
+                Log.e("chat page", "refreshed");
+            }
+        } catch (IOException IOE) {
+            Log.e("chat", "saving conv. failed");
+        }
+    }
+
+    public void saveNewChats(String sellerName, String sellerId, String bookName, String message){
+        newMessageDir.mkdir();
+        newFile = null;
+        try {
+            newFile = new PrintWriter(new FileOutputStream(new File(newMessageDir, (sellerName.replace(" ", "") + "_" + sellerId + "_" + bookName.replace(" ", "_")))));
+            newFile.println(message);
+            newFile.close();
+        }catch (IOException IOE){
+            Log.e("file", "failed");
+        }
+
     }
 
 
