@@ -70,7 +70,6 @@ public class BackgroundListeners extends Service {
     ArrayList<String> messageKeyList;
     File messageDir;
     File newMessageDir;
-    public static  String messageFromPage = "";
     PrintWriter oldfile;
     PrintWriter newFile;
 
@@ -113,15 +112,19 @@ public class BackgroundListeners extends Service {
         SharedPreferences.Editor editor = pref.edit();
         Log.e("started", "1");
         if(!pref.contains("userId") && !pref.contains("userName")) {
-            String userIdFromIntent = intent.getStringExtra("userId");
-            String userNameFromIntent = intent.getStringExtra("userName");
-            editor.putString("userId", userIdFromIntent);
-            editor.putString("userName", userNameFromIntent);
-            editor.apply();
-            checkIfFirstListeningIsDone();
-            setFirebaseListener();
-            setNewSellerListener(userIdFromIntent);
-            setAllMessagesListener(userIdFromIntent, userNameFromIntent);
+            try {
+                String userIdFromIntent = intent.getStringExtra("userId");
+                String userNameFromIntent = intent.getStringExtra("userName");
+                editor.putString("userId", userIdFromIntent);
+                editor.putString("userName", userNameFromIntent);
+                editor.apply();
+                checkIfFirstListeningIsDone();
+                setFirebaseListener();
+                setNewSellerListener(userIdFromIntent);
+                setAllMessagesListener(userIdFromIntent, userNameFromIntent);
+            }catch (NullPointerException NPE){
+                Log.e("user", "hasn't logged in to app yet!");
+            }
         }else{
             Log.e("userId", pref.getString("userId", null));
             Log.e("userName", pref.getString("userName", null));
