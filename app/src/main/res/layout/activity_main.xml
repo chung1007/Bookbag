@@ -21,8 +21,8 @@
 
     <ImageView
         android:id="@+id/iconImage"
-        android:layout_width="55dp"
-        android:layout_height="55dp"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
         android:src="@drawable/bookbagicon"
         android:tint="#ffffff"
         android:layout_centerInParent="true"
