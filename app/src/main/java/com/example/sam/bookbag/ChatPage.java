@@ -89,7 +89,7 @@ public class ChatPage extends AppCompatActivity {
     public void setPageInfo(){
         Log.e("firstTime!", "true");
         if(isContinued == false) {
-            messageBox.setText("Hi! i am interested in buying " + bookName + ".");
+            messageBox.setText("Hi! I am interested in buying " + bookName + ".");
         }
         chatMateName.setText(sellerName);
         back = (TextView)findViewById(R.id.backFromChat);

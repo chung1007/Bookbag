@@ -3,7 +3,16 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#ffffff">
-
+<ScrollView
+    android:id="@+id/postDataScrollView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:isScrollContainer="false">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal"
+        android:orientation="vertical">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -82,16 +91,6 @@
 
     </LinearLayout>
 
-    <ScrollView
-        android:id="@+id/postDataScrollView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:isScrollContainer="false">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:orientation="vertical">
             <RelativeLayout
                 android:id="@+id/notesSection"
                 android:layout_width="match_parent"
@@ -312,13 +311,13 @@
                     android:paddingRight="10dp"/>
 
                 <EditText
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
+                    android:layout_height="70dp"
+                    android:layout_width="match_parent"
                     android:id="@+id/notes"
                     android:inputType="textCapSentences|textMultiLine"
                     android:maxLength="2000"
                     android:maxLines="4"
-                    android:hint="...."
+                    android:gravity="top|left"
                     android:paddingLeft="10dp"
                     android:layout_toRightOf="@id/noteTextView"
                     android:paddingTop="10dp"
@@ -376,15 +375,26 @@
                 android:layout_marginLeft="10dp"
                 android:paddingBottom="10dp"/>
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp">
+
             <Button
                 android:id="@+id/postButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="60dp"
+                android:layout_height="40dp"
                 android:text="Post"
+                android:textAllCaps="false"
+                android:textSize="15sp"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginBottom="0dp"
                 android:backgroundTint="#1ABC9C"
-                android:textColor="#ffffff"/>
+                android:textColor="#ffffff" />
+
+        </RelativeLayout>
 
         </LinearLayout>
 

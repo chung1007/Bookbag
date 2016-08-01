@@ -235,6 +235,9 @@ public class Sell extends Fragment {
         }else if(notes.getText().toString().equals("") && (Collections.frequency(dataCheckList, "")) > 1){
             toastMaker("Incomplete information!");
             correctInfo = false;
+        }else if(!notes.getText().toString().equals("") && dataCheckList.contains("")){
+            toastMaker("Incomplete information!");
+            correctInfo = false;
         }else if(photoCheckList.contains(toCheckWith)){
             toastMaker("You forgot to fill in the photos!");
             correctInfo = false;
