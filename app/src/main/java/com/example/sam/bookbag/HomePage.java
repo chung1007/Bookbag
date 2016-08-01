@@ -179,22 +179,7 @@ public class HomePage extends AppCompatActivity {
     }
     @Override
     public void onBackPressed(){
-        final Activity activity = this;
-        new AlertDialog.Builder(this)
-                .setTitle("You Sure?")
-                .setMessage("Want to leave this page?")
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        activity.finish();
-                    }
-                })
-                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        // do nothing
-                    }
-                })
-                .setIcon(R.drawable.gobackicon)
-                .show();
+        finishAffinity();
     }
 
     public static class NoPageTransformer implements ViewPager.PageTransformer {

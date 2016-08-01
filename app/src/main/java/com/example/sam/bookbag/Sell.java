@@ -43,6 +43,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * Created by sam on 6/6/16.
@@ -228,7 +229,10 @@ public class Sell extends Fragment {
         for (int i = 0; i < photoList.length; i++){
             photoCheckList.add(photoList[i].getDrawable().toString());
         }
-        if(dataCheckList.contains("")){
+        if(ISBN.getText().toString().length()!=13){
+            toastMaker("ISBN-10 needs 13 numbers!");
+            correctInfo = false;
+        }else if(notes.getText().toString().equals("") && (Collections.frequency(dataCheckList, "")) > 1){
             toastMaker("Incomplete information!");
             correctInfo = false;
         }else if(photoCheckList.contains(toCheckWith)){
@@ -248,7 +252,7 @@ public class Sell extends Fragment {
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
             byte[] data = baos.toByteArray();
             StorageReference imageKey = MyApplication.storageRef.child(HomePage.userId);
-            UploadTask uploadTask = imageKey.child(bookTitle).child("image" + Integer.toString(photoCounter)).putBytes(data);
+        UploadTask uploadTask = imageKey.child(bookTitle).child("image" + Integer.toString(photoCounter)).putBytes(data);
             uploadTask.addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception exception) {
