@@ -21,6 +21,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
 import com.facebook.FacebookSdk;
@@ -59,6 +60,7 @@ public class HomePage extends AppCompatActivity {
         viewPager = (CustomViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);
         viewPager.setPagingEnabled(false);
+        viewPager.setPageTransformer(false, new NoPageTransformer());
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
         setTabIcons();
@@ -98,7 +100,6 @@ public class HomePage extends AppCompatActivity {
             mFragmentList.add(fragment);
             mFragmentTitleList.add(title);
         }
-
         @Override
         public CharSequence getPageTitle(int position) {
             return mFragmentTitleList.get(position);
@@ -196,5 +197,17 @@ public class HomePage extends AppCompatActivity {
                 .show();
     }
 
-}
+    public static class NoPageTransformer implements ViewPager.PageTransformer {
+        public void transformPage(View view, float position) {
+            if (position < 0) {
+                view.setScrollX((int)((float)(view.getWidth()) * position));
+            } else if (position > 0) {
+                view.setScrollX(-(int) ((float) (view.getWidth()) * -position));
+            } else {
+                view.setScrollX(0);
+            }
 
+        }
+    }
+
+}

@@ -772,6 +772,7 @@ public class Explore extends Fragment{
                         file.println(data);
                         file.close();
                         toastMaker("Added to WishList!");
+                        checkifAlreadyAdded(view, userId, postKey);
                     } catch (IOException IOE) {
                         Log.e("file", "NOT FOUND WISHLIST");
                     }

@@ -71,6 +71,7 @@ public class WishList extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.wishlist, container, false);
+        Log.e("wishList", "started");
         wishList = (ListView)view.findViewById(R.id.userWishList);
         seeWishItems = (ImageView)view.findViewById(R.id.seeWishItems);
         button2 = (Button)view.findViewById(R.id.button2);
@@ -85,6 +86,7 @@ public class WishList extends Fragment {
         setWishesListener();
         listenForListItemClicked();
         setPlusButtonListener(dialogDisplay);
+        setBookMarkListener();
         setUnavailableItemListener();
         setListItemDelete();
         Log.e("whichList", whichList + "");
@@ -198,7 +200,7 @@ public class WishList extends Fragment {
     public void displayPostBoxes(List<JSONObject> datapoints, ArrayList<String> userIds) {
         adapter = new ExploreListAdapter(getContext(), datapoints, userIds);
         if(datapoints.size()>0){
-            button2.setTextColor(R.color.capsuleSelected);
+            button2.setTextColor(getResources().getColor(R.color.capsuleSelected));
             button1.setTextColor(Color.WHITE);
             wishList.setAdapter(null);
             wishList.setAdapter(adapter);
@@ -207,9 +209,9 @@ public class WishList extends Fragment {
         button2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                button2.setTextColor(getResources().getColor(R.color.capsuleSelected));
                 whichList = 2;
                 checkPostFile();
-                button2.setTextColor(R.color.capsuleSelected);
                 button1.setTextColor(Color.WHITE);
                 wishList.setAdapter(null);
                 wishList.setAdapter(adapter);
@@ -217,6 +219,16 @@ public class WishList extends Fragment {
             }
         });
         Log.e("boxes", "made");
+    }
+    public void setBookMarkListener(){
+        button2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                button2.setTextColor(getResources().getColor(R.color.capsuleSelected));
+                button1.setTextColor(Color.WHITE);
+                checkPostFile();
+            }
+        });
     }
     public void displayWishBoxes(List<JSONObject> datapoints) {
         wishAdapter = new WishListAdapter(getContext(), datapoints);
@@ -233,7 +245,7 @@ public class WishList extends Fragment {
                 whichList = 1;
                 wishList.setAdapter(null);
                 getFiles("wishExist", "wishExist");
-                button1.setTextColor(R.color.capsuleSelected);
+                button1.setTextColor(getResources().getColor(R.color.capsuleSelected));
                 button2.setTextColor(Color.WHITE);
             }
         });
@@ -453,7 +465,7 @@ public class WishList extends Fragment {
                     setUpDeleteDialog(fileName, 2, name);
 
                 }
-                return false;
+                return true;
             }
         });
     }
@@ -472,8 +484,9 @@ public class WishList extends Fragment {
                             button1.performClick();
                             button1.setPressed(true);
                         }else if (whichList == 2){
-                            button2.performClick();
-                            button2.setPressed(true);
+                            wishList.setAdapter(null);
+                            checkPostFile();
+                            Log.e("list", "refreshed");
                         }
                     }
                 })
