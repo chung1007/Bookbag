@@ -464,13 +464,15 @@ public class Explore extends Fragment{
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 searchBar.setCursorVisible(true);
+                searchBar.setGravity(Gravity.NO_GRAVITY);
+                searchBar.setGravity(Gravity.CENTER_VERTICAL);
                 return false;
             }
         });
     }
 
     public void setSearchBarListener() {
-
+        searchBar.setGravity(Gravity.CENTER);
         searchBar.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -480,6 +482,7 @@ public class Explore extends Fragment{
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 if (searchBar.getText().toString().equals("")) {
                     searchBar.setCursorVisible(false);
+                    searchBar.setGravity(Gravity.CENTER);
                     exploreList.setAdapter(null);
                     checkPostFile();
                     putDownKeyBoard();

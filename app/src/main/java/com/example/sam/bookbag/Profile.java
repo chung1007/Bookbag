@@ -190,6 +190,8 @@ public class Profile extends Fragment {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 searchBar.setCursorVisible(true);
+                searchBar.setGravity(Gravity.NO_GRAVITY);
+                searchBar.setGravity(Gravity.CENTER_VERTICAL);
                 return false;
             }
         });
@@ -367,17 +369,19 @@ public class Profile extends Fragment {
     }
 
     public void setProfileSearchBarlistener(){
+        searchBar.setGravity(Gravity.CENTER);
+
         searchBar.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (searchBar.getText().toString().equals("")) {
                     profileList.setAdapter(null);
                     searchBar.setCursorVisible(false);
+                    searchBar.setGravity(Gravity.CENTER);
                     rateKeysToShow.clear();
+                    putDownKeyBoard();
                 } else if (searchBar.getText().toString().replace(" ", "").length() > 3) {
                     for (int i = 0; i < rateKeys.size(); i++) {
                         if (rateKeys.get(i).contains("_" + (searchBar.getText().toString()))) {
@@ -387,6 +391,7 @@ public class Profile extends Fragment {
                         }
                     }
                     Log.e("rateKeysToShow", rateKeysToShow.toString());
+                    Collections.reverse(rateKeysToShow);
                     profileAdapter = new ProfileListAdapter(getContext(), rateKeysToShow);
                     profileList.setAdapter(null);
                     profileList.setAdapter(profileAdapter);
