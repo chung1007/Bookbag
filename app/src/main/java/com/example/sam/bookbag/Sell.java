@@ -277,6 +277,9 @@ public class Sell extends Fragment {
         DatabaseReference postKey = MyApplication.ref.child(HomePage.userId);
         for (int i = 0; i < editTextList.length; i++){
             String dataValue = editTextList[i].getText().toString();
+            if(dataValue.equals(price.getText().toString())){
+                dataValue = "$" + dataValue;
+            }
             if (dataValue.endsWith(" ")){
                 if(dataValue.equals(className.getText().toString())){
                     Log.e("title", "had space at the end");

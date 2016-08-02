@@ -344,22 +344,21 @@
                     android:id="@+id/priceTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Price :"
+                    android:text="Price : $"
                     android:textColor="@color/infoColor"
                     android:textSize="15sp"
                     android:textStyle="bold"
                     android:paddingTop="10dp"
                     android:paddingLeft="10dp"
-                    android:paddingRight="10dp"/>
+                    android:paddingRight="5dp"/>
 
                 <EditText
                     android:id="@+id/price"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="number"
-                    android:text="$"
-                    android:hint=" your price"
                     android:textSize="15sp"
+                    android:gravity="center_vertical"
                     android:layout_toRightOf="@+id/priceTextView"
                     android:background="@android:color/transparent"
                     android:paddingTop="10dp"/>

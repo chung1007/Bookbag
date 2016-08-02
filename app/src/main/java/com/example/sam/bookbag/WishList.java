@@ -273,7 +273,7 @@ public class WishList extends Fragment {
             @Override
             public void onClick(View view) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                builder.setTitle("");
+                builder.setTitle("Add a wish!");
                 if (dialogView.getParent() != null) {
                     ((ViewGroup) dialogView.getParent()).removeView(dialogView);
                 }
