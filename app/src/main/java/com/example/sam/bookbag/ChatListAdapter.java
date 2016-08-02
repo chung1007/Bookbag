@@ -33,6 +33,7 @@ import java.util.List;
 public class ChatListAdapter extends BaseAdapter {
     Context context;
     List<JSONObject> messageData;
+    public static String fileToRemove = " ";
 
     public ChatListAdapter(Context context, List<JSONObject> messageData){
         super();
@@ -60,6 +61,7 @@ public class ChatListAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         if (convertView == null) {
+            greenDotRemove();
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
             View chatBox = inflater.inflate(R.layout.chatbox, null);
             TextView sellerName = (TextView)chatBox.findViewById(R.id.chatName);
@@ -112,6 +114,22 @@ public class ChatListAdapter extends BaseAdapter {
             return null;
         }
         return dataOfFile;
+    }
+    public void greenDotRemove(){
+        Log.e("greenDotRemove", "called");
+        Log.e("fileName", fileToRemove);
+        try {
+            if (!fileToRemove.equals(null)) {
+                if (!readFile(fileToRemove).equals(null)) {
+                    File file = new File(fileToRemove);
+                    file.delete();
+                    Log.e("green dot", "removed?");
+                    ChatListAdapter.fileToRemove = " ";
+                }
+            }
+        }catch (NullPointerException NPE){
+
+        }
     }
 
 }

@@ -222,12 +222,7 @@ public class Chat extends Fragment {
                 String name = sellerName.getText().toString();
                 String ID = sellerId.getText().toString();
                 String book = bookTitle.getText().toString();
-                String fileName = name.replace(" ", "") + "_" + ID + "_" + book.replace(" ", "_");
-                String filePath = "sdcard/Bookbag_newChat/"+fileName;
-                if(readFile(filePath)!=null){
-                    File toDelete = new File(filePath);
-                    toDelete.delete();
-                }
+
                 startActivity(intent);
             }
         });
@@ -337,8 +332,10 @@ public class Chat extends Fragment {
                 String lastMessage = conversations.get(lastMessageKey);
                 Log.e("lastKey", lastMessageKey);
                 Log.e("lastMessage", lastMessage);
-                writeToFileAndUpdate(newChatMate, newTopic, lastMessage, lastMessageKey);
+                if(!lastMessage.equals("sjvsdvbsdbv")) {
+                    writeToFileAndUpdate(newChatMate, newTopic, lastMessage, lastMessageKey);
 
+                }
             }
 
             @Override
@@ -433,13 +430,13 @@ public class Chat extends Fragment {
                 String ID = sellerId.getText().toString();
                 String book = bookTitle.getText().toString();
                 String fileName = name.replace(" ", "") + "_" + ID + "_" + book.replace(" ", "_");
-                String filePath = "sdcard/Bookbag_chat/"+fileName;
-                conversationDeleteDialog(filePath);
-                return false;
+                String filePath = "sdcard/Bookbag_chat/" + fileName;
+                conversationDeleteDialog(filePath, book, name, ID);
+                return true;
             }
         });
     }
-    public void conversationDeleteDialog(final String fileName){
+    public void conversationDeleteDialog(final String fileName, final String bookTitle, final String sellerName, final String sellerId){
         new AlertDialog.Builder(getContext())
                 .setTitle("Are you sure?")
                 .setMessage("Delete this conversation?")
@@ -447,6 +444,7 @@ public class Chat extends Fragment {
                     public void onClick(DialogInterface dialog, int which) {
                         File file =  new File(fileName);
                         file.delete();
+                        chatDataBase.child(HomePage.userId).child(sellerId + "_" + sellerName).child(bookTitle).setValue(null);
                         refreshChatPage();
                     }
                 })
@@ -464,5 +462,6 @@ public class Chat extends Fragment {
         //this.startService(new Intent(this, BackgroundListeners.class));
         super.onDestroy();
     }
+
 
 }

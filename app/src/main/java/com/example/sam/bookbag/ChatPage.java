@@ -96,6 +96,19 @@ public class ChatPage extends AppCompatActivity {
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Log.e("backpressed", "true");
+                String fileName = sellerName.replace(" ", "") + "_" + sellerId + "_" + bookName.replace(" ", "_");
+                String filePath = "sdcard/Bookbag_newChat/"+fileName;
+                Log.e("sellerName", sellerName);
+                Log.e("sellerId", sellerId);
+                Log.e("bookName", bookName);
+                if(readFile(filePath)!=null){
+                    File toDelete = new File(filePath);
+                    toDelete.delete();
+                    Log.e("green dot", "should be gone");
+                    toDelete.delete();
+                    ChatListAdapter.fileToRemove = filePath;
+                }
                 HomePage.viewPager.setCurrentItem(3);
                 finish();
 
@@ -104,6 +117,7 @@ public class ChatPage extends AppCompatActivity {
     }
     @Override
     public void onBackPressed() {
+
         HomePage.viewPager.setCurrentItem(3);
     }
     public void listenForSendClicked(){
@@ -265,6 +279,28 @@ public class ChatPage extends AppCompatActivity {
 
             }
         });
+    }
+    public String readFile(String name) {
+        BufferedReader file;
+        try {
+            file = new BufferedReader(new InputStreamReader(new FileInputStream(
+                    new File(name))));
+        } catch (IOException ioe) {
+            Log.e("File Error", "Failed To Open File");
+            Log.e("failed", "from back pressed");
+            return null;
+        }
+        String dataOfFile = "";
+        String buf;
+        try {
+            while ((buf = file.readLine()) != null) {
+                dataOfFile = dataOfFile.concat(buf + "\n");
+            }
+        } catch (IOException ioe) {
+            Log.e("File Error", "Failed To Read From File");
+            return null;
+        }
+        return dataOfFile;
     }
 
 }
