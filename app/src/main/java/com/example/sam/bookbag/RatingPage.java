@@ -1,12 +1,23 @@
 package com.example.sam.bookbag;
 
+import android.app.Activity;
+import android.app.NotificationManager;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -18,6 +29,11 @@ import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.storage.StorageReference;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -25,12 +41,16 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 
@@ -39,12 +59,14 @@ import java.util.List;
  */
 public class RatingPage extends AppCompatActivity {
     Intent intent;
+    StorageReference storageRef;
     String sellerId;
     String sellerName;
     Integer userSmileCount;
     Integer userSadCount;
     Firebase rateDataBase;
     ArrayList<String> keys;
+    ArrayList<Bitmap> displayBM;
     ProfilePictureView ratePagePicture;
     TextView profilePageFirstName;
     TextView profilePageLastName;
@@ -59,6 +81,11 @@ public class RatingPage extends AppCompatActivity {
     ArrayList<String> userIdlist;
     ExploreListAdapter adapter;
     List<JSONObject> dataPoints;
+    View infoView;
+    PrintWriter file;
+    PrintWriter anotherFile;
+    File wishDir;
+    File wishExistDir;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,12 +104,17 @@ public class RatingPage extends AppCompatActivity {
         activeListing = (ListView)findViewById(R.id.sellerActiveListings);
         noListings = (TextView)findViewById(R.id.noListingsText);
         keys = new ArrayList<>();
+        displayBM = new ArrayList<>();
         keysAndValues = new HashMap<>();
+        wishDir = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/Bookbag_wishList/existing");
+        wishExistDir = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/Bookbag_wishList/wishExist");
+        storageRef = MyApplication.storageRef;
         setPageInfo();
         checkPostFile();
         getCurrentRatings();
         listenForSmileClicked();
         listenForSadClicked();
+        listenForListItemClicked();
 
     }
 
@@ -94,7 +126,7 @@ public class RatingPage extends AppCompatActivity {
                 String value = dataSnapshot.getValue().toString();
                 keys.add(key);
                 keysAndValues.put(key, Integer.parseInt(value));
-                if(keys.size() == 2){
+                if (keys.size() == 2) {
                     userSmileCount = keysAndValues.get("likes");
                     userSadCount = keysAndValues.get("dislikes");
                     Log.e("smiles", userSmileCount + " ");
@@ -249,6 +281,185 @@ public class RatingPage extends AppCompatActivity {
             Log.e("noListings", "set visible false");
         }
     }
+    public void listenForListItemClicked() {
+        activeListing.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                infoView = View.inflate(getApplicationContext(), R.layout.bookinfopage, null);
+                TextView Id = (TextView) view.findViewById(R.id.userId);
+                TextView boxTitle = (TextView) view.findViewById(R.id.exploreBoxTitle);
+                ImageView wishListAdd = (ImageView) infoView.findViewById(R.id.addToWishList);
+                String sellersId = Id.getText().toString();
+                String bookTitle = boxTitle.getText().toString();
+                String fileName = sellersId + "_" + (bookTitle.replace(" ", ""));
+                String content = readFile("/sdcard/Bookbag_explore/" + fileName);
+                ProfilePictureView profilePictureView;
+                profilePictureView = (ProfilePictureView) infoView.findViewById(R.id.sellerImage);
+                profilePictureView.setProfileId(sellersId);
+
+                for (int j = 0; j < 4; j++) {
+                    setViewPictures(sellersId, bookTitle, Integer.toString(j + 1));
+                    Log.e("j", j + "");
+                }
+                try {
+                    JSONObject fileData = new JSONObject(content);
+                    Iterator<String> keys = fileData.keys();
+                    String firstKey = keys.next();
+                    JSONObject jsonToRead = fileData.getJSONObject(firstKey);
+                    String price = jsonToRead.getString("price");
+                    String edition = jsonToRead.getString("edition");
+                    String author = jsonToRead.getString("author");
+                    String ISBN = jsonToRead.getString("ISBN");
+                    String condition = jsonToRead.getString("condition");
+                    String notes = jsonToRead.getString("notes");
+                    String seller = jsonToRead.getString("seller");
+                    ArrayList<String> viewDataList = new ArrayList<>(Arrays.asList(price, bookTitle, edition, author,
+                            ISBN, condition, notes, seller));
+                    checkifAlreadyAdded(infoView, sellersId, bookTitle);
+                    setViewData(infoView, viewDataList);
+                    setUpViewingDialog(infoView);
+                    setWishListAddClicked(wishListAdd, content, sellersId, bookTitle);
+                    setContactSellerListener(infoView, sellersId, seller, bookTitle);
+                    setProfilePictureClickListener(profilePictureView, sellersId, seller);
+                } catch (JSONException JSE) {
+                    Log.e("item click listener", "json failed!");
+                }
+            }
+        });
+    }
+    public void setProfilePictureClickListener(ProfilePictureView view, final String sellerId, final String sellerName){
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), RatingPage.class);
+                intent.putExtra("profileId", sellerId);
+                intent.putExtra("profileName", sellerName);
+                startActivity(intent);
+            }
+        });
+    }
+    public void setViewData(View view, ArrayList<String> values){
+
+        TextView price = (TextView)view.findViewById(R.id.priceDisplay);
+        TextView bookTitle = (TextView)view.findViewById(R.id.nameDisplay);
+        TextView edition = (TextView)view.findViewById(R.id.editionDisplay);
+        TextView author = (TextView)view.findViewById(R.id.authorDisplay);
+        TextView ISBN = (TextView)view.findViewById(R.id.ISBNDisplay);
+        TextView condition = (TextView)view.findViewById(R.id.conditionDisplay);
+        TextView notes = (TextView)view.findViewById(R.id.notesDisplay);
+        TextView seller = (TextView)view.findViewById(R.id.sellerName);
+        ArrayList<TextView> textviews = new ArrayList<>(Arrays.asList(price, bookTitle, edition,
+                author, ISBN, condition, notes, seller));
+        for (int i = 0; i < values.size(); i++){
+            textviews.get(i).setText(values.get(i));
+        }
+    }
+    public void setContactSellerListener(View view, final String sellerId, final String sellerName, final String bookName){
+        Button contactSeller = (Button)view.findViewById(R.id.contactSellerButton);
+        contactSeller.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), ChatPage.class);
+                intent.putExtra("sellerId", sellerId);
+                intent.putExtra("sellerName", sellerName);
+                intent.putExtra("bookName", bookName);
+                startActivity(intent);
+            }
+        });
+
+    }
+
+    public void setUpViewingDialog(View view) {
+
+        AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(this);
+        builder.setTitle("");
+        builder.setView(view)
+                .setCancelable(false)
+                .setPositiveButton("Back", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                }).show();
+
+    }
+
+    public void setWishListAddClicked(ImageView view, final String data, final String userId, final String postKey){
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.e("wishIcon", "clicked");
+                if (view.getTag() != null) {
+                    toastMaker("Already in Wist List!");
+                    Log.e("item", "already in list!");
+                } else {
+                    try {
+                        file = null;
+                        wishDir.mkdir();
+                        file = new PrintWriter(new FileOutputStream(new File(wishDir, (userId + "_" + (postKey.replace(" ", ""))))));
+                        file.println(data);
+                        file.close();
+                        toastMaker("Added to WishList!");
+                        checkifAlreadyAdded(view, userId, postKey);
+                    } catch (IOException IOE) {
+                        Log.e("file", "NOT FOUND WISHLIST");
+                    }
+                }
+            }
+        });
+    }
+
+    public void setViewPictures(String userId, String title, String number){
+
+        final StorageReference imageRef = storageRef.child(userId).child(title).child("image" + number);
+        imageRef.getBytes(Constants.ONE_MEGABYTE).addOnCompleteListener(new OnCompleteListener<byte[]>() {
+            @Override
+            public void onComplete(@NonNull Task<byte[]> task) {
+                Log.e("completion", "SUCCCESS!");
+
+                imageRef.getBytes(Long.MAX_VALUE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                    @Override
+                    public void onSuccess(byte[] bytes) {
+                        Log.e("bytes", "SUCCESS");
+                        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                        displayBM.add(bitmap);
+                        Log.e("sizeafteradd", displayBM.size() + "");
+                        Log.e("bitmap", bitmap.toString());
+                        if (displayBM.size() == 4) {
+                            ImageView bookOne = (ImageView) infoView.findViewById(R.id.imageDisplayOne);
+                            ImageView bookTwo = (ImageView) infoView.findViewById(R.id.imageDisplayTwo);
+                            ImageView bookThree = (ImageView) infoView.findViewById(R.id.imageDisplayThree);
+                            ImageView bookFour = (ImageView) infoView.findViewById(R.id.imageDisplayFour);
+                            bookOne.setImageBitmap(displayBM.get(0));
+                            bookTwo.setImageBitmap(displayBM.get(1));
+                            bookThree.setImageBitmap(displayBM.get(2));
+                            bookFour.setImageBitmap(displayBM.get(3));
+                            displayBM.clear();
+                        }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        // Handle any errors
+                        Log.e("getting image", "failed");
+                    }
+                });
+            }
+        });
+    }
+    public void checkifAlreadyAdded(View view, String sellersId, String bookTitle){
+        ImageView addIcon = (ImageView)view.findViewById(R.id.addToWishList);
+        String fileName = sellersId+"_"+(bookTitle.replace(" ", ""));
+        String content = readFile("/sdcard/Bookbag_wishList/existing/"+fileName);
+        if(content!=null){
+            Log.e("item", "inWishList!");
+            addIcon.setImageResource(R.drawable.addedicon);
+            addIcon.setTag(R.drawable.addedicon);
+        }else{
+            //Do nothing
+        }
+
+    }
+
 
 
 }

@@ -45,8 +45,9 @@
             android:name=".HomePage"
             android:windowSoftInputMode="adjustPan">
         </activity>
-        <activity android:name=".RatingPage">
-
+        <activity
+            android:name=".RatingPage"
+            android:theme="@style/Theme.AppCompat.Light">
         </activity>
         <activity
             android:name="com.facebook.FacebookActivity"

@@ -198,13 +198,12 @@ public class Profile extends Fragment {
     }
 
     public void listItemClickListener() {
-        profileList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+        profileList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 TextView boxTitle = (TextView) view.findViewById(R.id.exploreBoxTitle);
                 String bookTitle = boxTitle.getText().toString();
                 markItemAsSold(bookTitle);
-                return false;
             }
         });
     }
@@ -384,7 +383,7 @@ public class Profile extends Fragment {
                     putDownKeyBoard();
                 } else if (searchBar.getText().toString().replace(" ", "").length() > 3) {
                     for (int i = 0; i < rateKeys.size(); i++) {
-                        if (rateKeys.get(i).contains("_" + (searchBar.getText().toString()))) {
+                        if ((rateKeys.get(i)).toLowerCase().contains("_" + ((searchBar.getText().toString()).toLowerCase()))) {
                             if (!rateKeysToShow.contains(rateKeys.get(i))) {
                                 rateKeysToShow.add(rateKeys.get(i));
                             }
