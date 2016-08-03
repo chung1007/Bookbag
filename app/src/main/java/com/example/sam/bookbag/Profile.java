@@ -176,9 +176,18 @@ public class Profile extends Fragment {
                         Log.e("Initialized", "already deleted");
                     }
                     listShowing = true;
+                    searchBar.setText("My Listings");
+                    searchBar.setGravity(Gravity.CENTER);
+                    searchBar.setFocusable(false);
+                    searchBar.setFocusableInTouchMode(false);
+                    putDownKeyBoard();
                 } else {
                     profileList.setAdapter(null);
                     listShowing = false;
+                    searchBar.setText("");
+                    searchBar.setGravity(Gravity.CENTER);
+                    searchBar.setFocusableInTouchMode(true);
+
                 }
 
             }
@@ -189,9 +198,12 @@ public class Profile extends Fragment {
         searchBar.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                searchBar.setCursorVisible(true);
-                searchBar.setGravity(Gravity.NO_GRAVITY);
-                searchBar.setGravity(Gravity.CENTER_VERTICAL);
+                if(!searchBar.getText().toString().equals("My Listings")) {
+                    searchBar.setCursorVisible(true);
+                    searchBar.setGravity(Gravity.NO_GRAVITY);
+                    searchBar.setGravity(Gravity.CENTER_VERTICAL);
+
+                }
                 return false;
             }
         });
@@ -234,19 +246,7 @@ public class Profile extends Fragment {
         });
 
     }
-    public void listenUntilDoneDeleting(String userId){
-        ref.child(userId).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                deletingDone = true;
-            }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
     public void getNameOfDeletedItem(final String userId){
         ref.child(userId).addChildEventListener(new ChildEventListener() {
             @Override
@@ -381,7 +381,7 @@ public class Profile extends Fragment {
                     searchBar.setGravity(Gravity.CENTER);
                     rateKeysToShow.clear();
                     putDownKeyBoard();
-                } else if (searchBar.getText().toString().replace(" ", "").length() > 3) {
+                } else if (searchBar.getText().toString().replace(" ", "").length() > 3 && !searchBar.getText().toString().equals("My Listings")) {
                     for (int i = 0; i < rateKeys.size(); i++) {
                         if ((rateKeys.get(i)).toLowerCase().contains("_" + ((searchBar.getText().toString()).toLowerCase()))) {
                             if (!rateKeysToShow.contains(rateKeys.get(i))) {
