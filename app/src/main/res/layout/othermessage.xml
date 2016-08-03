@@ -5,7 +5,7 @@
     android:layout_alignParentLeft="true"
     android:paddingLeft="10dp"
     android:paddingRight="50dp"
-    android:paddingTop="15dp">
+    android:paddingTop="10dp">
 
     <TextView
         android:id="@+id/otherMessageBox"
@@ -25,7 +25,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:paddingLeft="10dp"
+        android:paddingLeft="3dp"
         android:layout_below="@id/otherMessageBox"
         android:text="Time Stamp"
         android:textColor="#98999B"
