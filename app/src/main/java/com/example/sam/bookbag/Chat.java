@@ -332,8 +332,10 @@ public class Chat extends Fragment {
                 String lastMessage = conversations.get(lastMessageKey);
                 Log.e("lastKey", lastMessageKey);
                 Log.e("lastMessage", lastMessage);
-                if(!lastMessage.equals("sjvsdvbsdbv")) {
+                if (!lastMessage.equals("sjvsdvbsdbv")) {
+                    Log.e("lastMessage", "does not equal!");
                     writeToFileAndUpdate(newChatMate, newTopic, lastMessage, lastMessageKey);
+                    Log.e("fromChat1", lastMessage);
 
                 }
             }
@@ -376,6 +378,8 @@ public class Chat extends Fragment {
     }
 
     public void writeToFileAndUpdate(String sellerAndId, String messageKey, String message, String lastMessageKey) {
+        Log.e("fromChat", message);
+        Log.e("latestMessage1", message);
         Log.e("new convo", "writing to file!");
         Log.e("lastMessageKey", lastMessageKey);
         String[] sellerAndIdSplit = sellerAndId.split("_");
@@ -385,14 +389,13 @@ public class Chat extends Fragment {
         Log.e("sellerName", sellerName);
         String bookName = messageKey;
         Log.e("lastestBook", bookName);
-        String fileName = "sdcard/Bookbag_chat/"+sellerName.replace(" ", "") + "_" + sellerId + "_" + bookName.replace(" ", "_");
+        String fileName = "sdcard/Bookbag_chat/" + sellerName.replace(" ", "") + "_" + sellerId + "_" + bookName.replace(" ", "_");
         try {
-            if(message.equals(messageFromPage) && !lastMessageKey.contains("_"+HomePage.userName+"_") || readFile(fileName) == null) {
+            if (message.equals(messageFromPage) && !lastMessageKey.contains("_" + HomePage.userName + "_") || readFile(fileName) == null) {
                 messageDir.mkdir();
                 file = null;
                 file = new PrintWriter(new FileOutputStream(new File(messageDir, (sellerName.replace(" ", "") + "_" + sellerId + "_" + bookName.replace(" ", "_")))));
                 file.println(message);
-                Log.e("fromChat", message);
                 file.close();
                 saveNewChats(sellerName, sellerId, bookName, message);
                 refreshChatPage();

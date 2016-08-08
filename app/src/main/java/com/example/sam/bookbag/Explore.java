@@ -299,8 +299,6 @@ public class Explore extends Fragment{
                 String values = dataSnapshot.getValue().toString();
                 keysAndValues.put(keys, values);
                 if (keysAndValues.size() == 9) {
-                    Log.e("map keys", keysAndValues.keySet().toString());
-                    Log.e("map values", keysAndValues.values().toString());
                     condition = keysAndValues.get("condition");
                     price = keysAndValues.get("price");
                     edition = keysAndValues.get("edition");

@@ -1,6 +1,7 @@
 package com.example.sam.bookbag;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -28,6 +29,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -54,6 +57,7 @@ public class ChatPage extends AppCompatActivity {
     File messageDir;
     PrintWriter file;
     String messageTime;
+    public static int oldTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,11 +102,11 @@ public class ChatPage extends AppCompatActivity {
             public void onClick(View view) {
                 Log.e("backpressed", "true");
                 String fileName = sellerName.replace(" ", "") + "_" + sellerId + "_" + bookName.replace(" ", "_");
-                String filePath = "sdcard/Bookbag_newChat/"+fileName;
+                String filePath = "sdcard/Bookbag_newChat/" + fileName;
                 Log.e("sellerName", sellerName);
                 Log.e("sellerId", sellerId);
                 Log.e("bookName", bookName);
-                if(readFile(filePath)!=null){
+                if (readFile(filePath) != null) {
                     File toDelete = new File(filePath);
                     toDelete.delete();
                     Log.e("green dot", "should be gone");
@@ -124,6 +128,7 @@ public class ChatPage extends AppCompatActivity {
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                saveTime();
                 String message = messageBox.getText().toString();
                 if (message.equals("")) {
                     //Do Nothing
@@ -179,7 +184,11 @@ public class ChatPage extends AppCompatActivity {
                         addMessage(latestMessage, newMessage);
                         Log.e("latestKey", latestMessage);
                         Log.e("newMessage", newMessage);
-                        writeToFile(newMessage);
+                        if(!newMessage.equals("sjvsdvbsdbv")) {
+                            writeToFile(newMessage);
+                            Log.e("writeToFile", "from chatpage");
+                            Log.e("messageWrote", newMessage);
+                        }
                     }
                     scrollDown();
 
@@ -246,7 +255,10 @@ public class ChatPage extends AppCompatActivity {
             file.println(message);
             Log.e("fromChatPage", message);
             file.close();
-            Chat.messageFromPage = message;
+            if(!message.equals("sjvsdvbsdbv")) {
+                Chat.messageFromPage = message;
+                Log.e("messageFromPage", message);
+            }
         }catch(IOException IOE){
             Log.e("chat", "saving conv. failed");
         }
@@ -301,6 +313,21 @@ public class ChatPage extends AppCompatActivity {
             return null;
         }
         return dataOfFile;
+    }
+    public void saveTime(){
+        SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        Date date = new Date();   // given date
+        Calendar calendar = GregorianCalendar.getInstance();
+        calendar.setTime(date);
+        pref.edit().remove("oldTime").commit();
+        if(!pref.contains("oldTime")){
+            editor.putString("oldTime", Integer.toString(calendar.get(Calendar.HOUR)));
+            editor.apply();
+        }else if(Integer.parseInt(pref.getString("oldTime", null)) >  calendar.get(Calendar.HOUR)){
+            messageRoom.child(HomePage.userId).child(sellerId + "_" + sellerName).child(bookName).setValue(null);
+
+        }
     }
 
 }

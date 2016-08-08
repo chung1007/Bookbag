@@ -266,8 +266,6 @@ public class BackgroundListeners extends Service {
                 String values = dataSnapshot.getValue().toString();
                 keysAndValues.put(keys, values);
                 if (keysAndValues.size() == 9) {
-                    Log.e("map keys", keysAndValues.keySet().toString());
-                    Log.e("map values", keysAndValues.values().toString());
                     condition = keysAndValues.get("condition");
                     price = keysAndValues.get("price");
                     edition = keysAndValues.get("edition");
@@ -505,7 +503,9 @@ public class BackgroundListeners extends Service {
                 String lastMessage = conversations.get(lastMessageKey);
                 Log.e("lastKey", lastMessageKey);
                 Log.e("lastMessage", lastMessage);
-                writeToFileAndUpdate(newChatMate, newTopic, lastMessage, lastMessageKey, userName);
+                if(!lastMessage.equals("sjvsdvbsdbv")) {
+                    writeToFileAndUpdate(newChatMate, newTopic, lastMessage, lastMessageKey, userName);
+                }
 
             }
 
@@ -563,7 +563,7 @@ public class BackgroundListeners extends Service {
                 oldfile = null;
                 oldfile = new PrintWriter(new FileOutputStream(new File(messageDir, (sellerName.replace(" ", "") + "_" + sellerId + "_" + bookName.replace(" ", "_")))));
                 oldfile.println(message);
-                Log.e("fromChat", message);
+                Log.e("fromBackChat", message);
                 oldfile.close();
                 saveNewChats(sellerName, sellerId, bookName, message);
                 Log.e("chat page", "refreshed");
