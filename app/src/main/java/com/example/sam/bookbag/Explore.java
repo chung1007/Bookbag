@@ -165,6 +165,12 @@ public class Explore extends Fragment{
         super.onDestroy();
         //getActivity().startService(new Intent(getContext(), Explore.class));
     }
+    @Override
+    public void onPause() {
+        super.onPause();
+        searchBar.setText("");
+
+    }
 
     public void initializeFiles(){
         try {

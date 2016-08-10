@@ -75,7 +75,6 @@ public class Profile extends Fragment {
         Firebase.setAndroidContext(getContext());
         initializations(view);
         setListeners();
-        renewPage();
         return view;
     }
 
@@ -211,7 +210,7 @@ public class Profile extends Fragment {
         });
     }
 
-    public void listItemClickListener() {
+    /*public void listItemClickListener() {
         profileList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
@@ -222,7 +221,7 @@ public class Profile extends Fragment {
                 return true;
             }
         });
-    }
+    }*/
     public void setDataBaseListener(){
         ref.addChildEventListener(new ChildEventListener() {
             @Override
@@ -360,12 +359,13 @@ public class Profile extends Fragment {
         rateKeysToShow = new ArrayList<>();
         getAllRateKeys();
         searchBar.setCursorVisible(false);
+        searchBar.setText("");
     }
 
     public void setListeners(){
         setShowListClickedListener();
         setSearchBarClickListener();
-        listItemClickListener();
+        //listItemClickListener();
         setDataBaseListener();
         setProfileSearchBarlistener();
         profileBoxClickListener();
@@ -442,14 +442,13 @@ public class Profile extends Fragment {
         profileList.setAdapter(null);
         checkPostFile();
     }
-    public void renewPage(){
-        if(searchBar.getText().toString().equals("My Listings") || listShowing){
-            Log.e("searchbartext", "My Listings");
-            listShowing = true;
-            list.performClick();
-            list.setPressed(true);
-            searchBar.setText(null);
-        }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        searchBar.setText("");
+        listShowing = false;
     }
+
 
 }
