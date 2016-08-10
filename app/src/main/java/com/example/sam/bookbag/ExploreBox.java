@@ -34,6 +34,7 @@ public class ExploreBox extends RelativeLayout {
     String ISBN;
     String bitmap;
     View box;
+    public static boolean showX;
 
     public ExploreBox(Context context, String title, String edition, String condition, String price, String ISBN, String userId, String bitmap) {
         super(context);
@@ -59,6 +60,10 @@ public class ExploreBox extends RelativeLayout {
         TextView boxPrice = (TextView) box.findViewById(R.id.exploreBoxPrice);
         TextView userIdInBox = (TextView)box.findViewById(R.id.userId);
         TextView bookISBN = (TextView)box.findViewById(R.id.isbn);
+        ImageView X = (ImageView)box.findViewById(R.id.XButton);
+        if(!showX){
+            X.setVisibility(INVISIBLE);
+        }
         final ImageView boxImage = (ImageView) box.findViewById(R.id.exploreImageView);
         boxTitle.setText(title);
         boxEdition.setText(edition + " edition");

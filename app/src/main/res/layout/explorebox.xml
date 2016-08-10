@@ -2,17 +2,17 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/explorebox"
-    android:paddingTop="13dp">
+    android:background="@drawable/explorebox">
 
     <ImageView
         android:id="@+id/exploreImageView"
-        android:layout_width="80dp"
-        android:layout_height="77dp"
+        android:layout_width="85dp"
+        android:layout_height="90dp"
         android:paddingLeft="20dp"
         android:paddingRight="10dp"
         android:paddingBottom="5dp"
         android:scaleType="fitXY"
+        android:paddingTop="13dp"
         android:background="@android:color/transparent"/>
 
     <TextView
@@ -21,7 +21,7 @@
         android:layout_height="wrap_content"
         android:text="TITLE"
         android:textSize="14sp"
-        android:paddingTop="0dp"
+        android:paddingTop="13dp"
         android:paddingRight="10dp"
         android:textColor="#000000"
         android:layout_toRightOf="@id/exploreImageView"
@@ -57,7 +57,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingLeft="50dp"
-        android:paddingTop="20dp"
+        android:paddingTop="33dp"
         android:text="PRICE"
         android:textColor="#1ABC9C"
         android:textSize="20sp"
@@ -79,6 +79,19 @@
         android:layout_alignParentRight="true"
         android:text="ISBN"
         android:alpha="0"/>
+
+    <ImageView
+        android:id="@+id/XButton"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:src="@drawable/xbutton"
+        android:textStyle="bold"
+        android:textColor="#000000"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:textSize="15sp"
+        android:paddingRight="10dp"
+        android:paddingTop="5dp"/>
 
 
 </RelativeLayout>

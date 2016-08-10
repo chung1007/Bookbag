@@ -11,22 +11,32 @@
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
+        android:gravity="center"
         android:id="@+id/wishButtons"
         android:paddingTop="5dp"
-        android:paddingBottom="3dp"
-        android:layout_toLeftOf="@+id/addWantItem"
+        android:paddingBottom="2dp"
         android:paddingRight="20dp"
-        android:paddingLeft="40dp">
+        android:paddingLeft="20dp">
 
         <Button
-            android:id="@+id/button1"
+            android:id="@+id/seeWishItems"
             android:layout_width="110dp"
             android:layout_height="30dp"
             android:background="@drawable/wishlistbutton1"
-            android:text="@string/button1"
+            android:text="Wishes"
             android:textAllCaps="false"
             android:textColor="#ffffff"/>
+
+        <Button
+            android:id="@+id/button1"
+            android:layout_width="100dp"
+            android:layout_height="30dp"
+            android:background="@drawable/availablebutton"
+            android:text="@string/button1"
+            android:textAllCaps="false"
+            android:textColor="#ffffff"
+            android:layout_toEndOf="@+id/seeWishItems" />
+
         <Button
             android:id="@+id/button2"
             android:layout_width="110dp"
@@ -40,30 +50,23 @@
     </RelativeLayout>
 
 
-        <ImageView
-            android:id="@+id/addWantItem"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:src="@drawable/addwantitem"
-            android:paddingRight="25dp"
-            android:layout_alignBottom="@+id/wishButtons"
-            android:layout_alignParentEnd="true" />
-    <ImageView
-        android:id="@+id/seeWishItems"
-        android:layout_width="45dp"
-        android:layout_height="45dp"
-        android:src="@drawable/unavailable"
-        android:paddingLeft="23dp"
-        android:layout_alignBottom="@+id/wishButtons"
-        android:layout_alignParentLeft="true"
-        android:clickable="true"/>
+
 
 
 </RelativeLayout>
 
 
+    <ImageView
+        android:id="@+id/addWantItem"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:src="@drawable/addwantitem"
+        android:paddingLeft="10dp"
+        android:layout_alignBottom="@+id/wishButtons"
+        android:layout_alignParentEnd="true" />
+
     <ListView
-        android:paddingTop="20dp"
+        android:paddingTop="2dp"
         android:id="@+id/userWishList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

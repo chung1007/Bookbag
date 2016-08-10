@@ -427,6 +427,7 @@ public class Explore extends Fragment{
     }
 
     public void displayPostBoxes(List<JSONObject> datapoints, ArrayList<String> userIds) {
+        ExploreListAdapter.isprofile = false;
         adapter = new ExploreListAdapter(getContext(), datapoints, userIds);
         exploreList.setAdapter(adapter);
         adapter.notifyDataSetChanged();

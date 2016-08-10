@@ -269,6 +269,7 @@ public class RatingPage extends AppCompatActivity {
     }
 
     public void displayPostBoxes(List<JSONObject> datapoints, ArrayList<String> userIds) {
+        ExploreListAdapter.isprofile = false;
         adapter = new ExploreListAdapter(this, datapoints, userIds);
         activeListing.setAdapter(adapter);
         adapter.notifyDataSetChanged();

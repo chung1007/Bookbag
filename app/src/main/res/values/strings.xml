@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Bookbag</string>
     <string name="spinner_heading">Sort by</string>
-    <string name="button1">Wishes</string>
+    <string name="button1">Available</string>
     <string name="button2">Bookmark</string>
 
 

@@ -55,7 +55,7 @@ public class WishList extends Fragment {
     Button button1;
     Button button2;
     ImageView addWantItem;
-    ImageView seeWishItems;
+    Button seeWishItems;
     File wishBookDir;
     PrintWriter file;
     View dialogDisplay;
@@ -73,7 +73,7 @@ public class WishList extends Fragment {
         View view = inflater.inflate(R.layout.wishlist, container, false);
         Log.e("wishList", "started");
         wishList = (ListView)view.findViewById(R.id.userWishList);
-        seeWishItems = (ImageView)view.findViewById(R.id.seeWishItems);
+        seeWishItems = (Button)view.findViewById(R.id.seeWishItems);
         button2 = (Button)view.findViewById(R.id.button2);
         button1 = (Button)view.findViewById(R.id.button1);
         displayBM = new ArrayList<>();
@@ -202,6 +202,7 @@ public class WishList extends Fragment {
         if(datapoints.size()>0){
             button2.setTextColor(getResources().getColor(R.color.capsuleSelected));
             button1.setTextColor(Color.WHITE);
+            seeWishItems.setTextColor(Color.WHITE);
             wishList.setAdapter(null);
             wishList.setAdapter(adapter);
             adapter.notifyDataSetChanged();
@@ -213,6 +214,7 @@ public class WishList extends Fragment {
                 whichList = 2;
                 checkPostFile();
                 button1.setTextColor(Color.WHITE);
+                seeWishItems.setTextColor(Color.WHITE);
                 wishList.setAdapter(null);
                 wishList.setAdapter(adapter);
                 adapter.notifyDataSetChanged();
@@ -226,6 +228,7 @@ public class WishList extends Fragment {
             public void onClick(View v) {
                 button2.setTextColor(getResources().getColor(R.color.capsuleSelected));
                 button1.setTextColor(Color.WHITE);
+                seeWishItems.setTextColor(Color.WHITE);
                 checkPostFile();
             }
         });
@@ -247,6 +250,7 @@ public class WishList extends Fragment {
                 getFiles("wishExist", "wishExist");
                 button1.setTextColor(getResources().getColor(R.color.capsuleSelected));
                 button2.setTextColor(Color.WHITE);
+                seeWishItems.setTextColor(Color.WHITE);
             }
         });
     }
@@ -255,6 +259,7 @@ public class WishList extends Fragment {
             @Override
             public void onClick(View view) {
                 whichList = 0;
+                seeWishItems.setTextColor(getResources().getColor(R.color.capsuleSelected));
                 wishList.setAdapter(null);
                 button1.setTextColor(Color.WHITE);
                 button2.setTextColor(Color.WHITE);

@@ -52,7 +52,7 @@ public class Profile extends Fragment {
     List<JSONObject> dataPoints;
     ExploreListAdapter adapter;
     ProfileListAdapter profileAdapter;
-    ListView profileList;
+    public static ListView profileList;
     ImageView list;
     EditText searchBar;
     boolean listShowing = false;
@@ -75,6 +75,7 @@ public class Profile extends Fragment {
         Firebase.setAndroidContext(getContext());
         initializations(view);
         setListeners();
+        renewPage();
         return view;
     }
 
@@ -168,6 +169,7 @@ public class Profile extends Fragment {
             @Override
             public void onClick(View v) {
                 if (listShowing == false) {
+                    ExploreListAdapter.isprofile = true;
                     checkPostFile();
                     isProfilelist = false;
                     try {
@@ -198,7 +200,7 @@ public class Profile extends Fragment {
         searchBar.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                if(!searchBar.getText().toString().equals("My Listings")) {
+                if (!searchBar.getText().toString().equals("My Listings")) {
                     searchBar.setCursorVisible(true);
                     searchBar.setGravity(Gravity.NO_GRAVITY);
                     searchBar.setGravity(Gravity.CENTER_VERTICAL);
@@ -264,6 +266,7 @@ public class Profile extends Fragment {
                 String deletedItem = dataSnapshot.getKey();
                 deleteIfExists(userId, deletedItem);
                 Log.e("deleted item", deletedItem);
+                refreshPage();
             }
 
             @Override
@@ -373,7 +376,9 @@ public class Profile extends Fragment {
 
         searchBar.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (searchBar.getText().toString().equals("")) {
@@ -432,6 +437,19 @@ public class Profile extends Fragment {
                 }
             }
         });
+    }
+    public void refreshPage(){
+        profileList.setAdapter(null);
+        checkPostFile();
+    }
+    public void renewPage(){
+        if(searchBar.getText().toString().equals("My Listings") || listShowing){
+            Log.e("searchbartext", "My Listings");
+            listShowing = true;
+            list.performClick();
+            list.setPressed(true);
+            searchBar.setText(null);
+        }
     }
 
 }

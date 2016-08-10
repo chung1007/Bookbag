@@ -60,7 +60,6 @@ public class HomePage extends AppCompatActivity {
         viewPager = (CustomViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);
         viewPager.setPagingEnabled(false);
-        viewPager.setPageTransformer(false, new NoPageTransformer());
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
         setTabIcons();
