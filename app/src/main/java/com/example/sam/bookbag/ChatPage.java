@@ -87,7 +87,7 @@ public class ChatPage extends AppCompatActivity {
         checkIfNewMessageIsDone(bookName);
         listenForNewMessages(bookName);
         messageRoom.child(HomePage.userId).child(sellerId+"_"+sellerName).child(bookName).child(time).setValue("sjvsdvbsdbv");
-        HomePage.viewPager.setCurrentItem(1);
+        //HomePage.viewPager.setCurrentItem(1);
         chateMateNameClicked();
     }
     public void setPageInfo(){
@@ -320,12 +320,12 @@ public class ChatPage extends AppCompatActivity {
         Date date = new Date();   // given date
         Calendar calendar = GregorianCalendar.getInstance();
         calendar.setTime(date);
-        pref.edit().remove("oldTime").commit();
         if(!pref.contains("oldTime")){
             editor.putString("oldTime", Integer.toString(calendar.get(Calendar.HOUR)));
             editor.apply();
         }else if(Integer.parseInt(pref.getString("oldTime", null)) >  calendar.get(Calendar.HOUR)){
             messageRoom.child(HomePage.userId).child(sellerId + "_" + sellerName).child(bookName).setValue(null);
+            Log.e("messagePage", "deleted");
 
         }
     }

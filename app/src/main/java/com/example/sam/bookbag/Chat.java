@@ -219,9 +219,6 @@ public class Chat extends Fragment {
                 intent.putExtra("sellerName", sellerName.getText().toString());
                 intent.putExtra("bookName", bookTitle.getText().toString());
                 intent.putExtra("isContinued", "continued");
-                String name = sellerName.getText().toString();
-                String ID = sellerId.getText().toString();
-                String book = bookTitle.getText().toString();
 
                 startActivity(intent);
             }
@@ -464,6 +461,26 @@ public class Chat extends Fragment {
         Log.e("Chat", "killed");
         //this.startService(new Intent(this, BackgroundListeners.class));
         super.onDestroy();
+    }
+    @Override
+    public void onPause() {
+        super.onPause();
+        checkPostFile();
+        listenForChatBoxClicked();
+        setNewSellerListener();
+        setAllMessagesListener();
+        setDeleteClickListener();
+        Log.e("Chat", "paused");
+    }
+    @Override
+    public void onResume(){
+        super.onResume();
+        checkPostFile();
+        listenForChatBoxClicked();
+        setNewSellerListener();
+        setAllMessagesListener();
+        setDeleteClickListener();
+        Log.e("Chat", "paused");
     }
 
 

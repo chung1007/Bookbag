@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.StorageReference;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -144,6 +145,20 @@ public class ExploreListAdapter extends BaseAdapter {
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         MyApplication.ref.child(HomePage.userId).child(bookTitle).setValue(null);
+                        StorageReference imageKey = MyApplication.storageRef.child(HomePage.userId);
+                        Log.e("delete bookTitle", bookTitle);
+                        StorageReference imageKeyDelete = imageKey.child(bookTitle);
+                        imageKeyDelete.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Log.e("photo file", "deleted");
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.e("photo file", "delete failed");
+                            }
+                        });
                         String fileName = "sdcard/Bookbag_explore/" + HomePage.userId + "_" + bookTitle.replace(" ", "");
                         String fileName2 = android.os.Environment.getExternalStorageDirectory() + "/Bookbag_wishList/existing/" + HomePage.userId + "_" + bookTitle.replace(" ", "");
                         File file = new File(fileName);

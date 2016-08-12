@@ -565,6 +565,7 @@ public class BackgroundListeners extends Service {
                 oldfile.println(message);
                 Log.e("fromBackChat", message);
                 oldfile.close();
+                newMessageNotification(sellerName, message);
                 saveNewChats(sellerName, sellerId, bookName, message);
                 Log.e("chat page", "refreshed");
             }
@@ -584,6 +585,18 @@ public class BackgroundListeners extends Service {
             Log.e("file", "failed");
         }
 
+    }
+    public void newMessageNotification(String person, String newMessage){
+        mNotificationManager =
+                (NotificationManager)this. getSystemService(Context.NOTIFICATION_SERVICE);
+        int notifyID = 1;
+        android.support.v4.app.NotificationCompat.Builder mNotifyBuilder = new NotificationCompat.Builder(this)
+                .setContentTitle("New message from "+ person)
+                .setContentText(newMessage)
+                .setSmallIcon(R.drawable.notification);
+        mNotificationManager.notify(
+                notifyID,
+                mNotifyBuilder.build());
     }
 
 

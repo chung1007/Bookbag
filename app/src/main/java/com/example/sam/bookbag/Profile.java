@@ -277,34 +277,7 @@ public class Profile extends Fragment {
             }
         });
     }
-
-    public void markItemAsSold(final String bookTitle){
-        new AlertDialog.Builder(getContext())
-                .setTitle("Delete Listing?")
-                .setMessage("")
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        ref.child(HomePage.userId).child(bookTitle).setValue(null);
-                        String fileName = "sdcard/Bookbag_explore/" + HomePage.userId + "_" + bookTitle.replace(" ", "");
-                        String fileName2 = android.os.Environment.getExternalStorageDirectory() + "/Bookbag_wishList/existing/" + HomePage.userId + "_" + bookTitle.replace(" ", "");
-                        File file = new File(fileName);
-                        File file2 = new File(fileName2);
-                        file.delete();
-                        if (file2.exists()) {
-                            file2.delete();
-                            Log.e("file deleted", "in wishList");
-                        }
-                        profileList.setAdapter(null);
-                        checkPostFile();
-                    }
-                })
-                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                })
-                .show();
-    }
+    
     public void deleteIfExists(String id, String bookName){
         if(!id.equals(HomePage.userId)) {
             File explore = new File(android.os.Environment.getExternalStorageDirectory() + "/Bookbag_explore/" + id + "_" + bookName.replace(" ", ""));
