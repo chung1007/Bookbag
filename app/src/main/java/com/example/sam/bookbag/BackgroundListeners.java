@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.IBinder;
 import android.support.v7.app.NotificationCompat;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -32,6 +33,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,6 +76,7 @@ public class BackgroundListeners extends Service {
     File newMessageDir;
     PrintWriter oldfile;
     PrintWriter newFile;
+    String date;
 
     public BackgroundListeners(){
 
@@ -503,7 +508,7 @@ public class BackgroundListeners extends Service {
                 String lastMessage = conversations.get(lastMessageKey);
                 Log.e("lastKey", lastMessageKey);
                 Log.e("lastMessage", lastMessage);
-                if(!lastMessage.equals("sjvsdvbsdbv")) {
+                if (!lastMessage.equals("sjvsdvbsdbv")) {
                     writeToFileAndUpdate(newChatMate, newTopic, lastMessage, lastMessageKey, userName);
                 }
 
@@ -559,15 +564,24 @@ public class BackgroundListeners extends Service {
         String fileName = "sdcard/Bookbag_chat/"+sellerName.replace(" ", "") + "_" + sellerId + "_" + bookName.replace(" ", "_");
         try {
             if(!lastMessageKey.contains("_"+userName+"_") || readFile(fileName) == null) {
-                messageDir.mkdir();
-                oldfile = null;
-                oldfile = new PrintWriter(new FileOutputStream(new File(messageDir, (sellerName.replace(" ", "") + "_" + sellerId + "_" + bookName.replace(" ", "_")))));
-                oldfile.println(message);
-                Log.e("fromBackChat", message);
-                oldfile.close();
-                newMessageNotification(sellerName, message);
-                saveNewChats(sellerName, sellerId, bookName, message);
-                Log.e("chat page", "refreshed");
+                String delegate = "hh:mm:ss aaa";
+                String delegate2 = "hh:mm aaa";
+                String date = (String) DateFormat.format(delegate, Calendar.getInstance().getTime());
+                String dateOfLastKey = lastMessageKey.substring(0, Math.min(lastMessageKey.length(), 8));
+                String dateNumber = date.substring(0, Math.min(date.length(), 8));
+                Log.e("dateOflastKey", dateOfLastKey);
+                Log.e("date", date);
+                if(Integer.parseInt(dateNumber.replace(":", ""))-Integer.parseInt(dateOfLastKey.replace(":", "")) < 3) {
+                    messageDir.mkdir();
+                    oldfile = null;
+                    oldfile = new PrintWriter(new FileOutputStream(new File(messageDir, (sellerName.replace(" ", "") + "_" + sellerId + "_" + bookName.replace(" ", "_")))));
+                    oldfile.println(message);
+                    Log.e("fromBackChat", message);
+                    oldfile.close();
+                    newMessageNotification(sellerName, message);
+                    saveNewChats(sellerName, sellerId, bookName, message);
+                    Log.e("chat page", "refreshed");
+                }
             }
         } catch (IOException IOE) {
             Log.e("chat", "saving conv. failed");
@@ -601,3 +615,4 @@ public class BackgroundListeners extends Service {
 
 
 }
+

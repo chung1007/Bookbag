@@ -326,6 +326,9 @@ public class ChatPage extends AppCompatActivity {
         }else if(Integer.parseInt(pref.getString("oldTime", null)) >  calendar.get(Calendar.HOUR)){
             messageRoom.child(HomePage.userId).child(sellerId + "_" + sellerName).child(bookName).setValue(null);
             Log.e("messagePage", "deleted");
+            pref.edit().remove("oldTime").apply();
+            editor.putString("oldTime", Integer.toString(calendar.get(Calendar.HOUR)));
+            editor.apply();
 
         }
     }
