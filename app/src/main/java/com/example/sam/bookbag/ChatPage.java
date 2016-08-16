@@ -320,15 +320,16 @@ public class ChatPage extends AppCompatActivity {
         Date date = new Date();   // given date
         Calendar calendar = GregorianCalendar.getInstance();
         calendar.setTime(date);
+        Log.e("prev oldTime", pref.getString("oldTime", null));
         if(!pref.contains("oldTime")){
             editor.putString("oldTime", Integer.toString(calendar.get(Calendar.HOUR)));
             editor.apply();
         }else if(Integer.parseInt(pref.getString("oldTime", null)) >  calendar.get(Calendar.HOUR)){
             messageRoom.child(HomePage.userId).child(sellerId + "_" + sellerName).child(bookName).setValue(null);
             Log.e("messagePage", "deleted");
-            pref.edit().remove("oldTime").apply();
             editor.putString("oldTime", Integer.toString(calendar.get(Calendar.HOUR)));
             editor.apply();
+            Log.e("new editor time", pref.getString("oldTime", null));
 
         }
     }

@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.IBinder;
+import android.os.Vibrator;
 import android.support.v7.app.NotificationCompat;
 import android.text.format.DateFormat;
 import android.util.Log;
@@ -357,6 +358,7 @@ public class BackgroundListeners extends Service {
             mNotificationManager.notify(
                     notifyID,
                     mNotifyBuilder.build());
+            vibrate();
             try {
                 Log.e("wishExistsFile", "start");
                 try {
@@ -611,6 +613,11 @@ public class BackgroundListeners extends Service {
         mNotificationManager.notify(
                 notifyID,
                 mNotifyBuilder.build());
+        vibrate();
+    }
+    public void vibrate(){
+        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        v.vibrate(400);
     }
 
 
