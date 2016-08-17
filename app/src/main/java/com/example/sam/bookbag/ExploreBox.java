@@ -82,6 +82,8 @@ public class ExploreBox extends RelativeLayout {
 
     public Bitmap StringToBitMap(String encodedString){
         try {
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inScaled = false;
             byte [] encodeByte=Base64.decode(encodedString, Base64.DEFAULT);
             Bitmap bitmap=BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
             return bitmap;

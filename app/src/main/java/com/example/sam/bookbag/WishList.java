@@ -296,11 +296,17 @@ public class WishList extends Fragment {
                                 EditText textBookISBN = (EditText) dialogView.findViewById(R.id.ISBNOfDesiredBook);
                                 String bookName = textBookName.getText().toString();
                                 String bookISBN = textBookISBN.getText().toString();
-                                saveWantedBookInfo(bookName, bookISBN);
-                                seeWishItems.performClick();
-                                seeWishItems.setPressed(true);
-                                textBookName.setText("");
-                                textBookISBN.setText("");
+                                if (bookISBN.length() < 13) {
+                                    toastMaker("IBSN-10 must have 13 digits!");
+                                    addWantItem.performClick();
+                                    addWantItem.isPressed();
+                                } else {
+                                    saveWantedBookInfo(bookName, bookISBN);
+                                    seeWishItems.performClick();
+                                    seeWishItems.setPressed(true);
+                                    textBookName.setText("");
+                                    textBookISBN.setText("");
+                                }
                             }
                         }).show();
 
