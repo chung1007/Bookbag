@@ -320,7 +320,6 @@ public class ChatPage extends AppCompatActivity {
         Date date = new Date();   // given date
         Calendar calendar = GregorianCalendar.getInstance();
         calendar.setTime(date);
-        Log.e("prev oldTime", pref.getString("oldTime", null));
         if(!pref.contains("oldTime")){
             editor.putString("oldTime", Integer.toString(calendar.get(Calendar.HOUR)));
             editor.apply();

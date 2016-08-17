@@ -5,6 +5,7 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -73,7 +74,6 @@ public class RatingPage extends AppCompatActivity {
     TextView smileCounter;
     TextView sadCounter;
     TextView noListings;
-    boolean alreadyRated = false;
     HashMap<String, Integer> keysAndValues;
     ImageView smile;
     ImageView sad;
@@ -174,11 +174,10 @@ public class RatingPage extends AppCompatActivity {
         smile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!alreadyRated) {
+                if (saveRate(sellerId)) {
                     smileCounter.setText(Integer.toString(userSmileCount + 1));
                     rateDataBase.child(sellerId + "_" + sellerName).child("likes").setValue(Integer.parseInt(smileCounter.getText().toString()));
-                    alreadyRated = true;
-                } else {
+                }else{
                     toastMaker("You already rated!");
                 }
             }
@@ -188,11 +187,10 @@ public class RatingPage extends AppCompatActivity {
         sad.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!alreadyRated) {
+                if (saveRate(sellerId)) {
                     sadCounter.setText(Integer.toString(userSadCount + 1));
                     rateDataBase.child(sellerId + "_" + sellerName).child("dislikes").setValue(Integer.parseInt(sadCounter.getText().toString()));
-                    alreadyRated = true;
-                } else {
+                }else {
                     toastMaker("You already rated!");
                 }
             }
@@ -460,7 +458,19 @@ public class RatingPage extends AppCompatActivity {
         }
 
     }
+    public boolean saveRate(String sellerId){
+        SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        if(pref.contains(sellerId)){
+            Log.e("already rated!", "true");
+            return false;
+        }else{
+            Log.e("already rated!", "false");
+            editor.putString(sellerId, "testing");
+            editor.apply();
+            return true;
+        }
 
-
+    }
 
 }

@@ -198,6 +198,7 @@ public class WishList extends Fragment {
 
 
     public void displayPostBoxes(List<JSONObject> datapoints, ArrayList<String> userIds) {
+        ExploreListAdapter.isBookMark = true;
         adapter = new ExploreListAdapter(getContext(), datapoints, userIds);
         if(datapoints.size()>0){
             button2.setTextColor(getResources().getColor(R.color.capsuleSelected));

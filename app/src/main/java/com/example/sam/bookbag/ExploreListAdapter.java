@@ -53,6 +53,7 @@ public class ExploreListAdapter extends BaseAdapter {
     String ISBN;
     String bitmap;
     public static boolean isprofile;
+    public static boolean isBookMark;
 
     public ExploreListAdapter(Context context, List<JSONObject> datapoints, ArrayList<String> userIds) {
         super();
@@ -103,7 +104,6 @@ public class ExploreListAdapter extends BaseAdapter {
             }
             if(isprofile){
                 ExploreBox.showX = true;
-
             }else{
                 ExploreBox.showX = false;
             }
@@ -130,52 +130,56 @@ public class ExploreListAdapter extends BaseAdapter {
                 public void onClick(View v) {
                     Log.e("X button", "clicked");
                     TextView title = (TextView) view.findViewById(R.id.exploreBoxTitle);
+                    TextView userId = (TextView)view.findViewById(R.id.userId);
+                    String id = userId.getText().toString();
                     String titleName = title.getText().toString();
                     Log.e("item", titleName);
-                    markItemAsSold(titleName, parent);
+                    markItemAsSold(titleName, parent, id);
 
                 }
             });
         }
     }
-    public void markItemAsSold(final String bookTitle, ViewGroup parent){
-        new AlertDialog.Builder(parent.getContext())
-                .setTitle("Delete Listing?")
-                .setMessage("")
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        MyApplication.ref.child(HomePage.userId).child(bookTitle).setValue(null);
-                        StorageReference imageKey = MyApplication.storageRef.child(HomePage.userId);
-                        Log.e("delete bookTitle", bookTitle);
-                        StorageReference imageKeyDelete = imageKey.child(bookTitle);
-                        imageKeyDelete.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                Log.e("photo file", "deleted");
+    public void markItemAsSold(final String bookTitle, ViewGroup parent, final String id){
+        if(isprofile) {
+            new AlertDialog.Builder(parent.getContext())
+                    .setTitle("Delete Listing?")
+                    .setMessage("")
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            MyApplication.ref.child(HomePage.userId).child(bookTitle).setValue(null);
+                            StorageReference imageKey = MyApplication.storageRef.child(HomePage.userId);
+                            Log.e("delete bookTitle", bookTitle);
+                            StorageReference imageKeyDelete = imageKey.child(bookTitle);
+                            imageKeyDelete.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Log.e("photo file", "deleted");
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Log.e("photo file", "delete failed");
+                                }
+                            });
+                            String fileName = "sdcard/Bookbag_explore/" + HomePage.userId + "_" + bookTitle.replace(" ", "");
+                            String fileName2 = android.os.Environment.getExternalStorageDirectory() + "/Bookbag_wishList/existing/" + HomePage.userId + "_" + bookTitle.replace(" ", "");
+                            File file = new File(fileName);
+                            File file2 = new File(fileName2);
+                            file.delete();
+                            if (file2.exists()) {
+                                file2.delete();
+                                Log.e("file deleted", "in wishList");
                             }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.e("photo file", "delete failed");
-                            }
-                        });
-                        String fileName = "sdcard/Bookbag_explore/" + HomePage.userId + "_" + bookTitle.replace(" ", "");
-                        String fileName2 = android.os.Environment.getExternalStorageDirectory() + "/Bookbag_wishList/existing/" + HomePage.userId + "_" + bookTitle.replace(" ", "");
-                        File file = new File(fileName);
-                        File file2 = new File(fileName2);
-                        file.delete();
-                        if (file2.exists()) {
-                            file2.delete();
-                            Log.e("file deleted", "in wishList");
                         }
-                    }
-                })
-                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                })
-                .show();
+                    })
+                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .show();
+        }
     }
 
 }

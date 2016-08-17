@@ -776,7 +776,7 @@ public class Explore extends Fragment{
                         file = new PrintWriter(new FileOutputStream(new File(wishDir, (userId + "_" + (postKey.replace(" ", ""))))));
                         file.println(data);
                         file.close();
-                        toastMaker("Added to WishList!");
+                        toastMaker("Added as bookmark in Wishlist");
                         checkifAlreadyAdded(view, userId, postKey);
                     } catch (IOException IOE) {
                         Log.e("file", "NOT FOUND WISHLIST");
