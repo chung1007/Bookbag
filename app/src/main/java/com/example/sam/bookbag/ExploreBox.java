@@ -84,8 +84,13 @@ public class ExploreBox extends RelativeLayout {
         try {
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inScaled = false;
+            options.inJustDecodeBounds = false;
+            options.inDither = false;
+            options.inSampleSize = 1;
+            options.inScaled = false;
+            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
             byte [] encodeByte=Base64.decode(encodedString, Base64.DEFAULT);
-            Bitmap bitmap=BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
+            Bitmap bitmap=BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length, options);
             return bitmap;
         } catch(Exception e) {
             e.getMessage();

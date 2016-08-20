@@ -182,7 +182,7 @@
                     android:id="@+id/ISBNTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="ISBN-10 :"
+                    android:text="ISBN-13 :"
                     android:textColor="@color/infoColor"
                     android:textSize="15sp"
                     android:textStyle="bold"

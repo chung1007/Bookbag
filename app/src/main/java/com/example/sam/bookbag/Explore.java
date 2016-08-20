@@ -798,7 +798,14 @@ public class Explore extends Fragment{
                         @Override
                         public void onSuccess(byte[] bytes) {
                             Log.e("bytes", "SUCCESS");
-                            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                            BitmapFactory.Options options = new BitmapFactory.Options();
+                            options.inScaled = false;
+                            options.inJustDecodeBounds = false;
+                            options.inDither = false;
+                            options.inSampleSize = 1;
+                            options.inScaled = false;
+                            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+                            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);
                             displayBM.add(bitmap);
                             Log.e("sizeafteradd", displayBM.size() + "");
                             Log.e("bitmap", bitmap.toString());

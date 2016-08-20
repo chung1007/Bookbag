@@ -248,13 +248,13 @@ public class Sell extends Fragment {
 
     }
     public void sendTextBookPhoto(ImageView imageView){
-            imageView.setDrawingCacheEnabled(true);
-            imageView.buildDrawingCache();
-            final Bitmap bitmap = imageView.getDrawingCache();
-            final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
-            byte[] data = baos.toByteArray();
-            StorageReference imageKey = MyApplication.storageRef.child(HomePage.userId);
+        imageView.setDrawingCacheEnabled(true);
+        imageView.buildDrawingCache();
+        final Bitmap bitmap = imageView.getDrawingCache();
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        byte[] data = baos.toByteArray();
+        StorageReference imageKey = MyApplication.storageRef.child(HomePage.userId);
         UploadTask uploadTask = imageKey.child(bookTitle).child("image" + Integer.toString(photoCounter)).putBytes(data);
             uploadTask.addOnFailureListener(new OnFailureListener() {
                 @Override

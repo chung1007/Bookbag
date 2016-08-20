@@ -210,7 +210,7 @@
             android:id="@+id/ISBNHeading"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="ISBN-10: "
+            android:text="ISBN-13: "
             android:textStyle="bold"
             android:paddingLeft="20dp"
             android:textSize="15sp"
@@ -300,7 +300,8 @@
             android:paddingTop="10dp"
             android:layout_gravity="center_horizontal"
             android:paddingBottom="20dp"
-            android:text="Seller"/>
+            android:text="Seller"
+            android:textSize="15sp"/>
 
         <Button
             android:id="@+id/contactSellerButton"
@@ -308,6 +309,7 @@
             android:layout_height="wrap_content"
             android:text="Contact Seller"
             android:layout_gravity="center_horizontal"
+            android:textAllCaps="false"
             android:backgroundTint="#1ABC9C"
             android:textColor="#ffffff"/>
 
