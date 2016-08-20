@@ -567,13 +567,14 @@ public class BackgroundListeners extends Service {
         try {
             if(!lastMessageKey.contains("_"+userName+"_") || readFile(fileName) == null) {
                 String delegate = "hh:mm:ss aaa";
-                String delegate2 = "hh:mm aaa";
                 String date = (String) DateFormat.format(delegate, Calendar.getInstance().getTime());
                 String dateOfLastKey = lastMessageKey.substring(0, Math.min(lastMessageKey.length(), 8));
                 String dateNumber = date.substring(0, Math.min(date.length(), 8));
                 Log.e("dateOflastKey", dateOfLastKey);
                 Log.e("date", date);
-                if(Integer.parseInt(dateNumber.replace(":", ""))-Integer.parseInt(dateOfLastKey.replace(":", "")) < 3) {
+                Integer subtractAnswer = Integer.parseInt(dateNumber.replace(":", ""))-Integer.parseInt(dateOfLastKey.replace(":", ""));
+                if(subtractAnswer < 3 && subtractAnswer >= 0) {
+                    Log.e("answer", Integer.toString(subtractAnswer));
                     messageDir.mkdir();
                     oldfile = null;
                     oldfile = new PrintWriter(new FileOutputStream(new File(messageDir, (sellerName.replace(" ", "") + "_" + sellerId + "_" + bookName.replace(" ", "_")))));

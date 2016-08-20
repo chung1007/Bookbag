@@ -58,6 +58,7 @@ public class ChatPage extends AppCompatActivity {
     PrintWriter file;
     String messageTime;
     public static int oldTime;
+    String latestMessageHour;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -184,6 +185,7 @@ public class ChatPage extends AppCompatActivity {
                         addMessage(latestMessage, newMessage);
                         Log.e("latestKey", latestMessage);
                         Log.e("newMessage", newMessage);
+                        latestMessageHour = latestMessage;
                         if(!newMessage.equals("sjvsdvbsdbv")) {
                             writeToFile(newMessage);
                             Log.e("writeToFile", "from chatpage");
@@ -315,22 +317,15 @@ public class ChatPage extends AppCompatActivity {
         return dataOfFile;
     }
     public void saveTime(){
-        SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", MODE_PRIVATE);
-        SharedPreferences.Editor editor = pref.edit();
-        Date date = new Date();   // given date
-        Calendar calendar = GregorianCalendar.getInstance();
-        calendar.setTime(date);
-        if(!pref.contains("oldTime")){
-            editor.putString("oldTime", Integer.toString(calendar.get(Calendar.HOUR)));
-            editor.apply();
-        }else if(Integer.parseInt(pref.getString("oldTime", null)) >  calendar.get(Calendar.HOUR)){
+        String delegate = "hh:mm:ss aaa";
+        String date = (String) DateFormat.format(delegate, Calendar.getInstance().getTime());
+        String dateOfLastKey = latestMessageHour.substring(0, Math.min(latestMessageHour.length(), 8));
+        String dateNumber = date.substring(0, Math.min(date.length(), 8));
+        Log.e("latestMessageTime", dateOfLastKey);
+        if(Integer.parseInt(dateNumber.replace(":", "")) < Integer.parseInt(dateOfLastKey.replace(":", ""))) {
             messageRoom.child(HomePage.userId).child(sellerId + "_" + sellerName).child(bookName).setValue(null);
-            Log.e("messagePage", "deleted");
-            editor.putString("oldTime", Integer.toString(calendar.get(Calendar.HOUR)));
-            editor.apply();
-            Log.e("new editor time", pref.getString("oldTime", null));
-
         }
+
     }
 
 }
