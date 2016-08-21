@@ -316,16 +316,20 @@ public class ChatPage extends AppCompatActivity {
         }
         return dataOfFile;
     }
-    public void saveTime(){
-        String delegate = "hh:mm:ss aaa";
-        String date = (String) DateFormat.format(delegate, Calendar.getInstance().getTime());
-        String dateOfLastKey = latestMessageHour.substring(0, Math.min(latestMessageHour.length(), 8));
-        String dateNumber = date.substring(0, Math.min(date.length(), 8));
-        Log.e("latestMessageTime", dateOfLastKey);
-        if(Integer.parseInt(dateNumber.replace(":", "")) < Integer.parseInt(dateOfLastKey.replace(":", ""))) {
-            messageRoom.child(HomePage.userId).child(sellerId + "_" + sellerName).child(bookName).setValue(null);
-        }
+    public void saveTime() {
+        try {
+            String delegate = "hh:mm:ss aaa";
+            String date = (String) DateFormat.format(delegate, Calendar.getInstance().getTime());
+            String dateOfLastKey = latestMessageHour.substring(0, Math.min(latestMessageHour.length(), 8));
+            String dateNumber = date.substring(0, Math.min(date.length(), 8));
+            Log.e("latestMessageTime", dateOfLastKey);
+            if (Integer.parseInt(dateNumber.replace(":", "")) < Integer.parseInt(dateOfLastKey.replace(":", ""))) {
+                messageRoom.child(HomePage.userId).child(sellerId + "_" + sellerName).child(bookName).setValue(null);
+            }
 
+        } catch (NullPointerException NOE) {
+            Log.e("no prev messages", "true");
+        }
     }
 
 }
