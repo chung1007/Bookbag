@@ -767,8 +767,14 @@ public class Explore extends Fragment{
             public void onClick(View view) {
                 Log.e("wishIcon", "clicked");
                 if (view.getTag() != null) {
-                    toastMaker("Already in Wist List!");
-                    Log.e("item", "already in list!");
+                    ImageView addIcon = (ImageView)view.findViewById(R.id.addToWishList);
+                    toastMaker("removed bookmark");
+                    String fileName = userId+"_"+(postKey.replace(" ", ""));
+                    File file = new File("sdcard/Bookbag_wishList/existing/"+fileName);
+                    file.delete();
+                    addIcon.setImageResource(R.drawable.addtowishlist);
+                    addIcon.setTag(R.drawable.addtowishlist);
+
                 } else {
                     try {
                         file = null;

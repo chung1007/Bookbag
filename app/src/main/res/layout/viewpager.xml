@@ -39,7 +39,7 @@
         android:orientation="horizontal"
         android:layout_gravity="center_horizontal">
 
-        <ImageView
+       <!-- <ImageView
             android:src="@drawable/bookbagicon"
             android:layout_width="35dp"
             android:layout_height="35dp"
@@ -47,6 +47,7 @@
             android:tint="#ffffff"
             android:layout_gravity="center_vertical"/>
 
+-->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

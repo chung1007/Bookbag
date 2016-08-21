@@ -510,6 +510,10 @@ public class WishList extends Fragment {
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .show();
     }
+    public void refreshPage(){
+        wishList.setAdapter(null);
+        checkPostFile();
+    }
 
 }
 

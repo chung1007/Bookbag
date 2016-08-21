@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -160,6 +161,12 @@ public class HomePage extends AppCompatActivity {
                         super.onTabSelected(tab);
                         int tabIconColor = ContextCompat.getColor(getApplicationContext(), R.color.tabSelected);
                         tab.getIcon().setColorFilter(tabIconColor, PorterDuff.Mode.SRC_IN);
+                        if(tabLayout.getSelectedTabPosition() == 1){
+                            Log.e("WishList", "selected");
+                            giveDeleteTutorial();
+
+
+                        }
                     }
 
                     @Override
@@ -191,6 +198,24 @@ public class HomePage extends AppCompatActivity {
                 view.setScrollX(0);
             }
 
+        }
+    }
+    public void giveDeleteTutorial(){
+        SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        if(!pref.contains("tutorial")){
+            editor.putString("tutorial", "given").apply();
+            new AlertDialog.Builder(this)
+                    .setTitle("Tutorial: Deleting items")
+                    .setMessage("Hold down items too delete")
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .show();
+        }else{
+            //don't do anything
         }
     }
 

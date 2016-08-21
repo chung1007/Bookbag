@@ -229,11 +229,11 @@ public class Sell extends Fragment {
         for (int i = 0; i < photoList.length; i++){
             photoCheckList.add(photoList[i].getDrawable().toString());
         }
-        if(ISBN.getText().toString().length()!=13){
-            toastMaker("ISBN-10 needs 13 numbers!");
-            correctInfo = false;
-        }else if(notes.getText().toString().equals("") && (Collections.frequency(dataCheckList, "")) > 1){
+        if(notes.getText().toString().equals("") && (Collections.frequency(dataCheckList, "")) > 1){
             toastMaker("Incomplete information!");
+            correctInfo = false;
+        }else if(ISBN.getText().toString().length()!=13){
+            toastMaker("ISBN-13 needs 13 numbers!");
             correctInfo = false;
         }else if(!notes.getText().toString().equals("") && dataCheckList.contains("")){
             toastMaker("Incomplete information!");
