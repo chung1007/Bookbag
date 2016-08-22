@@ -104,6 +104,7 @@
             android:textColor="#ffffff"
             android:textAlignment="gravity"
             android:gravity="center"
+            android:layout_centerVertical="true"
             android:layout_alignParentRight="true"
             android:backgroundTint="#34CAD8"/>
     </RelativeLayout>

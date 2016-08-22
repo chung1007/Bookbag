@@ -207,7 +207,7 @@ public class HomePage extends AppCompatActivity {
             editor.putString("tutorial", "given").apply();
             new AlertDialog.Builder(this)
                     .setTitle("Tutorial: Deleting items")
-                    .setMessage("Hold down items too delete")
+                    .setMessage("Hold down items to delete")
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
