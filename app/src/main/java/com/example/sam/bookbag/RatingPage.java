@@ -25,6 +25,7 @@ import android.text.style.TypefaceSpan;
 import android.util.Log;
 import android.util.LruCache;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -107,7 +108,8 @@ public class RatingPage extends AppCompatActivity {
         SpannableString s = new SpannableString("Profile");
         s.setSpan(new TypefaceSpan(this, "Roboto.ttf"), 0, s.length(),
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        getSupportActionBar().setTitle(s);
+        getSupportActionBar().setTitle(null);
+        setUpTitle();
         intent = getIntent();
         Log.e("ratingpage", "started");
         sellerId = intent.getStringExtra("profileId");
@@ -523,6 +525,16 @@ public class RatingPage extends AppCompatActivity {
             // Note: This flag is required for proper typeface rendering
             tp.setFlags(tp.getFlags() | Paint.SUBPIXEL_TEXT_FLAG);
         }
+    }
+    public void setUpTitle(){
+        this.getSupportActionBar().setDisplayShowCustomEnabled(true);
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View v = inflater.inflate(R.layout.actionbar, null);
+        TextView titleTextView = (TextView) v.findViewById(R.id.appTitle);
+        Typeface tf = Typeface.createFromAsset(getAssets(),
+                "fonts/Roboto.ttf");
+        titleTextView.setTypeface(tf);
+        this.getSupportActionBar().setCustomView(v);
     }
 
 }
