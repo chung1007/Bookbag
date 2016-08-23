@@ -1,5 +1,6 @@
 package com.example.sam.bookbag;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.Context;
@@ -9,14 +10,23 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.NotificationCompat;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.TextPaint;
+import android.text.style.MetricAffectingSpan;
+import android.text.style.TypefaceSpan;
 import android.util.Log;
+import android.util.LruCache;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -94,6 +104,10 @@ public class RatingPage extends AppCompatActivity {
         FacebookSdk.sdkInitialize(this);
         Firebase.setAndroidContext(this);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        SpannableString s = new SpannableString("Profile");
+        s.setSpan(new TypefaceSpan(this, "Roboto.ttf"), 0, s.length(),
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        getSupportActionBar().setTitle(s);
         intent = getIntent();
         Log.e("ratingpage", "started");
         sellerId = intent.getStringExtra("profileId");
@@ -471,6 +485,44 @@ public class RatingPage extends AppCompatActivity {
             return true;
         }
 
+    }
+    public class TypefaceSpan extends MetricAffectingSpan {
+        /** An <code>LruCache</code> for previously loaded typefaces. */
+        private LruCache<String, Typeface> sTypefaceCache =
+                new LruCache<String, Typeface>(12);
+
+        private Typeface mTypeface;
+
+        /**
+         * Load the {@link Typeface} and apply to a {@link Spannable}.
+         */
+        public TypefaceSpan(Context context, String typefaceName) {
+            mTypeface = sTypefaceCache.get(typefaceName);
+
+            if (mTypeface == null) {
+                mTypeface = Typeface.createFromAsset(context.getApplicationContext()
+                        .getAssets(), String.format("fonts/%s", typefaceName));
+
+                // Cache the loaded Typeface
+                sTypefaceCache.put(typefaceName, mTypeface);
+            }
+        }
+
+        @Override
+        public void updateMeasureState(TextPaint p) {
+            p.setTypeface(mTypeface);
+
+            // Note: This flag is required for proper typeface rendering
+            p.setFlags(p.getFlags() | Paint.SUBPIXEL_TEXT_FLAG);
+        }
+
+        @Override
+        public void updateDrawState(TextPaint tp) {
+            tp.setTypeface(mTypeface);
+
+            // Note: This flag is required for proper typeface rendering
+            tp.setFlags(tp.getFlags() | Paint.SUBPIXEL_TEXT_FLAG);
+        }
     }
 
 }
