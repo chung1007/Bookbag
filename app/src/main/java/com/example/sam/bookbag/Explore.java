@@ -26,6 +26,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.NotificationCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -767,13 +768,13 @@ public class Explore extends Fragment{
             public void onClick(View view) {
                 Log.e("wishIcon", "clicked");
                 if (view.getTag() != null) {
-                    ImageView addIcon = (ImageView)view.findViewById(R.id.addToWishList);
+                    ImageView addIcon = (ImageView) view.findViewById(R.id.addToWishList);
                     toastMaker("removed bookmark");
-                    String fileName = userId+"_"+(postKey.replace(" ", ""));
-                    File file = new File("sdcard/Bookbag_wishList/existing/"+fileName);
+                    String fileName = userId + "_" + (postKey.replace(" ", ""));
+                    File file = new File("sdcard/Bookbag_wishList/existing/" + fileName);
                     file.delete();
                     addIcon.setImageResource(R.drawable.addtowishlist);
-                    addIcon.setTag(R.drawable.addtowishlist);
+                    addIcon.setTag(null);
 
                 } else {
                     try {
@@ -792,7 +793,7 @@ public class Explore extends Fragment{
         });
     }
 
-    public void setViewPictures(String userId, String title, String number){
+    public void setViewPictures(final String userId, final String title, String number){
 
             final StorageReference imageRef = storageRef.child(userId).child(title).child("image" + number);
             imageRef.getBytes(Constants.ONE_MEGABYTE).addOnCompleteListener(new OnCompleteListener<byte[]>() {
@@ -808,7 +809,7 @@ public class Explore extends Fragment{
                             options.inScaled = false;
                             options.inJustDecodeBounds = false;
                             options.inDither = false;
-                            options.inSampleSize = 1;
+                            options.inSampleSize = 0;
                             options.inScaled = false;
                             options.inPreferredConfig = Bitmap.Config.ARGB_8888;
                             Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);

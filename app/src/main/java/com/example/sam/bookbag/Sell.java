@@ -10,6 +10,7 @@ import android.graphics.Camera;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
@@ -39,6 +40,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -103,6 +105,7 @@ public class Sell extends Fragment {
         setPhotoAddListener(textBookImageFour, 3);
         setPostClickListener();
         //tabChangeListener();
+        //autoFill();
         return view;
     }
 
@@ -157,7 +160,7 @@ public class Sell extends Fragment {
 
     private void startCamera(int requestCode) {
 
-        Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(cameraIntent, requestCode);
     }
     @Override
@@ -168,18 +171,23 @@ public class Sell extends Fragment {
         {
             imageOneBitmap = (Bitmap) data.getExtras().get("data");
             textBookImageOne.setImageBitmap(imageOneBitmap);
+            deleteTakenPhotoFromGallery(data);
         }else if (requestCode == 1 && resultCode == Activity.RESULT_OK){
             Bitmap photo = (Bitmap) data.getExtras().get("data");
             textBookImageTwo.setImageBitmap(photo);
+            deleteTakenPhotoFromGallery(data);
         }else if (requestCode == 2 && resultCode == Activity.RESULT_OK){
             Bitmap photo = (Bitmap) data.getExtras().get("data");
             textBookImageThree.setImageBitmap(photo);
+            deleteTakenPhotoFromGallery(data);
         }else if (requestCode == 3 && resultCode == Activity.RESULT_OK){
             Bitmap photo = (Bitmap) data.getExtras().get("data");
             textBookImageFour.setImageBitmap(photo);
+            deleteTakenPhotoFromGallery(data);
         }
     }
-    public void setPostClickListener(){
+
+    public void setPostClickListener() {
         postButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -193,7 +201,7 @@ public class Sell extends Fragment {
                     }
                     toastMaker("Posted!");
                     clearPostData();
-                    if(toast!=null){
+                    if (toast != null) {
                         HomePage.tabLayout.getTabAt(2);
                     }
                 }
@@ -305,7 +313,7 @@ public class Sell extends Fragment {
             photoList[i].setImageResource(0);
             photoList[i].setImageResource(R.drawable.addpicture);
         }
-        for (int i = 0; i < editTextList.length; i++){
+        for (int i = 0; i < editTextList.length; i++) {
             editTextList[i].setText("");
         }
         scrollView.fullScroll(ScrollView.FOCUS_UP);
@@ -317,11 +325,31 @@ public class Sell extends Fragment {
         toast.show();
     }
     public String BitMapToString(Bitmap bitmap){
-        ByteArrayOutputStream baos=new  ByteArrayOutputStream();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
         byte [] b=baos.toByteArray();
         String temp=Base64.encodeToString(b, Base64.DEFAULT);
         return temp;
+    }
+    public void autoFill(){
+        className = (EditText)view.findViewById(R.id.className);
+        authorName = (EditText)view.findViewById(R.id.authorName);
+        ISBN = (EditText)view.findViewById(R.id.ISBN);
+        condition = (EditText)view.findViewById(R.id.condition);
+        price = (EditText)view.findViewById(R.id.price);
+        edition = (EditText)view.findViewById(R.id.edition);
+        notes = (EditText)view.findViewById(R.id.notes);
+        className.setText("Test");
+        authorName.setText("Sam Chung");
+        ISBN.setText("1234567890123");
+        condition.setText("Good");
+        edition.setText("7th");
+        price.setText("10");
+        notes.setText("notes");
+    }
+    public void deleteTakenPhotoFromGallery(Intent data){
+        getContext().getContentResolver().delete(data.getData(), null, null);
+        this.getContext().getContentResolver().delete(data.getData(), null, null);
     }
 
 }
