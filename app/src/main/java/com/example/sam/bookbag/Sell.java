@@ -73,6 +73,9 @@ public class Sell extends Fragment {
     EditText[] editTextList;
     ImageView[] photoList;
     Bitmap imageOneBitmap;
+    Bitmap imageTwoBitmap;
+    Bitmap imageThreeBitmap;
+    Bitmap imageFourBitmap;
     int photoCounter;
     boolean correctInfo;
     Toast toast;
@@ -173,14 +176,17 @@ public class Sell extends Fragment {
             textBookImageOne.setImageBitmap(imageOneBitmap);
             deleteTakenPhotoFromGallery(data);
         }else if (requestCode == 1 && resultCode == Activity.RESULT_OK){
+            imageTwoBitmap = (Bitmap) data.getExtras().get("data");
             Bitmap photo = (Bitmap) data.getExtras().get("data");
             textBookImageTwo.setImageBitmap(photo);
             deleteTakenPhotoFromGallery(data);
         }else if (requestCode == 2 && resultCode == Activity.RESULT_OK){
+            imageThreeBitmap = (Bitmap) data.getExtras().get("data");
             Bitmap photo = (Bitmap) data.getExtras().get("data");
             textBookImageThree.setImageBitmap(photo);
             deleteTakenPhotoFromGallery(data);
         }else if (requestCode == 3 && resultCode == Activity.RESULT_OK){
+            imageFourBitmap = (Bitmap) data.getExtras().get("data");
             Bitmap photo = (Bitmap) data.getExtras().get("data");
             textBookImageFour.setImageBitmap(photo);
             deleteTakenPhotoFromGallery(data);
@@ -304,7 +310,10 @@ public class Sell extends Fragment {
                 postKey.child(bookTitle).child(dataNames.get(i)).setValue(dataValue);
             }
         }
-        postKey.child(bookTitle).child("bitmap").setValue(BitMapToString(imageOneBitmap));
+        postKey.child(bookTitle).child("bitmap1").setValue(BitMapToString(imageOneBitmap));
+        postKey.child(bookTitle).child("bitmap2").setValue(BitMapToString(imageTwoBitmap));
+        postKey.child(bookTitle).child("bitmap3").setValue(BitMapToString(imageThreeBitmap));
+        postKey.child(bookTitle).child("bitmap4").setValue(BitMapToString(imageFourBitmap));
         postKey.child(bookTitle).child("seller").setValue(HomePage.userName);
 
     }
@@ -326,7 +335,7 @@ public class Sell extends Fragment {
     }
     public String BitMapToString(Bitmap bitmap){
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        bitmap.compress(Bitmap.CompressFormat.PNG, 0, baos);
         byte [] b=baos.toByteArray();
         String temp=Base64.encodeToString(b, Base64.DEFAULT);
         return temp;

@@ -12,11 +12,13 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.os.Binder;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -64,6 +66,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.security.Provider;
 import java.util.ArrayList;
@@ -100,6 +103,7 @@ public class Explore extends Fragment{
     List<JSONObject> dataPoints;
     JSONObject postData;
     JSONObject eachPostData;
+    JSONObject displayPictures;
     ListView exploreList;
     View infoView;
     String condition;
@@ -305,12 +309,12 @@ public class Explore extends Fragment{
                 String keys = dataSnapshot.getKey();
                 String values = dataSnapshot.getValue().toString();
                 keysAndValues.put(keys, values);
-                if (keysAndValues.size() == 9) {
+                if (keysAndValues.size() == 12) {
                     condition = keysAndValues.get("condition");
                     price = keysAndValues.get("price");
                     edition = keysAndValues.get("edition");
                     ISBN = keysAndValues.get("ISBN");
-                    bitmap = keysAndValues.get("bitmap");
+                    bitmap = keysAndValues.get("bitmap1");
                     author = keysAndValues.get("authorName");
                     notes = keysAndValues.get("notes");
                     seller = keysAndValues.get("seller");
@@ -795,7 +799,9 @@ public class Explore extends Fragment{
 
     public void setViewPictures(final String userId, final String title, String number){
 
-            final StorageReference imageRef = storageRef.child(userId).child(title).child("image" + number);
+        getPictures(userId, title);
+
+            /*final StorageReference imageRef = storageRef.child(userId).child(title).child("image" + number);
             imageRef.getBytes(Constants.ONE_MEGABYTE).addOnCompleteListener(new OnCompleteListener<byte[]>() {
                 @Override
                 public void onComplete(@NonNull Task<byte[]> task) {
@@ -823,6 +829,8 @@ public class Explore extends Fragment{
                                 ImageView bookFour = (ImageView) infoView.findViewById(R.id.imageDisplayFour);
                                 bookOne.setImageBitmap(displayBM.get(0));
                                 bookTwo.setImageBitmap(displayBM.get(1));
+                                saveImageToGallery(displayBM.get(1));
+                                Log.e("image", "saved to gallery");
                                 bookThree.setImageBitmap(displayBM.get(2));
                                 bookFour.setImageBitmap(displayBM.get(3));
                                 displayBM.clear();
@@ -836,8 +844,68 @@ public class Explore extends Fragment{
                         }
                     });
                 }
-            });
+            });*/
         }
+    public void getPictures(final String userId, final String postKey) {
+        keysAndValues.clear();
+        ref.child(userId).child(postKey).addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                String keys = dataSnapshot.getKey();
+                String values = dataSnapshot.getValue().toString();
+                keysAndValues.put(keys, values);
+                if (keysAndValues.size() == 12) {
+                    displayPictures = new JSONObject();
+                    String bitmap1 = keysAndValues.get("bitmap1");
+                    String bitmap2 = keysAndValues.get("bitmap2");
+                    String bitmap3 = keysAndValues.get("bitmap3");
+                    String bitmap4 = keysAndValues.get("bitmap4");
+                    try {
+                        displayPictures.put("bitmap1", bitmap1);
+                        displayPictures.put("bitmap2", bitmap2);
+                        displayPictures.put("bitmap3", bitmap3);
+                        displayPictures.put("bitmap4", bitmap4);
+
+                        ImageView bookOne = (ImageView) infoView.findViewById(R.id.imageDisplayOne);
+                        ImageView bookTwo = (ImageView) infoView.findViewById(R.id.imageDisplayTwo);
+                        ImageView bookThree = (ImageView) infoView.findViewById(R.id.imageDisplayThree);
+                        ImageView bookFour = (ImageView) infoView.findViewById(R.id.imageDisplayFour);
+                        try {
+                            bookOne.setImageBitmap(StringToBitMap(displayPictures.getString("bitmap1")));
+                            bookTwo.setImageBitmap(StringToBitMap(displayPictures.getString("bitmap2")));
+                            bookThree.setImageBitmap(StringToBitMap(displayPictures.getString("bitmap3")));
+                            bookFour.setImageBitmap(StringToBitMap(displayPictures.getString("bitmap4")));
+                        }catch (JSONException JE){
+                            Log.e("displayPictures", "failed");
+                        }
+                    } catch (JSONException JE) {
+                        Log.e("getting pictures", "failed");
+                    }
+
+                    keysAndValues.clear();
+                } else {
+                    //keep adding on to keys and values list;
+                }
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+    }
+
     public void checkifAlreadyAdded(View view, String sellersId, String bookTitle){
         ImageView addIcon = (ImageView)view.findViewById(R.id.addToWishList);
         String fileName = sellersId+"_"+(bookTitle.replace(" ", ""));
@@ -949,6 +1017,62 @@ public class Explore extends Fragment{
         exploreList.setAdapter(null);
         checkPostFile();
     }
+    public void saveImageToGallery(Bitmap bitmap){
+        String fullPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Pictures";
+        try {
+            File dir = new File(fullPath);
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+
+            OutputStream fOut = null;
+            File file = new File(fullPath, "TEST.png");
+            file.createNewFile();
+            fOut = new FileOutputStream(file);
+
+            getResizedBitmap(bitmap, 1000, 1000).compress(Bitmap.CompressFormat.JPEG, 100, fOut);
+            fOut.flush();
+            fOut.close();
+
+            MediaStore.Images.Media.insertImage(getContext().getContentResolver(), file.getAbsolutePath(), file.getName(), file.getName());
+
+
+        } catch (Exception e) {
+            Log.e("saveToExternalStorage()", e.getMessage());
+
+        }
+    }
+    public Bitmap getResizedBitmap(Bitmap bm, int newHeight, int newWidth)
+    {
+        int width = bm.getWidth();
+        int height = bm.getHeight();
+        float scaleWidth = ((float) newWidth) / width;
+        float scaleHeight = ((float) newHeight) / height;
+        // create a matrix for the manipulation
+        Matrix matrix = new Matrix();
+        // resize the bit map
+        matrix.postScale(scaleWidth, scaleHeight);
+        // recreate the new Bitmap
+        Bitmap resizedBitmap = Bitmap.createBitmap(bm, 0, 0, width, height, matrix, false);
+        return resizedBitmap;
+    }
+    public Bitmap StringToBitMap(String encodedString){
+        try {
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inScaled = false;
+            options.inJustDecodeBounds = false;
+            options.inDither = false;
+            options.inSampleSize = 0;
+            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+            byte [] encodeByte=Base64.decode(encodedString, Base64.DEFAULT);
+            Bitmap bitmap=BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length, options);
+            return bitmap;
+        } catch(Exception e) {
+            e.getMessage();
+            return null;
+        }
+    }
+
 
 }
 

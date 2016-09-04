@@ -50,6 +50,9 @@
             android:name=".RatingPage"
             android:theme="@style/Theme.AppCompat.Light">
         </activity>
+        <activity android:name=".ActualMainActivity">
+
+        </activity>
         <activity
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
