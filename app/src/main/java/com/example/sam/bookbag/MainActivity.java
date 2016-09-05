@@ -75,27 +75,39 @@ public class MainActivity extends AppCompatActivity {
     }
     public void generateRandomFontColor(){
         Random r = new Random();
-        int x = r.nextInt(7 - 1) + 1;
+        int x = r.nextInt(7) + 1;
         Log.e("random", x + "");
         switch (x) {
             case 1:
+                Log.e("case", "1");
                 icon.setImageResource(0);
                 icon.setImageResource(R.drawable.gradientappspreview1);
+                break;
             case 2:
+                Log.e("case", "2");
                 icon.setImageResource(0);
                 icon.setImageResource(R.drawable.gradientappspreview2);
+                break;
             case 3:
+                Log.e("case", "3");
                 icon.setImageResource(0);
                 icon.setImageResource(R.drawable.gradientappspreview3);
+                break;
             case 4:
+                Log.e("case", "4");
                 icon.setImageResource(0);
                 icon.setImageResource(R.drawable.gradientappspreview4);
+                break;
             case 5:
+                Log.e("case", "5");
                 icon.setImageResource(0);
                 icon.setImageResource(R.drawable.gradientappspreview5);
+                break;
             case 6:
+                Log.e("case", "6");
                 icon.setImageResource(0);
                 icon.setImageResource(R.drawable.gradientappspreview6);
+                break;
         }
     }
 }
