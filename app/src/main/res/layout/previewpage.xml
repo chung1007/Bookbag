@@ -5,8 +5,18 @@
     android:background="#ffffff">
     
     <ImageView
+        android:id="@+id/companyLogo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/gradientappspreview"/>
+    <TextView
+        android:id="@+id/next"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="click"
+        android:layout_below="@+id/companyLogo"
+        android:layout_centerHorizontal="true"
+        android:onClick="next"
+        android:alpha="0"/>
 
 </RelativeLayout>

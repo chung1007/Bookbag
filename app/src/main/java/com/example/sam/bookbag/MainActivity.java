@@ -3,14 +3,18 @@ package com.example.sam.bookbag;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Typeface;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 
 import com.facebook.FacebookSdk;
 
 public class MainActivity extends AppCompatActivity {
+    TextView next;
+    Thread thread;
 
     public static TextView displayText;
     @Override
@@ -19,17 +23,16 @@ public class MainActivity extends AppCompatActivity {
         FacebookSdk.sdkInitialize(this);
         setContentView(R.layout.previewpage);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        try{
-            Thread.sleep(2000);
-            Intent intent = new Intent(this, ActualMainActivity.class);
-            startActivity(intent);
-        }catch (InterruptedException IE){
-            Log.e("go to main", "failed");
-        }
+        next = (TextView)findViewById(R.id.next);
         /*displayText = (TextView) findViewById(R.id.textDisplay);
         Typeface tf = Typeface.createFromAsset(getAssets(),
                 "fonts/Hero.otf");
         displayText.setTypeface(tf);*/
+        forceClick();
+    }
+    public void next(View view){
+        Intent go = new Intent(this, ActualMainActivity.class);
+        startActivity(go);
     }
     @Override
     public void onDestroy(){
@@ -42,7 +45,33 @@ public class MainActivity extends AppCompatActivity {
         Log.e("started", "service");
         super.onDestroy();
     }
+    public void forceClick() {
+        thread=  new Thread(){
+            @Override
+            public void run(){
+                try {
+                    synchronized(this){
+                        wait(2000);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                next.performClick();
+                                next.setPressed(true);
+                            }
+                        });
+                    }
+                }
+                catch(InterruptedException ex){
+                }
 
+                // TODO
+            }
+        };
+
+        thread.start();
+    }
 }
+
+
 
 
