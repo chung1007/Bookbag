@@ -8,7 +8,7 @@
         android:id="@+id/companyLogo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/gradientappspreview"/>
+        android:src="@drawable/gradientappspreview1"/>
     <TextView
         android:id="@+id/next"
         android:layout_width="wrap_content"

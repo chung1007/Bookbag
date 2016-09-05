@@ -8,15 +8,20 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.facebook.FacebookSdk;
+
+import java.util.ArrayList;
+import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
     TextView next;
     Thread thread;
 
     public static TextView displayText;
+    ImageView icon;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,10 +29,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.previewpage);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         next = (TextView)findViewById(R.id.next);
-        /*displayText = (TextView) findViewById(R.id.textDisplay);
-        Typeface tf = Typeface.createFromAsset(getAssets(),
-                "fonts/Hero.otf");
-        displayText.setTypeface(tf);*/
+        icon = (ImageView)findViewById(R.id.companyLogo);
+        generateRandomFontColor();
         forceClick();
     }
     public void next(View view){
@@ -69,6 +72,31 @@ public class MainActivity extends AppCompatActivity {
         };
 
         thread.start();
+    }
+    public void generateRandomFontColor(){
+        Random r = new Random();
+        int x = r.nextInt(7 - 1) + 1;
+        Log.e("random", x + "");
+        switch (x) {
+            case 1:
+                icon.setImageResource(0);
+                icon.setImageResource(R.drawable.gradientappspreview1);
+            case 2:
+                icon.setImageResource(0);
+                icon.setImageResource(R.drawable.gradientappspreview2);
+            case 3:
+                icon.setImageResource(0);
+                icon.setImageResource(R.drawable.gradientappspreview3);
+            case 4:
+                icon.setImageResource(0);
+                icon.setImageResource(R.drawable.gradientappspreview4);
+            case 5:
+                icon.setImageResource(0);
+                icon.setImageResource(R.drawable.gradientappspreview5);
+            case 6:
+                icon.setImageResource(0);
+                icon.setImageResource(R.drawable.gradientappspreview6);
+        }
     }
 }
 

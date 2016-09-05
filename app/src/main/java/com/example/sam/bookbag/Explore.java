@@ -875,7 +875,7 @@ public class Explore extends Fragment{
                             bookTwo.setImageBitmap(StringToBitMap(displayPictures.getString("bitmap2")));
                             bookThree.setImageBitmap(StringToBitMap(displayPictures.getString("bitmap3")));
                             bookFour.setImageBitmap(StringToBitMap(displayPictures.getString("bitmap4")));
-                        }catch (JSONException JE){
+                        } catch (JSONException JE) {
                             Log.e("displayPictures", "failed");
                         }
                     } catch (JSONException JE) {
@@ -962,23 +962,26 @@ public class Explore extends Fragment{
         }
     }
     public boolean isStoragePermissionGranted() {
-        if (Build.VERSION.SDK_INT >= 23) {
-            if (ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    == PackageManager.PERMISSION_GRANTED) {
-                Log.e("permission","Permission is granted");
+        try {
+            if (Build.VERSION.SDK_INT >= 23) {
+                if (ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        == PackageManager.PERMISSION_GRANTED) {
+                    Log.e("permission", "Permission is granted");
+                    return true;
+                } else {
+
+                    Log.e("Permission", "Permission is revoked");
+                    ActivityCompat.requestPermissions(getActivity(), new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                    return false;
+                }
+            } else { //permission is automatically granted on sdk<23 upon installation
+                Log.e("Permission", "Permission is granted");
                 return true;
-            } else {
-
-                Log.e("Permission", "Permission is revoked");
-                ActivityCompat.requestPermissions(getActivity(), new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
-                return false;
             }
+        }catch (NullPointerException NPE){
+            //whatever
         }
-        else { //permission is automatically granted on sdk<23 upon installation
-            Log.e("Permission", "Permission is granted");
-            return true;
-        }
-
+        return true;
     }
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
