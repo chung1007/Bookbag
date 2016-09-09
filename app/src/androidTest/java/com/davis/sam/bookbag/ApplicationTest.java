@@ -1,4 +1,4 @@
-package com.example.sam.bookbag;
+package com.davis.sam.bookbag;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

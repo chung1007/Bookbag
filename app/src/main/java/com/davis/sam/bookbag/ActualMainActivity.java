@@ -1,4 +1,4 @@
-package com.example.sam.bookbag;
+package com.davis.sam.bookbag;
 
 import android.content.Intent;
 import android.content.pm.ActivityInfo;

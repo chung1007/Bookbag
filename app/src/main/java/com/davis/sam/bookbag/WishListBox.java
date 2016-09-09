@@ -1,8 +1,7 @@
-package com.example.sam.bookbag;
+package com.davis.sam.bookbag;
 
 import android.content.Context;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.RelativeLayout;
 
 /**

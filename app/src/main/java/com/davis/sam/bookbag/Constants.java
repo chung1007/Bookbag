@@ -1,4 +1,4 @@
-package com.example.sam.bookbag;
+package com.davis.sam.bookbag;
 
 /**
  * Created by sam on 6/11/16.

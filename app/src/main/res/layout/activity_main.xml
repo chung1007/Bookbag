@@ -29,7 +29,7 @@
         android:layout_above="@+id/textDisplay"/>
 
     <fragment
-        android:name="com.example.sam.bookbag.FacebookLogin"
+        android:name="com.davis.sam.bookbag.FacebookLogin"
         android:id="@+id/facebookLoginButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

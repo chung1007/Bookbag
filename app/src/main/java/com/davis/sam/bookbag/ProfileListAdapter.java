@@ -1,19 +1,14 @@
-package com.example.sam.bookbag;
+package com.davis.sam.bookbag;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 import com.facebook.login.widget.ProfilePictureView;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by sam on 7/12/16.

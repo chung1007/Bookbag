@@ -1,4 +1,4 @@
-package com.example.sam.bookbag;
+package com.davis.sam.bookbag;
 
 import android.content.DialogInterface;
 import android.graphics.Bitmap;

@@ -64,7 +64,7 @@
 
     </android.support.v7.widget.Toolbar>
 
-    <com.example.sam.bookbag.CustomViewPager
+    <com.davis.sam.bookbag.CustomViewPager
         android:id="@+id/viewpager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

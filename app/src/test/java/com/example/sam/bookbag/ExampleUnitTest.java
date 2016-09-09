@@ -1,4 +1,4 @@
-package com.example.sam.bookbag;
+package com.davis.sam.bookbag;
 
 import org.junit.Test;
 

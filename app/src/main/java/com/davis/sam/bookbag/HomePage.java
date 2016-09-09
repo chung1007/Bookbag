@@ -1,6 +1,5 @@
-package com.example.sam.bookbag;
+package com.davis.sam.bookbag;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -9,7 +8,6 @@ import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
-import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -26,7 +24,6 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.facebook.FacebookSdk;
-import com.facebook.login.widget.ProfilePictureView;
 
 import java.util.ArrayList;
 import java.util.List;

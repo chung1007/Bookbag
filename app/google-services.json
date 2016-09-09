@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:708223146382:android:afaf73b6b1fa0dae",
         "android_client_info": {
-          "package_name": "com.example.sam.bookbag"
+          "package_name": "com.davis.sam.bookbag"
         }
       },
       "oauth_client": [
@@ -18,7 +18,7 @@
           "client_id": "708223146382-p0f18rdnsq6tsgph9cf0578ufarpv3tc.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.sam.bookbag",
+            "package_name": "com.davis.sam.bookbag",
             "certificate_hash": "E542397F33E0F999839D25598B0F13F76533B3C8"
           }
         },

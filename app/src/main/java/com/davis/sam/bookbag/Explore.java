@@ -1,11 +1,8 @@
-package com.example.sam.bookbag;
+package com.davis.sam.bookbag;
 
 
 
-import android.app.Notification;
 import android.app.NotificationManager;
-import android.app.Service;
-import android.bluetooth.BluetoothClass;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,14 +10,10 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
-import android.os.Binder;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.IBinder;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -45,10 +38,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.facebook.login.widget.ProfilePictureView;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -58,17 +47,14 @@ import com.google.firebase.storage.StorageReference;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.security.Provider;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -545,31 +531,8 @@ public class Explore extends Fragment{
     }
 
     public void casePriceChosen() {
-        HashMap<String, String> mapToSort = new HashMap<>();
-        for (int i = 0; i < dataPoints.size(); i++) {
-            JSONObject jsonFirst = dataPoints.get(i);
-            Iterator<String> keys = jsonFirst.keys();
-            String firstKey = keys.next();
-            try {
-                JSONObject jsonUnderFirst = jsonFirst.getJSONObject(firstKey);
-                String key = firstKey + "_" + jsonUnderFirst.getString("title");
-                Log.e("compare keys", key);
-                String value = jsonUnderFirst.getString("price");
-                mapToSort.put(key, value);
-            } catch (JSONException JSE) {
-                Log.e("JSON in sorting", "FAILED");
-            }
-        }
-        HashMap<String, String> sortedMap = sortByValues(mapToSort);
-        List<JSONObject> sortedDataPoints = new ArrayList<>();
-        List<String> sortedKeys = new ArrayList<>(sortedMap.keySet());
-        List<String> sortedValues = new ArrayList<>(sortedMap.values());
-        ArrayList<String> userIds = new ArrayList<>();
-        List<String> list = new ArrayList<>();
-        Log.e("mapToSort", mapToSort.toString());
-        Log.e("sorted Map", sortedMap.toString());
-        counter = 0;
-        while (list.size() != dataPoints.size()) {
+        try {
+            HashMap<String, String> mapToSort = new HashMap<>();
             for (int i = 0; i < dataPoints.size(); i++) {
                 JSONObject jsonFirst = dataPoints.get(i);
                 Iterator<String> keys = jsonFirst.keys();
@@ -577,63 +540,65 @@ public class Explore extends Fragment{
                 try {
                     JSONObject jsonUnderFirst = jsonFirst.getJSONObject(firstKey);
                     String key = firstKey + "_" + jsonUnderFirst.getString("title");
+                    Log.e("compare keys", key);
                     String value = jsonUnderFirst.getString("price");
-                    if (key.equals(sortedKeys.get(counter)) && value.equals(sortedValues.get(counter))) {
-                        list.add(key);
-                        sortedDataPoints.add(jsonFirst);
-                        userIds.add(firstKey);
-                        Log.e("addedKey", key);
-                        sortedKeys.remove(sortedKeys.get(counter));
-                        sortedValues.remove(sortedValues.get(counter));
-                        if (sortedKeys.size() == 0) {
-                            break;
-                        }
-                    } else {
-                    }
+                    mapToSort.put(key, value);
                 } catch (JSONException JSE) {
                     Log.e("JSON in sorting", "FAILED");
                 }
             }
+            HashMap<String, String> sortedMap = sortByValues(mapToSort);
+            List<JSONObject> sortedDataPoints = new ArrayList<>();
+            List<String> sortedKeys = new ArrayList<>(sortedMap.keySet());
+            List<String> sortedValues = new ArrayList<>(sortedMap.values());
+            ArrayList<String> userIds = new ArrayList<>();
+            List<String> list = new ArrayList<>();
+            Log.e("mapToSort", mapToSort.toString());
+            Log.e("sorted Map", sortedMap.toString());
+            counter = 0;
+            while (list.size() != dataPoints.size()) {
+                for (int i = 0; i < dataPoints.size(); i++) {
+                    JSONObject jsonFirst = dataPoints.get(i);
+                    Iterator<String> keys = jsonFirst.keys();
+                    String firstKey = keys.next();
+                    try {
+                        JSONObject jsonUnderFirst = jsonFirst.getJSONObject(firstKey);
+                        String key = firstKey + "_" + jsonUnderFirst.getString("title");
+                        String value = jsonUnderFirst.getString("price");
+                        if (key.equals(sortedKeys.get(counter)) && value.equals(sortedValues.get(counter))) {
+                            list.add(key);
+                            sortedDataPoints.add(jsonFirst);
+                            userIds.add(firstKey);
+                            Log.e("addedKey", key);
+                            sortedKeys.remove(sortedKeys.get(counter));
+                            sortedValues.remove(sortedValues.get(counter));
+                            if (sortedKeys.size() == 0) {
+                                break;
+                            }
+                        } else {
+                        }
+                    } catch (JSONException JSE) {
+                        Log.e("JSON in sorting", "FAILED");
+                    }
+                }
+            }
+            displayPostBoxes(sortedDataPoints, userIds);
+            Log.e("matches", list.toString());
+        }catch (NullPointerException NPE){
+            Log.e("No items", "null");
         }
-        displayPostBoxes(sortedDataPoints, userIds);
-        Log.e("matches", list.toString());
     }
 
     public void caseConditionChosen() {
-        HashMap<String, String> mapToSort = new HashMap<>();
-        HashMap<String, String> conditionValues = new HashMap<>();
-        conditionValues.put("As New", "1");
-        conditionValues.put("Fine", "2");
-        conditionValues.put("Very Good", "3");
-        conditionValues.put("Good", "4");
-        conditionValues.put("Fair", "5");
-        conditionValues.put("Poor", "6");
-        for (int i = 0; i < dataPoints.size(); i++) {
-            JSONObject jsonFirst = dataPoints.get(i);
-            Iterator<String> keys = jsonFirst.keys();
-            String firstKey = keys.next();
-            try {
-                JSONObject jsonUnderFirst = jsonFirst.getJSONObject(firstKey);
-                String title = jsonUnderFirst.getString("title");
-                String condition = jsonUnderFirst.getString("condition");
-                String key = firstKey + "_" + title + "_" + condition;
-                String value = conditionValues.get(condition);
-                mapToSort.put(key, value);
-            } catch (JSONException JSE) {
-                Log.e("JSON in sorting", "FAILED");
-            }
-        }
-        Log.e("conditionMap", mapToSort.toString());
-        HashMap<String, String> sortedMap = sortByValues(mapToSort);
-        List<JSONObject> sortedDataPoints = new ArrayList<>();
-        List<String> sortedKeys = new ArrayList<>(sortedMap.keySet());
-        List<String> sortedValues = new ArrayList<>(sortedMap.values());
-        ArrayList<String> userIds = new ArrayList<>();
-        List<String> list = new ArrayList<>();
-        Log.e("mapToSort", mapToSort.toString());
-        Log.e("sorted Map", sortedMap.toString());
-        counter = 0;
-        while (list.size() != dataPoints.size()) {
+        try {
+            HashMap<String, String> mapToSort = new HashMap<>();
+            HashMap<String, String> conditionValues = new HashMap<>();
+            conditionValues.put("As New", "1");
+            conditionValues.put("Fine", "2");
+            conditionValues.put("Very Good", "3");
+            conditionValues.put("Good", "4");
+            conditionValues.put("Fair", "5");
+            conditionValues.put("Poor", "6");
             for (int i = 0; i < dataPoints.size(); i++) {
                 JSONObject jsonFirst = dataPoints.get(i);
                 Iterator<String> keys = jsonFirst.keys();
@@ -643,25 +608,54 @@ public class Explore extends Fragment{
                     String title = jsonUnderFirst.getString("title");
                     String condition = jsonUnderFirst.getString("condition");
                     String key = firstKey + "_" + title + "_" + condition;
-                    if (key.equals(sortedKeys.get(counter))) {
-                        list.add(key);
-                        sortedDataPoints.add(jsonFirst);
-                        userIds.add(firstKey);
-                        Log.e("addedKey", key);
-                        sortedKeys.remove(sortedKeys.get(counter));
-                        sortedValues.remove(sortedValues.get(counter));
-                        if (sortedKeys.size() == 0) {
-                            break;
-                        }
-                    } else {
-                    }
+                    String value = conditionValues.get(condition);
+                    mapToSort.put(key, value);
                 } catch (JSONException JSE) {
                     Log.e("JSON in sorting", "FAILED");
                 }
             }
+            Log.e("conditionMap", mapToSort.toString());
+            HashMap<String, String> sortedMap = sortByValues(mapToSort);
+            List<JSONObject> sortedDataPoints = new ArrayList<>();
+            List<String> sortedKeys = new ArrayList<>(sortedMap.keySet());
+            List<String> sortedValues = new ArrayList<>(sortedMap.values());
+            ArrayList<String> userIds = new ArrayList<>();
+            List<String> list = new ArrayList<>();
+            Log.e("mapToSort", mapToSort.toString());
+            Log.e("sorted Map", sortedMap.toString());
+            counter = 0;
+            while (list.size() != dataPoints.size()) {
+                for (int i = 0; i < dataPoints.size(); i++) {
+                    JSONObject jsonFirst = dataPoints.get(i);
+                    Iterator<String> keys = jsonFirst.keys();
+                    String firstKey = keys.next();
+                    try {
+                        JSONObject jsonUnderFirst = jsonFirst.getJSONObject(firstKey);
+                        String title = jsonUnderFirst.getString("title");
+                        String condition = jsonUnderFirst.getString("condition");
+                        String key = firstKey + "_" + title + "_" + condition;
+                        if (key.equals(sortedKeys.get(counter))) {
+                            list.add(key);
+                            sortedDataPoints.add(jsonFirst);
+                            userIds.add(firstKey);
+                            Log.e("addedKey", key);
+                            sortedKeys.remove(sortedKeys.get(counter));
+                            sortedValues.remove(sortedValues.get(counter));
+                            if (sortedKeys.size() == 0) {
+                                break;
+                            }
+                        } else {
+                        }
+                    } catch (JSONException JSE) {
+                        Log.e("JSON in sorting", "FAILED");
+                    }
+                }
+            }
+            displayPostBoxes(sortedDataPoints, userIds);
+            Log.e("matches", list.toString());
+        }catch(NullPointerException NPE){
+            Log.e("no listings", "null");
         }
-        displayPostBoxes(sortedDataPoints, userIds);
-        Log.e("matches", list.toString());
     }
 
     public void listenForListItemClicked() {

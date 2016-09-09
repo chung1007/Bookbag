@@ -1,4 +1,4 @@
-package com.example.sam.bookbag;
+package com.davis.sam.bookbag;
 
 import android.app.NotificationManager;
 import android.app.Service;
@@ -10,10 +10,6 @@ import android.os.Vibrator;
 import android.support.v7.app.NotificationCompat;
 import android.text.format.DateFormat;
 import android.util.Log;
-import android.view.View;
-import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.Spinner;
 
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
@@ -35,10 +31,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
