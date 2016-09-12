@@ -18,6 +18,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -158,7 +159,7 @@ public class HomePage extends AppCompatActivity {
                         super.onTabSelected(tab);
                         int tabIconColor = ContextCompat.getColor(getApplicationContext(), R.color.tabSelected);
                         tab.getIcon().setColorFilter(tabIconColor, PorterDuff.Mode.SRC_IN);
-                        if(tabLayout.getSelectedTabPosition() == 1){
+                        if (tabLayout.getSelectedTabPosition() == 1) {
                             Log.e("WishList", "selected");
                             giveDeleteTutorial();
 
@@ -215,5 +216,6 @@ public class HomePage extends AppCompatActivity {
             //don't do anything
         }
     }
+
 
 }

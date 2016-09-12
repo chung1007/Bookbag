@@ -6,6 +6,7 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -122,6 +123,7 @@ public class Explore extends Fragment{
         if(!FacebookLogin.firstTime) {
             checkPostFile();
         }
+        termsOfService();
         exploreDir = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/Bookbag_explore");
         wishDir = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/Bookbag_wishList/existing");
         wishExistDir = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/Bookbag_wishList/wishExist");
@@ -1067,6 +1069,27 @@ public class Explore extends Fragment{
         } catch(Exception e) {
             e.getMessage();
             return null;
+        }
+    }
+    public void termsOfService(){
+        LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(getContext().LAYOUT_INFLATER_SERVICE);
+        View terms = inflater.inflate(R.layout.termsofservice, null);
+        SharedPreferences pref = getContext().getSharedPreferences("MyPref", Context.MODE_PRIVATE);
+        final SharedPreferences.Editor editor = pref.edit();
+        if(!pref.contains("terms")){
+            new android.app.AlertDialog.Builder(getContext())
+                    .setView(terms)
+                    .setTitle("")
+                    .setMessage("")
+                    .setPositiveButton("Agree", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            editor.putString("terms", "shown").apply();
+                            dialog.dismiss();
+                        }
+                    })
+                    .show();
+        }else{
+            //don't do anything
         }
     }
 
