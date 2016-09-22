@@ -198,6 +198,7 @@ public class HomePage extends AppCompatActivity {
 
         }
     }
+    //
     public void giveDeleteTutorial(){
         SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();

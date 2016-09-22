@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 android {
     signingConfigs {
         config {
-            keyAlias 'androiddebugkey'
+            keyAlias 'keyalias'
             keyPassword 'Sam1007'
             storeFile file('/Users/sam/.android/debug.keystore')
             storePassword 'android'
@@ -21,8 +21,8 @@ android {
         applicationId "com.davis.sam.bookbag"
         minSdkVersion 21
         targetSdkVersion 23
-        versionCode 1
-        versionName "1.0"
+        versionCode 3
+        versionName "1.0.2"
     }
     /*dexOptions {
         javaMaxHeapSize "4g" //specify the heap size for the dex process
