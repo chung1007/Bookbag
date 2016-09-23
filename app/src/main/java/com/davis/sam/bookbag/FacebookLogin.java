@@ -53,13 +53,25 @@ public class FacebookLogin extends Fragment {
                     sendUserData(profile);
                     sendExtras();
                     Log.e("profile", "!=Null");
-                } else {
-                    mTextDetails.setText("Searching...");
-                    Log.e("displayText", "Searching");
+                } else if(profile == null && !loginResult.getAccessToken().getUserId().equals(null)){
+                    mProfileTracker = new ProfileTracker() {
+                        @Override
+                        protected void onCurrentProfileChanged(Profile profile, Profile profile2) {
+                            // profile2 is the new profile
+                            Log.e("facebook - profile", profile2.getFirstName());
+                            firstTime = true;
+                            FacebookLogin.profile = profile2;
+                            sendUserData(profile2);
+                            sendExtras();
+                            Log.e("profile", "!=Null");
+                            mProfileTracker.stopTracking();
+                        }
+                    };
+                    // no need to call startTracking() on mProfileTracker
+                    // because it is called by its constructor, internally.
                 }
             } catch (NullPointerException NPE) {
-                Log.e("Profile", "isNull");
-                Log.e("User ID", loginResult.getAccessToken().getUserId());
+
             }
         }
 
@@ -200,6 +212,8 @@ public class FacebookLogin extends Fragment {
         Log.e("Firebase", "sent Data");
     }
 }
+
+
 
 
 

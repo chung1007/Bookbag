@@ -319,7 +319,6 @@ public class ChatPage extends AppCompatActivity {
             String date = (String) DateFormat.format(delegate, Calendar.getInstance().getTime());
             String dateOfLastKey = latestMessageHour.substring(0, Math.min(latestMessageHour.length(), 8));
             String dateNumber = date.substring(0, Math.min(date.length(), 8));
-            Log.e("latestMessageTime", dateOfLastKey);
             if (Integer.parseInt(dateNumber.replace(":", "")) < Integer.parseInt(dateOfLastKey.replace(":", ""))) {
                 messageRoom.child(HomePage.userId).child(sellerId + "_" + sellerName).child(bookName).setValue(null);
             }
