@@ -98,7 +98,7 @@ public class Sell extends Fragment {
         setPhotoAddListener(textBookImageFour, 3);
         setPostClickListener();
         //tabChangeListener();
-        //autoFill();
+        autoFill();
         return view;
     }
 

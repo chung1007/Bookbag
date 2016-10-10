@@ -87,6 +87,7 @@ public class Explore extends Fragment{
     ArrayList<String> checkPostListening;
     ArrayList<String> userIdlist;
     ArrayList<Bitmap> displayBM;
+    ArrayList<String> postKeyNames = new ArrayList<>();
     List<JSONObject> dataPoints;
     JSONObject postData;
     JSONObject eachPostData;
@@ -127,6 +128,7 @@ public class Explore extends Fragment{
         exploreDir = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/Bookbag_explore");
         wishDir = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/Bookbag_wishList/existing");
         wishExistDir = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/Bookbag_wishList/wishExist");
+        //deleteAllFiles();
         initializeFiles();
         searchBar = (EditText) view.findViewById(R.id.searchBar);
         searchBar.setCursorVisible(false);
@@ -145,6 +147,7 @@ public class Explore extends Fragment{
         setFirebaseListener();
         listenForListItemClicked();
         setSearchBarClickListener();
+        checkForDeletes();
         //setDataBaseDeleteListener();
         return view;
     }
@@ -255,6 +258,10 @@ public class Explore extends Fragment{
                 lastOfPostKey.clear();
                 String postKey = dataSnapshot.getKey();
                 lastOfPostKey.add(postKey);
+                if (!postKey.equals("Initialized")) {
+                    postKeyNames.add(firstKey + "_" + postKey);
+                }
+                Log.e("postKeyNames", postKeyNames.toString());
                 Log.e("lastOfPostKeyList", lastOfPostKey.toString());
                 if (!FacebookLogin.firstTime && isStoragePermissionGranted()) {
                     if (!postKey.equals("Initialized")) {
@@ -357,6 +364,28 @@ public class Explore extends Fragment{
             public void onCancelled(DatabaseError databaseError) {
             }
         });
+    }
+    public void deleteAllFiles(){
+        File file1 = new File("/sdcard/Bookbag_explore");
+        File file2 = new File("/sdcard/Bookbag_chat");
+        File file3 = new File("/sdcard/Bookbag_wishList");
+        File file4 = new File("/sdcard/Bookbag_newChat");
+        File fileL1[] = file1.listFiles();
+        File fileL2[] = file2.listFiles();
+        File fileL3[] = file3.listFiles();
+        File fileL4[] = file4.listFiles();
+        deleteFilesInPath("/sdcard/Bookbag_explore", fileL1);
+        deleteFilesInPath("/sdcard/Bookbag_chat", fileL2);
+        deleteFilesInPath("/sdcard/Bookbag_wishList", fileL3);
+        deleteFilesInPath("/sdcard/Bookbag_newChat", fileL4);
+
+    }
+
+    public void deleteFilesInPath(String path, File [] list){
+            for (int i = 0; i < list.length; i++) {
+                File deleteFile = new File(path + "/" + list[i].getName());
+                deleteFile.delete();
+            }
     }
 
     public void checkPostFile() {
@@ -1093,6 +1122,18 @@ public class Explore extends Fragment{
         }
     }
 
+    public void checkForDeletes(){
+        File file = new File("/sdcard/Bookbag_explore");
+        File list[] = file.listFiles();
+        for (int i = 0; i < list.length; i++){
+            if(!postKeyNames.contains(list[i].getName())){
+                File toDeleteFile = new File("sdcard/Bookbag_explore/" + list[i].getName());
+                toDeleteFile.delete();
+                postKeyNames.clear();
+                refreshExplorePage();
+            }
+        }
+    }
 
 
 
